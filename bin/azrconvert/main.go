@@ -24,6 +24,8 @@ var (
 
 func main() {
 
+	fmt.Println()
+
 	defer logfile.Close()
 
 	location := flag.Arg(0)
@@ -45,7 +47,7 @@ func main() {
 		return
 	}
 
-	printmessage("Converting book at " + location)
+	log.Println("Converting book at " + location)
 
 	b := getbook(path)
 
@@ -130,7 +132,7 @@ func printmessage[Q any](m Q) {
 	log.Println(m)
 
 	if !verbose {
-		fmt.Print(m)
+		fmt.Println(m)
 
 	}
 	return
