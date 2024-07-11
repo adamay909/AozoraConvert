@@ -7,6 +7,7 @@
 - 外字も可能な限りUTF8に変換し、画像を避ける。
 - 挿絵なども自動的に取り込む。
 - EpubとKindle用では簡単な表紙を追加。
+- kindlegenを必要としない。
 
  
 
@@ -69,3 +70,5 @@ Output written to imogayu.zip.
 - 最近のブラウザ（Firefox, Google Chrome, Safari)はいずれも縦書きの日本語ページを問題なく表示できるが、使用するフォントによってはうまく行かないので、表示がおかしかったらまずフォントをかえてみること。Noto Serif JP、Noto Sans JP、 IPAフォントなどは大丈夫。
 - 使用しているCSSはFont Familyをserif, sans-serifの順で指定しているので、表示フォントをかえるにはブラウザの設定でserifの方をかえる。
 - 大概の場合、使用に耐えるものを作成できるが、Epub等の微調整をしたい場合Calibreなどの強力万能ツールの使用がお薦め。
+
+
