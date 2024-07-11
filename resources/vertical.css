@@ -1,0 +1,127 @@
+body {
+writing-mode: vertical-rl;
+ line-break: normal;
+ -epub-writing-mode: vertical-rl;
+ -webkit-writing-mode: vertical-rl;
+ -epub-line-break: normal;
+ -webkit-line-break: normal;
+ line-height: 180%;
+ padding: 1em 1em;
+ font-family: serif, sans-serif
+}
+span.notes {
+display: none;
+ }
+div.title{
+font-size: 2em;
+margin-top: 4em;
+}
+div.subtitle{
+font-size: 1.4em;
+margin-top: 7em;
+margin-right: 0.5em;
+}
+div.original_title{
+font-size: 1.4em;
+margin-top: 7em;
+margin-right: 0.5em;
+}
+div.author{
+font-size: 1.4em;
+text-align: end;
+}
+div.translator{
+font-size: 1.4em;
+text-align: end;
+}
+div.metadata {
+margin-left: 2em;
+}
+div.metadata div.title{
+font-size: 2em;
+margin-top: 4em;
+}
+div.metadata div.subtitle{
+font-size: 1.4em;
+margin-top: 7em;
+margin-right: 0.5em;
+}
+div.metadata div.author{
+font-size: 1.4em;
+text-align: end;
+}
+div.metadata div.translator{
+font-size: 1.4em;
+text-align: end;
+}
+div.notation_notes {
+display: none;
+}
+div.card {
+display: none;
+}
+div#card {
+display: none;
+}
+h3.o-midashi {
+page-break-after: avoid;
+font-size: 125%;
+margin-top: 3em;
+margin-left: 1em;
+margin-right: 2em;
+}
+h4.naka-midashi {
+page-break-after: avoid;
+font-size: large;
+margin-top: 2em;
+margin-right: 1em;
+ }
+h5.ko-midashi {
+page-break-after: avoid;
+font-size: medium;
+margin-top: 1.5em;
+margin-right: 1em;}
+div.titlepage {
+}
+span.underline_solid{
+ text-decoration: underline solid;
+}
+span.underline_double{
+ text-decoration: underline double;
+}
+span.underline_dotted{
+ text-decoration: underline dotted;
+}
+span.underline_dashed{
+ text-decoration: underline dashed;
+}
+span.underline_wavy{
+ text-decoration: underline wavy;
+}
+span.overline_solid{
+ text-decoration: overline solid;
+}
+span.overline_double{
+ text-decoration: overline double;
+}
+span.overline_dotted{
+ text-decoration: overline dotted;
+}
+span.overline_dashed{
+ text-decoration: overline dashed;
+}
+span.overline_wavy{
+ text-decoration: overline wavy;
+}
+ruby.left-boten{
+ ruby-position: under;
+}
+p.kaiTyou{
+ page-break-after: always;
+}
+p.kaiPeiji{
+ page-break-after: always;
+}
+p.kaiMihiraki{
+ page-break-after: always;
+}

@@ -1,0 +1,5 @@
+This is a simplistic package for replicating some of the functionalities of the strings package while operation explicitly with slices of runes. In fact, the internals utilize the strings package quite a bit. 
+
+The strings package operates on strings and the indexing is difficult to reason about when dealing with non-ASCII chracters because the index value becomes difficult to interpret for a human. 
+
+

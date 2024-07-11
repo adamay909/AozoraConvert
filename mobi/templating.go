@@ -1,0 +1,92 @@
+package mobi
+
+import (
+	"bytes"
+	"text/template"
+
+	r "github.com/adamay909/AozoraConvert/mobi/records"
+)
+
+const defaultTemplateString = `<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>{{ .Mobi.Title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {{- range $i, $_ := .Mobi.CSSFlows }}
+    <link rel="stylesheet" type="text/css" href="kindle:flow:{{ $i | inc | base32 }}?mime=text/css"/>
+    {{- end }}
+  </head>
+  <body aid="{{ .Chunk.ID | base32 }}">
+  `
+
+//</body>
+//</html>`
+
+var funcMap = template.FuncMap{
+	"inc": func(i int) int {
+		return i + 1
+	},
+	"base32": func(i int) string {
+		return r.To32(i)
+	},
+}
+
+var defaultTemplate = template.Must(template.New("default").Funcs(funcMap).Parse(defaultTemplateString))
+
+type inventory struct {
+	Mobi    Book
+	Chapter struct {
+		Title string
+		ID    int
+	}
+	Chunk struct {
+		ID int
+	}
+}
+
+func newInventory(m Book) inventory {
+	return inventory{
+		Mobi: m,
+		Chapter: struct {
+			Title string
+			ID    int
+		}{
+			Title: m.Title,
+			ID:    0,
+		},
+		Chunk: struct {
+			ID int
+		}{
+			ID: 0,
+		},
+	}
+}
+
+/*
+	func newInventory(m Book, c Chapter, chapID int, chunkID int) inventory {
+		return inventory{
+			Mobi: m,
+			Chapter: struct {
+				Title string
+				ID    int
+			}{
+				Title: c.Title,
+				ID:    chapID,
+			},
+			Chunk: struct {
+				ID int
+			}{
+				ID: chunkID,
+			},
+		}
+	}
+*/
+func runTemplate(tpl template.Template, v interface{}) (string, error) {
+	buf := bytes.NewBuffer(nil)
+	err := tpl.Execute(buf, v)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
