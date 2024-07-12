@@ -238,10 +238,8 @@ func (b *Book) RenderAZW3() []byte {
 
 }
 
-// AddFiles adds all the image files requested by
-// book. Server is either the host on which the files
-// reside (typically, https://www.aozora.gr.jp, else the path
-// to the root of the local repository.
+// AddFiles adds the CSS style files as well as
+// all the image files requested by the book.
 func (b *Book) AddFiles() {
 
 	dir := `https://` + strings.TrimPrefix(filepath.Dir(b.URI), `https:/`) + `/`
