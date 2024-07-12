@@ -14,7 +14,7 @@ Provides tools for converting texts from Aozora Bunko to epub and kindle documen
 
 ## コマンドラインツール
 
-bin/azrconvertフォルダにコンパイル済みのバイナリがいくつか置いてある。もちろん同フォルダで go build で自分でバイナリ作成も可。
+cmd/azrconvertフォルダにコンパイル済みのバイナリがいくつか置いてある。もちろん同フォルダで go build で自分でバイナリ作成も可。
 - azrconvert （Linux/amd64用）
 - azrconvert.exe （Windows用）
 - azrconvert_APPLESILICON （M1以降のMac用）
