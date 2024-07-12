@@ -10,6 +10,10 @@ Provides tools for converting texts from Aozora Bunko to epub and kindle documen
 - 挿絵なども自動的に取り込む。
 - EpubとKindle用では簡単な表紙を追加。
 
+Kindle用について：
+- kindlegenを必要としない。
+- Kindleストアから入手できるものと違いDRMは一切なし。
+
  
 
 ## コマンドラインツール
@@ -70,4 +74,7 @@ Output written to imogayu.zip.
 
 - 最近のブラウザ（Firefox, Google Chrome, Safari)はいずれも縦書きの日本語ページを問題なく表示できるが、使用するフォントによってはうまく行かないので、表示がおかしかったらまずフォントをかえてみること。Noto Serif JP、Noto Sans JP、 IPAフォントなどは大丈夫。
 - 使用しているCSSはFont Familyをserif, sans-serifの順で指定しているので、表示フォントをかえるにはブラウザの設定でserifの方をかえる。
-- 大概の場合、使用に耐えるものを作成できるが、Epub等の微調整をしたい場合Calibreなどの強力万能ツールの使用がお薦め。
+- 大概の場合、使用に耐えるものを作成できるが、Epub等の微調整をしたい場合は万能ツールの[Calibre](https://calibre-ebook.com/ja/download)の使用がお薦め。
+- 電子ブックリーダーにファイルを送るのも[Calibre](https://calibre-ebook.com/ja/download)がお薦め。
+
+
