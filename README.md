@@ -1,5 +1,7 @@
 # AozoraConvert
 
+Provides tools for converting texts from Aozora Bunko to epub and kindle documents formatted for vertical typesetting. For more documentation in English, check out the Go documentations, in particular the one for cmd/azrconvert.
+
 ## 概要
 
 青空文庫で提供されているテキストを縦書きのWebページ、あるいは縦書きのEpub3及びKindle用のAZW3（KF8)に変換するためのGoライブラリとコマンドラインツール：

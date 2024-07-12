@@ -18,8 +18,8 @@ import (
 //go:embed resources/jpfont.otf
 var fontdata []byte
 
-//Canvas holds information about the canvas on which to
-//write text.
+// Canvas holds information about the canvas on which to
+// write text.
 type Canvas struct {
 	drawer                                           *font.Drawer
 	marginLeft, marginRight, marginTop, marginBottom float64
@@ -28,8 +28,8 @@ type Canvas struct {
 	xoff, yoff                                       int
 }
 
-//NewCanvas returns a new Canvas with margins set to 10% on each side,
-//background color set to bg, and dimensions given by width and height.
+// NewCanvas returns a new Canvas with margins set to 10% on each side,
+// background color set to bg, and dimensions given by width and height.
 func NewCanvas(bg color.Color, width, height int) *Canvas {
 
 	canvas := new(Canvas)
@@ -55,16 +55,17 @@ func NewCanvas(bg color.Color, width, height int) *Canvas {
 	return canvas
 }
 
+// ImageOf returns the image given by canvas.
 func ImageOf(canvas *Canvas) image.Image {
 	return canvas.drawer.Dst
 }
 
-//SetCursor sets the position of the curser to xpos,ypos.
-//The value should be between 0 and 1 representing the position
-//relative to the printable size (canvas size minus the margins).
-//(0,0) is top left, (1,1) is bottom right. And the cursor
-//position represents the top left corner of the bounding box
-//of next string to be written.
+// SetCursor sets the position of the curser to xpos,ypos.
+// The value should be between 0 and 1 representing the position
+// relative to the printable size (canvas size minus the margins).
+// (0,0) is top left, (1,1) is bottom right. And the cursor
+// position represents the top left corner of the bounding box
+// of next string to be written.
 func SetCursor(canvas *Canvas, xpos, ypos float64) {
 
 	newX := int(float64(canvas.maxXPr)*xpos) + canvas.xoff
@@ -73,10 +74,10 @@ func SetCursor(canvas *Canvas, xpos, ypos float64) {
 	canvas.drawer.Dot = fixed.P(newX, newY)
 }
 
-//WriteLine writes a new line containing s onto canvas
-//using font face f and color fg.
-//Align is "right", "left", or "center". Any other value for align
-//will place the text at current cursor location.
+// WriteLine writes a new line containing s onto canvas
+// using font face f and color fg.
+// Align is "right", "left", or "center". Any other value for align
+// will place the text at current cursor location.
 func WriteLine(s string, align string, f font.Face, fg color.Color, canvas *Canvas) {
 
 	var xoffset, yoffset int
@@ -125,9 +126,9 @@ func WriteLine(s string, align string, f font.Face, fg color.Color, canvas *Canv
 	return
 }
 
-//RenderCanvas encodes the image of canvas.
-//filetype is given as the extension ("png", "jpg").
-//Default filetype is "png".
+// RenderCanvas encodes the image of canvas.
+// filetype is given as the extension ("png", "jpg").
+// Default filetype is "png".
 func RenderCanvas(canvas *Canvas, filetype string) []byte {
 
 	filetype = strings.TrimPrefix(filetype, ".")
@@ -162,8 +163,8 @@ func newBGimage(bg color.Color, xsize, ysize int) *image.RGBA {
 	return dstimg
 }
 
-//DrawGrid draws a grid on canvas. n gives the number
-//of grid lines.
+// DrawGrid draws a grid on canvas. n gives the number
+// of grid lines.
 func DrawGrid(canvas *Canvas, n int) {
 	dstimg := canvas.drawer.Dst
 
@@ -182,7 +183,7 @@ func DrawGrid(canvas *Canvas, n int) {
 	return
 }
 
-//MakeNewFontFace makes a new font face for writing.
+// MakeNewFontFace makes a new font face for writing.
 func MakeNewFontFace(f *opentype.Font, size int) font.Face {
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{Size: float64(size), DPI: 300})
 	if err != nil {
@@ -191,7 +192,7 @@ func MakeNewFontFace(f *opentype.Font, size int) font.Face {
 	return face
 }
 
-//AddCenteredText adds a centered text.
+// AddCenteredText adds a centered text.
 func AddCenteredText(s string, f font.Face, fg color.Color, canvas *Canvas) {
 
 	canvas.drawer.Face = f
@@ -204,9 +205,9 @@ func AddCenteredText(s string, f font.Face, fg color.Color, canvas *Canvas) {
 	return
 }
 
-//BreakLines breaks s into one or more lines to make sure each
-//part fits within the margins of canvas. It also returns the
-//expected maximal line height.
+// BreakLines breaks s into one or more lines to make sure each
+// part fits within the margins of canvas. It also returns the
+// expected maximal line height.
 func BreakLines(s string, f font.Face, canvas *Canvas) (lines []string, lineHeight float64) {
 
 	canvas.drawer.Face = f
@@ -240,8 +241,8 @@ func BreakLines(s string, f font.Face, canvas *Canvas) (lines []string, lineHeig
 	return lines, lineHeight
 }
 
-//ensure compliance with Japanese line breaking rules.
-//returns ok=true if no changes were needed.
+// ensure compliance with Japanese line breaking rules.
+// returns ok=true if no changes were needed.
 func kinsoku(lines []string) (ok bool) {
 
 	ok = true
