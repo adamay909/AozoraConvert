@@ -2,7 +2,7 @@ default:
 	go build
 
 linux:
-	GOOS=linux GOARCH=amd64 go build
+	GOOS=linux GOARCH=amd64 go build -o azrconvert_LINUX
 
 macintel:
 	GOOS=darwin GOARCH=amd64 go build -o azrconvert_INTEL

@@ -269,21 +269,24 @@ func fixNote(oldNode []*html.Token) (newNode []*html.Token) {
 	}
 
 	if strings.Contains(oldNode[1].String(), "［＃改丁］") {
-		newtxt := `<p class="kaiTyou"></p>`
+		//newtxt := `<p class="kaiTyou"></p>`
+		newtxt := `<div style="page-break-before: always;" data-AmznPageBreak="always"></div>`
 		newNode = tokenize([]byte(newtxt))
 		log.Println("Detected page break. Replaced ", renderTokens(oldNode), "with", renderTokens(newNode))
 		return
 	}
 
 	if strings.Contains(oldNode[1].String(), "［＃改ページ］") {
-		newtxt := `<p class="kaiPeiji"></p>`
+		//		newtxt := `<p class="kaiPeiji"></p>`
+		newtxt := `<div style="page-break-before: always;" data-AmznPageBreak="always"></div>`
 		newNode = tokenize([]byte(newtxt))
 		log.Println("Detected page break. Replaced ", renderTokens(oldNode), "with", renderTokens(newNode))
 		return
 	}
 
 	if strings.Contains(oldNode[1].String(), "［＃改見開き］") {
-		newtxt := `<p class="kaiMihiraki"></p>`
+		//newtxt := `<p class="kaiMihiraki"></p>`
+		newtxt := `<div style="page-break-before: always;" data-AmznPageBreak="always"></div>`
 		newNode = tokenize([]byte(newtxt))
 		log.Println("Detected page break. Replaced ", renderTokens(oldNode), "with", renderTokens(newNode))
 		return
