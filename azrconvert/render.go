@@ -248,6 +248,7 @@ func (b *Book) AddFiles() {
 
 		if isImg(t) {
 			var fi fileData
+			var err error
 
 			alt := getAttr(t, "alt")
 			path := getAttr(t, "src")
@@ -273,23 +274,34 @@ func (b *Book) AddFiles() {
 			}
 			fi.Name = fi.Name + ext
 			fi.Mtype = mime.TypeByExtension(filepath.Ext(fi.Name))
-			fi.Data = downloadFile(fi.Location)
+			fi.Data, err = downloadFile(fi.Location)
+			if err != nil {
+				log.Println("Could not add", fi.Location)
+				continue
+			}
+
 			fi.ID = "image" + strconv.Itoa(len(b.Files))
 
 			b.Files = append(b.Files, fi)
 
 			var im image.Image
+
 			if fi.Mtype == "image/png" {
 				r := bytes.NewReader(fi.Data)
-				im, _ = png.Decode(r)
+				im, err = png.Decode(r)
 			}
 			if fi.Mtype == "image/jpeg" {
 				r := bytes.NewReader(fi.Data)
-				im, _ = jpeg.Decode(r)
+				im, err = jpeg.Decode(r)
 			}
 			b.Images = append(b.Images, records.ImageRecord{Data: fi.Data, Ext: ext})
 
 			//fix css
+			if err != nil {
+				log.Println("Could not determine size of image", fi.Location)
+				continue
+			}
+
 			width, height := getSize(im)
 
 			b.CSS = b.CSS + "." + fi.ID + " {\nheight: " + strconv.Itoa(height) + "px;\n width: " + strconv.Itoa(width) + "px;\n}\n"
@@ -403,7 +415,7 @@ func toc(b *Book) []byte {
 	return []byte(builder.String())
 }
 
-func downloadFile(location string) []byte {
+func downloadFile(location string) (data []byte, err error) {
 	path, _ := url.Parse(location)
 
 	/*if path.Host == "" {
@@ -413,11 +425,17 @@ func downloadFile(location string) []byte {
 	r, err := http.Get(path.String())
 	if err != nil {
 		log.Println(err)
+		return
 	}
 	log.Println("file downloaded")
-	data, _ := io.ReadAll(r.Body)
+	data, err = io.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	r.Body.Close()
-	return data
+	return data, err
 }
 
 func getLocalFile(path string) (data []byte) {

@@ -51,6 +51,8 @@ E.g.,
 
 You can in any case see the output file name on the command line.
 
+It is possible to convert a local file by using the flag -i followed by the file name. Note, however, that this will fail to download any needed graphics files as the xhtml texts from Aozoroa Bunko only have relative paths so the converter will not know where to find them.
+
 # Notes
 
 Modern web browsers have no difficulty displaying Japanese vertically but the choice of font can matter. If the display looks weird, change the serif font for Japanese to something different. For example, Noto Serif JP, Noto Sans JP, IPA fonts, work well.

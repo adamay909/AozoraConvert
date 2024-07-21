@@ -17,28 +17,64 @@ import (
 var (
 	web, epub, kindle, verbose bool
 
-	of string
+	infile, outfile string
 
 	logfile *os.File
 )
 
-func main() {
+func init() {
 
-	fmt.Println()
+	flag.BoolVar(&web, "web", false, "Convert to UTF-8 encoded, vertical html page.")
 
-	defer logfile.Close()
+	flag.BoolVar(&epub, "epub", false, "Convert to EPUB3.")
 
-	location := flag.Arg(0)
-	if location == "" {
-		printmessage("Please specify URL of Aozora Bunko book you want to convert.")
+	flag.BoolVar(&kindle, "kindle", false, "Convert to azw3 format for Kindle.")
+
+	flag.BoolVar(&verbose, "v", false, "Enable verbose logging to screen and to  azrconvert.log.")
+
+	flag.StringVar(&outfile, "o", "", "Name of output. Defaults to title of document plus appropriate extension.")
+
+	flag.StringVar(&infile, "i", "", "Name of input file. Use this for converting local file. If specified, url will be ignored.")
+
+	flag.Parse()
+
+	var err error
+
+	log.SetOutput(io.Discard)
+
+	if verbose {
+		logfile, err = os.OpenFile("azrconvert.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		err = logfile.Truncate(0)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		log.SetOutput(io.MultiWriter(logfile, os.Stdout))
+
+		fmt.Println()
+
+		return
 
 	}
 
-	path, err := url.Parse(location)
+}
 
-	if err != nil {
-		printmessage(err)
-		return
+func main() {
+
+	var b *azrconvert.Book
+	var location, filename string
+
+	defer logfile.Close()
+
+	if len(flag.Args()) != 0 {
+		location = flag.Args()[0]
 	}
 
 	if !web && !epub && !kindle {
@@ -47,11 +83,13 @@ func main() {
 		return
 	}
 
-	log.Println("Converting book at " + location)
+	if infile == "" {
+		b = getbookFromURL(location)
+	} else {
+		b = getbookFromLocal(infile)
+	}
 
-	b := getbook(path)
-
-	filename := setOutputName(b, location)
+	filename = setOutputName(b, location)
 
 	if web {
 
@@ -88,45 +126,6 @@ func main() {
 
 }
 
-func init() {
-
-	flag.BoolVar(&web, "web", false, "Convert to UTF-8 encoded, vertical html page.")
-
-	flag.BoolVar(&epub, "epub", false, "Convert to EPUB3.")
-
-	flag.BoolVar(&kindle, "kindle", false, "Convert to azw3 format for Kindle.")
-
-	flag.BoolVar(&verbose, "v", false, "Enable verbose logging to screen and to  azrconvert.log.")
-
-	flag.StringVar(&of, "o", "", "Name of output. Defaults to title of document plus appropriate extension.")
-
-	flag.Parse()
-
-	var err error
-
-	if verbose {
-		logfile, err = os.OpenFile("azrconvert.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		err = logfile.Truncate(0)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		log.SetOutput(io.MultiWriter(logfile, os.Stdout))
-
-		return
-
-	}
-
-	log.SetOutput(io.Discard)
-}
-
 func printmessage[Q any](m Q) {
 
 	log.Println(m)
@@ -139,8 +138,40 @@ func printmessage[Q any](m Q) {
 
 }
 
-func getbook(path *url.URL) *azrconvert.Book {
+func getbookFromLocal(path string) *azrconvert.Book {
 
+	log.Println("Converting from local files won't download any external graphics.")
+
+	data, err := os.ReadFile(path)
+
+	if err != nil {
+		printmessage(err)
+		logfile.Close()
+		os.Exit(1)
+	}
+
+	b := azrconvert.NewBookFrom(data)
+	b.AddFiles()
+	b.SetMetadataFromPreamble()
+	return b
+
+}
+
+func getbookFromURL(location string) *azrconvert.Book {
+
+	log.Println("Converting book at " + location)
+
+	if location == "" {
+		printmessage("Please specify URL of Aozora Bunko book you want to convert.")
+
+	}
+
+	path, err := url.Parse(location)
+	if err != nil {
+		printmessage(err)
+		logfile.Close()
+		os.Exit(1)
+	}
 	r, err := http.Get(path.String())
 
 	if err != nil {
@@ -157,11 +188,9 @@ func getbook(path *url.URL) *azrconvert.Book {
 
 	data, _ := io.ReadAll(r.Body)
 
-	location := path.String()
-
 	b := azrconvert.NewBookFrom(data)
 
-	b.SetURI(filepath.Dir(location) + "/")
+	b.SetURI(location)
 
 	b.AddFiles()
 	b.SetMetadataFromPreamble()
@@ -169,16 +198,20 @@ func getbook(path *url.URL) *azrconvert.Book {
 	return b
 }
 
-func setOutputName(b *azrconvert.Book, location string) string {
+func setOutputName(b *azrconvert.Book, location string) (filename string) {
 
-	filename := strings.TrimSuffix(filepath.Base(location), filepath.Ext(location))
+	if location == "" {
+		filename = "output"
+	}
+
+	filename = strings.TrimSuffix(filepath.Base(location), filepath.Ext(location))
 
 	if b.Title != "" {
 		filename = b.Title
 	}
 
-	if of != "" {
-		filename = of
+	if outfile != "" {
+		filename = outfile
 	}
 
 	return filename
