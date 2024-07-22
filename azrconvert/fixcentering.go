@@ -105,6 +105,11 @@ func fixCentering(in []*html.Token) (out []*html.Token) {
 		for brc := 0; brc < 4; {
 
 			i++
+
+			if i == len(in) {
+				break
+			}
+
 			if isEmptyLineBreak(in[i]) {
 				brc++
 				continue

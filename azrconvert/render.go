@@ -258,15 +258,10 @@ func (b *Book) AddFiles() {
 				fi.Location = dir + path
 			}
 
-			//if strings.HasPrefix(path, "http") {
-			//} else {
-			//	fi.Location = filepath.Join(dir, path)
-			//}
+			t.Type = html.SelfClosingTagToken //need this to make sure tag self-closes
 
 			log.Println("Adding File", fi.Location)
-			/*	if contains(fi.Location, b.Files) {
-				continue
-			}*/
+
 			ext := filepath.Ext(fi.Location)
 			fi.Name = strconv.Itoa(len(b.Files) + 1)
 			for len(fi.Name) < 5 {
@@ -310,7 +305,6 @@ func (b *Book) AddFiles() {
 			setAttr(t, "class", fi.ID)
 			setAttr(t, "src", fi.Name)
 			setAttr(t, "alt", alt)
-			t.Type = html.SelfClosingTagToken
 		}
 	}
 
@@ -449,14 +443,12 @@ func getLocalFile(path string) (data []byte) {
 }
 
 func renderTokens(in []*html.Token) string {
+
 	w := new(strings.Builder)
 
 	for _, t := range in {
-		if isImg(t) && !strings.HasSuffix(t.String(), `/>`) {
-			w.WriteString(strings.TrimSuffix(t.String(), `>`) + ` />`)
-		} else {
-			w.WriteString(t.String())
-		}
+		w.WriteString(t.String())
 	}
+
 	return string(prettifyEmptyLines([]byte(w.String())))
 }
