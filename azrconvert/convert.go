@@ -60,7 +60,7 @@ func NewBookFrom(d []byte) *Book {
 
 	d = modifyNotes(d)
 
-	d = markEmptyLineBreaks(d)
+	d = markBlankLines(d)
 
 	tokens := tokenize(d)
 	log.Println("Parsed and tokenized document.")
