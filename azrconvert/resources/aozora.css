@@ -30,3 +30,4 @@ h5 { font-size: medium;}
 .complex_ruby rt.real_ruby:after  { content: "j" }
 .contents_invisible { display:none }
 .contents_visible   { display:block; margin-left:3em; text-indent: -1em }
+div.centered {width: 50%; margin: auto; }

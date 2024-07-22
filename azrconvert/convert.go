@@ -60,6 +60,8 @@ func NewBookFrom(d []byte) *Book {
 
 	d = modifyNotes(d)
 
+	d = markEmptyLineBreaks(d)
+
 	tokens := tokenize(d)
 	log.Println("Parsed and tokenized document.")
 
@@ -155,6 +157,8 @@ func getBody(tokens []*html.Token) (body []*html.Token) {
 	body = fixNodes(body)
 
 	body = fixTokens(body)
+
+	body = fixCentering(body)
 
 	insertSectionID(body)
 

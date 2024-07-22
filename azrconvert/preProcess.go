@@ -8,7 +8,7 @@ import (
 	"golang.org/x/text/encoding/japanese"
 )
 
-// ToUTF8 Converts src to UTF-8. It assumes src is ShiftJIS.
+// ToUTF8 converts src to UTF-8. It assumes src is ShiftJIS.
 func ToUTF8(src []byte) []byte {
 
 	r, err := japanese.ShiftJIS.NewDecoder().String(string(src))
@@ -39,6 +39,17 @@ func fixLineEndings(s []byte) (out []byte) {
 	log.Println("Fixed line endings to UNIX style.")
 
 	return
+}
+
+// ToSJIS converts src to ShiftJIS. src must be UTF-8.
+func ToSJIS(src []byte) []byte {
+
+	r, err := japanese.ShiftJIS.NewEncoder().String(string(src))
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("Converted to ShiftJIS.")
+	return []byte(r)
 }
 
 func fixLineBreaks(src []byte) []byte {

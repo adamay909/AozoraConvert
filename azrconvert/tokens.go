@@ -8,6 +8,46 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+func isProperLineBreak(t *html.Token) bool {
+
+	if t.Type != html.SelfClosingTagToken {
+		return false
+	}
+
+	if t.DataAtom == atom.Br {
+		return true
+	}
+
+	return false
+
+}
+
+func isEmptyLineBreak(t *html.Token) bool {
+
+	if t.Type != html.SelfClosingTagToken {
+		return false
+	}
+
+	if t.DataAtom != atom.Br {
+		return false
+	}
+
+	if len(t.Attr) == 0 {
+		return false
+	}
+
+	if t.Attr[0].Key != "class" {
+		return false
+	}
+
+	if t.Attr[0].Val != "emptyline" {
+		return false
+	}
+
+	return true
+
+}
+
 func isBodyStart(t *html.Token) bool {
 
 	if t.Type != html.StartTagToken {

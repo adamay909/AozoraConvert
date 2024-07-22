@@ -310,6 +310,7 @@ func (b *Book) AddFiles() {
 			setAttr(t, "class", fi.ID)
 			setAttr(t, "src", fi.Name)
 			setAttr(t, "alt", alt)
+			t.Type = html.SelfClosingTagToken
 		}
 	}
 
@@ -347,6 +348,7 @@ func (b *Book) RenderBody() string {
 	return renderTokens(b.Body)
 
 }
+
 func contains(e string, c []fileData) bool {
 	if len(c) == 0 {
 		return false
@@ -450,7 +452,11 @@ func renderTokens(in []*html.Token) string {
 	w := new(strings.Builder)
 
 	for _, t := range in {
-		w.WriteString(t.String())
+		if isImg(t) && !strings.HasSuffix(t.String(), `/>`) {
+			w.WriteString(strings.TrimSuffix(t.String(), `>`) + ` />`)
+		} else {
+			w.WriteString(t.String())
+		}
 	}
 	return w.String()
 }
