@@ -450,5 +450,5 @@ func renderTokens(in []*html.Token) string {
 		w.WriteString(t.String())
 	}
 
-	return string(prettifyEmptyLines([]byte(w.String())))
+	return w.String() //string(prettifyEmptyLines([]byte(w.String())))
 }

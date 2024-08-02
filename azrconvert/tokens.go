@@ -40,7 +40,7 @@ func isEmptyLineBreak(t *html.Token) bool {
 		return false
 	}
 
-	if t.Attr[0].Val != "emptyline" {
+	if t.Attr[0].Val != "blankline" {
 		return false
 	}
 

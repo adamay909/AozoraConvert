@@ -70,7 +70,9 @@ func prettifyEmptyLines(in []byte) []byte {
 
 func fixCentering(in []*html.Token) (out []*html.Token) {
 
-	for i := 0; i < len(in); i++ {
+	log.Println("New2 fixcentering")
+
+	for i := 0; i < len(in)-1; i++ {
 
 		if !isNote(in[i]) {
 			out = append(out, in[i])
@@ -112,22 +114,21 @@ func fixCentering(in []*html.Token) (out []*html.Token) {
 
 			if isEmptyLineBreak(in[i]) {
 				brc++
-				continue
 			}
 
 			out = append(out, in[i])
 
 		}
 
-		nn = new(html.Token)
+		nm := new(html.Token)
 
-		nn.Type = html.EndTagToken
+		nm.Type = html.EndTagToken
 
-		nn.DataAtom = atom.Div
+		nm.DataAtom = atom.Div
 
-		nn.Data = "div"
+		nm.Data = "div"
 
-		out = append(out, nn)
+		out = append(out, nm)
 
 		log.Println("Fixed centering.")
 

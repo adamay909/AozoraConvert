@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	web, epub, kindle, verbose bool
+	web, zip, epub, epub3, kindle, azw3, verbose bool
 
 	infile, outfile string
 
@@ -26,15 +26,21 @@ func init() {
 
 	flag.BoolVar(&web, "web", false, "Convert to UTF-8 encoded, vertical html page.")
 
+	flag.BoolVar(&zip, "zip", false, "Alias for -web.")
+
 	flag.BoolVar(&epub, "epub", false, "Convert to EPUB3.")
+
+	flag.BoolVar(&epub3, "epub3", false, "Alias for -epub.")
 
 	flag.BoolVar(&kindle, "kindle", false, "Convert to azw3 format for Kindle.")
 
+	flag.BoolVar(&azw3, "azw3", false, "Alias for kindle.")
+
 	flag.BoolVar(&verbose, "v", false, "Enable verbose logging to screen and to  azrconvert.log.")
 
-	flag.StringVar(&outfile, "o", "", "Name of output. Defaults to title of document plus appropriate extension.")
+	flag.StringVar(&outfile, "o", "", "Name output  as `name` + extension. Defaults to title of document plus appropriate extension.")
 
-	flag.StringVar(&infile, "i", "", "Name of input file. Use this for converting local file. If specified, url will be ignored.")
+	flag.StringVar(&infile, "i", "", "Convert local `file`.")
 
 	flag.Parse()
 
@@ -60,6 +66,12 @@ func init() {
 
 		fmt.Println()
 
+		web = web || zip
+
+		epub = epub || epub3
+
+		kindle = kindle || azw3
+
 		return
 
 	}
@@ -73,9 +85,9 @@ func main() {
 
 	defer logfile.Close()
 
-	if len(flag.Args()) != 0 {
-		location = flag.Args()[0]
-	}
+	//if flag.Arg(0) != "" {
+	//		location = flag.Arg(0)
+	//	}
 
 	if !web && !epub && !kindle {
 
@@ -84,7 +96,7 @@ func main() {
 	}
 
 	if infile == "" {
-		b = getbookFromURL(location)
+		b = getbookFromURL(flag.Arg(0))
 	} else {
 		b = getbookFromLocal(infile)
 	}
