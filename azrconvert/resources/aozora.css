@@ -9,7 +9,9 @@ img.gaiji { width: 1em; height: 1em; }
 div.keigakomi{padding-top: 0.5em;
               padding-bottom: 0.5em;
               padding-right: 0.5em;
-              padding-left: 1em;}
+              padding-left: 1em;
+			  margin-right: 1em;
+			  margin-left: 1em;}
 .futoji { font-weight: bold;}
 .shatai { font-style: italic;}
 .subscript { font-size: small; }

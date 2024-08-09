@@ -63,18 +63,17 @@ func init() {
 		}
 
 		log.SetOutput(io.MultiWriter(logfile, os.Stdout))
-
-		fmt.Println()
-
-		web = web || zip
-
-		epub = epub || epub3
-
-		kindle = kindle || azw3
-
-		return
-
 	}
+
+	fmt.Println()
+
+	web = web || zip
+
+	epub = epub || epub3
+
+	kindle = kindle || azw3
+
+	return
 
 }
 
