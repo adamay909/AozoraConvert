@@ -481,5 +481,9 @@ func (bk *Book) addFilesFromZip(arch *zip.Reader) {
 		}
 
 		bk.Files = append(bk.Files, fi)
+
+		if fi.Mtype == "image/png" || fi.Mtype == "image/jpeg" {
+			bk.Images = append(bk.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
+		}
 	}
 }
