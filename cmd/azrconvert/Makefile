@@ -14,3 +14,6 @@ windows:
 	GOOS=windows GOARCH=amd64 go build -o azrconvert.exe
 
 all: default linux macintel applesilicon windows
+
+install:
+	go install

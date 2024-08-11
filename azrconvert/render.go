@@ -275,7 +275,8 @@ func (b *Book) AddFiles() {
 				continue
 			}
 
-			fi.ID = "image" + strconv.Itoa(len(b.Files))
+			//fi.ID = "image" + strconv.Itoa(len(b.Files))
+			fi.ID = "image" + strings.TrimSuffix(fi.Name, filepath.Ext(fi.Name))
 
 			b.Files = append(b.Files, fi)
 
@@ -451,4 +452,34 @@ func renderTokens(in []*html.Token) string {
 	}
 
 	return w.String() //string(prettifyEmptyLines([]byte(w.String())))
+}
+
+func (bk *Book) addFilesFromZip(arch *zip.Reader) {
+
+	for _, f := range arch.File {
+
+		var fi fileData
+
+		fi.Name = filepath.Base(f.Name)
+
+		if fi.Name == "1.html" {
+			continue
+		}
+
+		fi.Mtype = mime.TypeByExtension(filepath.Ext(fi.Name))
+		r, err := f.Open()
+		defer r.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		fi.Data, err = io.ReadAll(r)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		bk.Files = append(bk.Files, fi)
+	}
 }

@@ -1,6 +1,7 @@
 package azrconvert
 
 import (
+	"archive/zip"
 	"bytes"
 	"image"
 	"io"
@@ -80,6 +81,67 @@ func NewBookFrom(d []byte) *Book {
 	return bk
 }
 
+// NewBookFromiZip returns a Book based on dz. dz is assumed to be the result of
+// RenderWebpagePackage.
+func NewBookFromZip(dz []byte) (bk *Book) {
+
+	wlog := log.Writer()
+	clog := new(strings.Builder)
+	nlog := io.MultiWriter(wlog, clog)
+	log.SetOutput(nlog)
+
+	var d []byte
+
+	arch, err := zip.NewReader(bytes.NewReader(dz), int64(len(dz)))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for _, e := range arch.File {
+
+		if filepath.Base(e.Name) == "1.html" {
+
+			r, err := e.Open()
+			defer r.Close()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			d, err = io.ReadAll(r)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			break
+		}
+	}
+
+	bk = NewBook()
+	tokens := tokenize(d)
+	log.Println("Unzipped and tokenized document.")
+	log.Println("length of tokens is", len(tokens))
+	bk.Preamble = headerOf(tokens)
+
+	bk.Body = bodyOf(tokens)
+
+	bk.SetMetadataFromPreamble()
+
+	bk.addFilesFromZip(arch)
+
+	bk.TopSection = getStructure(bk.Body)
+	if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
+		bk.TopSection = nil
+	}
+
+	bk.Log = clog.String()
+	log.SetOutput(nlog)
+
+	return bk
+}
+
 // SetURI sets the path of book within
 // Aozora Bunko's file structure.
 func (b *Book) SetURI(l string) {
@@ -125,6 +187,12 @@ func tokenize(d []byte) (out []*html.Token) {
 
 func getPreamble(tokens []*html.Token) (preamble []*html.Token) {
 
+	return headerOf(tokens)
+
+}
+
+func headerOf(tokens []*html.Token) (preamble []*html.Token) {
+
 	for i, t := range tokens {
 
 		if isBodyStart(t) {
@@ -136,7 +204,7 @@ func getPreamble(tokens []*html.Token) (preamble []*html.Token) {
 
 }
 
-func getBody(tokens []*html.Token) (body []*html.Token) {
+func bodyOf(tokens []*html.Token) (body []*html.Token) {
 
 	var s, e int
 
@@ -153,6 +221,14 @@ func getBody(tokens []*html.Token) (body []*html.Token) {
 
 	body = tokens[s : e+1]
 	log.Println("Got html body of document.")
+
+	return body
+
+}
+
+func getBody(tokens []*html.Token) (body []*html.Token) {
+
+	body = bodyOf(tokens)
 
 	body = fixNodes(body)
 
@@ -579,15 +655,15 @@ func (b *Book) SetMetadataFromPreamble() {
 		if t.DataAtom == atom.Meta {
 
 			if t.Attr[0].Key == "name" && t.Attr[0].Val == "DC.Title" {
-				b.SetTitle(t.Attr[1].Val)
+				b.SetTitle(strings.TrimSpace(t.Attr[1].Val))
 			}
 
 			if t.Attr[0].Key == "name" && t.Attr[0].Val == "DC.Creator" {
-				b.SetCreator(t.Attr[1].Val)
+				b.SetCreator(strings.TrimSpace(t.Attr[1].Val))
 			}
 
 			if t.Attr[0].Key == "name" && t.Attr[0].Val == "DC.Publisher" {
-				b.SetPublisher(t.Attr[1].Val)
+				b.SetPublisher(strings.TrimSpace(t.Attr[1].Val))
 			}
 
 		}

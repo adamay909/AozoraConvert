@@ -149,9 +149,7 @@ func printmessage[Q any](m Q) {
 
 }
 
-func getbookFromLocal(path string) *azrconvert.Book {
-
-	log.Println("Converting from local files won't download any external graphics.")
+func getbookFromLocal(path string) (b *azrconvert.Book) {
 
 	data, err := os.ReadFile(path)
 
@@ -161,10 +159,15 @@ func getbookFromLocal(path string) *azrconvert.Book {
 		os.Exit(1)
 	}
 
-	b := azrconvert.NewBookFrom(data)
+	if filepath.Ext(path) == `.zip` {
+		b = azrconvert.NewBookFromZip(data)
+		return
+	}
+	log.Println("Converting from local files won't download any external graphics.")
+	b = azrconvert.NewBookFrom(data)
 	b.AddFiles()
 	b.SetMetadataFromPreamble()
-	return b
+	return
 
 }
 
