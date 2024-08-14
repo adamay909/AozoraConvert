@@ -3,6 +3,7 @@ package azrconvert
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/base64"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -43,6 +44,18 @@ func (b *Book) RenderWebpage() []byte {
 		log.Println(err)
 	}
 	return []byte(builder.String())
+}
+
+func (b *Book) RenderMonolithicHTML() []byte {
+
+	b.EmbedImages()
+
+	d := b.RenderWebpage()
+
+	b.UnembedImages()
+
+	return d
+
 }
 
 // RenderWebpagePackage returns a zip archive containing
@@ -486,4 +499,67 @@ func (bk *Book) addFilesFromZip(arch *zip.Reader) {
 			bk.Images = append(bk.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
 		}
 	}
+}
+
+// EmbedImages adds images as inline HTMLk.
+func (b *Book) EmbedImages() {
+
+	for _, t := range b.Body {
+
+		if isImg(t) {
+
+			source := getAttr(t, "src")
+
+			t.Type = html.SelfClosingTagToken //need this to make sure tag self-closes
+
+			//find the connresponding file
+
+			for _, fi := range b.Files {
+
+				if fi.Name == source {
+
+					datastr := "data:" + fi.Mtype + ";base64,"
+
+					data := make([]byte, base64.StdEncoding.EncodedLen(len(fi.Data)))
+
+					base64.StdEncoding.Encode(data, fi.Data)
+
+					datastr = datastr + string(data)
+
+					setAttr(t, "src", datastr)
+
+					setAttr(t, "data-original-src", source)
+
+					log.Println("embedded file:", fi.Name)
+					break
+				}
+			}
+
+		}
+	}
+
+	return
+}
+
+// UnembedImages removes the inline images and replaces them with the usual links.
+func (b *Book) UnembedImages() {
+
+	for _, t := range b.Body {
+
+		if isImg(t) {
+
+			source := getAttr(t, "data-original-src")
+
+			if source == "" {
+				continue
+			}
+
+			setAttr(t, "src", source)
+
+			delAttr(t, "data-original-src")
+
+		}
+	}
+
+	return
 }

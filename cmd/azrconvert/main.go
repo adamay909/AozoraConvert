@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	web, zip, epub, epub3, kindle, azw3, verbose bool
+	web, zip, epub, epub3, kindle, azw3, mono, verbose bool
 
 	infile, outfile string
 
@@ -23,6 +23,8 @@ var (
 )
 
 func init() {
+
+	flag.BoolVar(&mono, "webm", false, "Convert to html page with graphics embedded inline.")
 
 	flag.BoolVar(&web, "web", false, "Convert to UTF-8 encoded, vertical html page.")
 
@@ -88,7 +90,7 @@ func main() {
 	//		location = flag.Arg(0)
 	//	}
 
-	if !web && !epub && !kindle {
+	if !web && !epub && !kindle && !mono {
 
 		printmessage("Please specify until one format to convert to.")
 		return
@@ -135,6 +137,16 @@ func main() {
 		printmessage("Output written to " + filename + ".azw3.")
 	}
 
+	if mono {
+
+		err := os.WriteFile(filename+".html", b.RenderMonolithicHTML(), 0644)
+
+		if err != nil {
+			printmessage(err)
+		}
+
+		printmessage("Output written to " + filename + ".html")
+	}
 }
 
 func printmessage[Q any](m Q) {
@@ -182,16 +194,21 @@ func getbookFromURL(location string) *azrconvert.Book {
 
 	path, err := url.Parse(location)
 	if err != nil {
-		printmessage(err)
-		logfile.Close()
-		os.Exit(1)
+		/*
+			printmessage(err)
+				logfile.Close()
+				os.Exit(1)
+		*/
 	}
+
 	r, err := http.Get(path.String())
 
 	if err != nil {
-		printmessage(err)
-		logfile.Close()
-		os.Exit(1)
+		/*
+		   printmessage(err)
+		   		logfile.Close()
+		   		os.Exit(1)
+		*/
 	}
 
 	if r.StatusCode != 200 {
