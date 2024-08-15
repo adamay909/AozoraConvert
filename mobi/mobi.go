@@ -33,6 +33,7 @@ type Book struct {
 	Language      language.Tag
 	FixedLayout   bool
 	RightToLeft   bool
+	Vertical      bool
 	Chapters      []Chapter
 	CSSFlows      []string
 	Images        []r.ImageRecord
@@ -218,8 +219,10 @@ func (m Book) createNullRecord() r.NullRecord {
 	if m.FixedLayout {
 		null.EXTHSection.AddString(t.EXTHFixedLayout, "true")
 	}
-	if m.RightToLeft {
+	if m.Vertical {
 		null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "vertical-rl")
+	}
+	if m.RightToLeft {
 		null.EXTHSection.AddString(t.EXTHPageProgressionDirection, "rtl")
 	}
 	if m.CoverImage != nil {

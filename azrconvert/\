@@ -55,12 +55,11 @@ func NewBookFrom(d []byte) *Book {
 	return bk
 }
 
-//GetBookFrom populates b based on d. d is assumed to be a
+
+//GetBookFrom populates b based on d. d is assumed to be a 
 //cleaned up, utf-8 encoded file.
 
 func (bk *Book) GetBookFrom(d []byte) {
-
-	d = cleanhtml(d)
 
 	tokens := tokenize(d)
 	log.Println("Parsed and tokenized document.")
@@ -122,7 +121,7 @@ func NewBookFromZip(dz []byte) (bk *Book) {
 
 	bk = NewBook()
 	bk.addFilesFromZip(arch)
-
+	
 	for _, e := range arch.File {
 
 		if filepath.Base(e.Name) == "1.html" {
@@ -144,6 +143,7 @@ func NewBookFromZip(dz []byte) (bk *Book) {
 		}
 	}
 
+	
 	tokens := tokenize(d)
 	bk.Preamble = headerOf(tokens)
 
@@ -151,23 +151,18 @@ func NewBookFromZip(dz []byte) (bk *Book) {
 
 	bk.SetMetadataFromPreamble()
 
+
 	bk.TopSection = getStructure(bk.Body)
 	if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
 		bk.TopSection = nil
 	}
 
-	td := new(bytes.Buffer)
-
-	td.Write(d)
-	for _, f := range bk.Files {
-		td.Write(f.Data)
-	}
 	h := md5.Sum(td.Bytes())
 
 	bk.Hash = base64.StdEncoding.EncodeToString(h[:])
 
 	bk.UUID = uuid.NewString()
-
+	
 	bk.GenTitlePage()
 
 	return bk

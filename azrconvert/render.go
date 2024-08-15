@@ -108,7 +108,7 @@ func (b *Book) RenderEpub() []byte {
 	}
 	// write title image
 	f, err = w.Create("cover.png")
-	b.genTitlePage()
+	//	b.genTitlePage()
 	img := new(bytes.Buffer)
 	_ = png.Encode(img, b.CoverImage)
 	_, err = f.Write(img.Bytes())
@@ -171,6 +171,7 @@ func (b *Book) RenderAZW3() []byte {
 		DocType:     "EBOK",
 		Language:    language.Japanese,
 		FixedLayout: false,
+		Vertical:    true,
 		RightToLeft: true,
 		UniqueID:    rand.Uint32(),
 		CSSFlows:    []string{b.CSS + string(verticalCSS()), string(aozoraCSS())},
@@ -255,7 +256,12 @@ func (b *Book) RenderAZW3() []byte {
 // all the image files requested by the book.
 func (b *Book) AddFiles() {
 
-	dir := `https://` + strings.TrimPrefix(filepath.Dir(b.URI), `https:/`) + `/`
+	u, err := url.Parse(b.URI)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	for _, t := range b.Body {
 
@@ -265,11 +271,7 @@ func (b *Book) AddFiles() {
 
 			alt := getAttr(t, "alt")
 			path := getAttr(t, "src")
-			if strings.HasPrefix(path, `http`) {
-				fi.Location = path
-			} else {
-				fi.Location = dir + path
-			}
+			fi.Location = u.Scheme + "://" + u.Host + filepath.Dir(u.Path) + "/" + path
 
 			t.Type = html.SelfClosingTagToken //need this to make sure tag self-closes
 
@@ -353,7 +355,10 @@ func (b *Book) RenderBody() string {
 	if len(b.Body) == 0 {
 		return ""
 	}
-	return renderTokens(b.Body)
+
+	s := renderTokens(b.Body)
+
+	return s
 
 }
 

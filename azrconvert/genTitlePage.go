@@ -2,11 +2,11 @@ package azrconvert
 
 import (
 	_ "embed" //for embedding font file.
+	"encoding/base64"
+	"encoding/binary"
 	"image/color"
 	"log"
-	"math/rand"
 	"strings"
-	"time"
 
 	"github.com/adamay909/AozoraConvert/drawtext"
 	"golang.org/x/image/font/opentype"
@@ -15,9 +15,11 @@ import (
 //go:embed resources/jpfont.otf
 var fontdata []byte
 
-func (b *Book) genTitlePage() {
+// GenTitlePage() generaltes a tile page for book. Relies on the
+// presence of metadata in b so should be called after setting metadata.
+func (b *Book) GenTitlePage() {
 
-	bg, fg := colorpair()
+	bg, fg := b.colorpair()
 	xsize := 1200
 	ysize := 1600
 
@@ -57,11 +59,18 @@ func breakTitle(in string) (out []string) {
 	return
 }
 
-func colorpair() (bg, fg color.Color) {
+func (b *Book) colorpair() (bg, fg color.Color) {
 
-	rand.Seed(time.Now().UnixNano() / 100019)
+	bh, err := base64.StdEncoding.DecodeString(b.Hash)
 
-	r := rand.Intn(4)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	n, _ := binary.Varint(bh[:4])
+
+	r := n % 5
 
 	switch r {
 	case 0:

@@ -177,8 +177,8 @@ func getbookFromLocal(path string) (b *azrconvert.Book) {
 	}
 	log.Println("Converting from local files won't download any external graphics.")
 	b = azrconvert.NewBookFrom(data)
-	b.AddFiles()
 	b.SetMetadataFromPreamble()
+	b.GenTitlePage()
 	return
 
 }
@@ -219,13 +219,14 @@ func getbookFromURL(location string) *azrconvert.Book {
 
 	data, _ := io.ReadAll(r.Body)
 
-	b := azrconvert.NewBookFrom(data)
+	b := azrconvert.NewBook()
 
 	b.SetURI(location)
 
-	b.AddFiles()
-	b.SetMetadataFromPreamble()
+	b.GetBookFrom(data)
 
+	b.SetMetadataFromPreamble()
+	b.GenTitlePage()
 	return b
 }
 
