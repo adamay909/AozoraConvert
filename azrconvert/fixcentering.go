@@ -88,6 +88,7 @@ func fixCentering(in []*html.Token) (out []*html.Token) {
 		}
 
 		if in[i+1].Data != `［＃ページの左右中央］` {
+			out = append(out, in[i])
 			continue
 		}
 

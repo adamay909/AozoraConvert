@@ -359,6 +359,8 @@ func fixTokens(in []*html.Token) (out []*html.Token) {
 
 func fixNote(oldNode []*html.Token) (newNode []*html.Token) {
 
+	log.Println("fixing note:", renderTokens(oldNode))
+
 	if strings.Contains(oldNode[1].String(), "U+") {
 		r := runes.Runes(oldNode[1].String())
 		i := runes.Index(r, runes.Runes("U+"))
@@ -402,7 +404,7 @@ func fixNote(oldNode []*html.Token) (newNode []*html.Token) {
 		log.Println("Detected page break. Replaced ", renderTokens(oldNode), "with", renderTokens(newNode))
 		return
 	}
-
+	log.Println("nothing to do.")
 	return oldNode
 }
 
