@@ -244,6 +244,23 @@ func isScriptStart(t *html.Token) bool {
 	return false
 }
 
+func isCharNote(t *html.Token) bool {
+
+	if t.Type != html.StartTagToken {
+		return false
+	}
+
+	if t.DataAtom != atom.Span {
+		return false
+	}
+
+	if classOf(t) != "charNote" {
+		return false
+	}
+
+	return true
+}
+
 func isText(t *html.Token) bool {
 
 	return t.Type == html.TextToken

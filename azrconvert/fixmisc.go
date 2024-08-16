@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/adamay909/AozoraConvert/runes"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
@@ -136,6 +137,63 @@ func fixCentering(in []*html.Token) (out []*html.Token) {
 
 		log.Println("Fixed centering.")
 
+	}
+
+	return
+}
+
+func fixKogaki(in []*html.Token) (out []*html.Token) {
+
+	log.Println("fixing Kogaki")
+
+	for i := 0; i < len(in); i++ {
+
+		if i == len(in)-1 {
+			out = append(out, in[i])
+			continue
+		}
+
+		if !isCharNote(in[i]) {
+			out = append(out, in[i])
+			continue
+		}
+
+		if !isText(in[i+1]) {
+			out = append(out, in[i])
+			continue
+		}
+
+		if !strings.HasPrefix(in[i+1].Data, `※［＃小書き`) {
+			out = append(out, in[i])
+			continue
+		}
+
+		oldnode := getNode(in[i:])
+
+		t0 := new(html.Token)
+		t0.Type = html.StartTagToken
+		t0.Data = "span"
+		t0.DataAtom = atom.Span
+		t0.Attr = []html.Attribute{{Key: "class", Val: "kogaki"}}
+
+		t2 := new(html.Token)
+		t2.Type = html.EndTagToken
+		t2.Data = "span"
+		t2.DataAtom = atom.Span
+
+		t1 := new(html.Token)
+
+		txt := runes.Runes(in[i+1].Data)[9:10]
+
+		t1.Data = string(txt)
+		t1.Type = html.TextToken
+
+		out = append(out, t0)
+		out = append(out, t1)
+		out = append(out, t2)
+
+		i = i + 2
+		log.Println("replaced", renderTokens(oldnode), "with", renderTokens([]*html.Token{t0, t1, t2}))
 	}
 
 	return

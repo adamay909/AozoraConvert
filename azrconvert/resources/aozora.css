@@ -34,3 +34,4 @@ h5 { font-size: medium;}
 .contents_visible   { display:block; margin-left:3em; text-indent: -1em }
 div.centered {width: 50%; margin: auto; }
 a.midashi_anchor {text-decoration: none; }
+span.kogaki {width: 1em; height: 1em; font-size: 0.7em; padding-left: 0.3em; padding-top: 0.1em}

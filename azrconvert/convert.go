@@ -265,6 +265,8 @@ func getBody(tokens []*html.Token) (body []*html.Token) {
 
 	body = fixTokens(body)
 
+	body = fixKogaki(body)
+
 	body = fixCentering(body)
 
 	insertSectionID(body)
