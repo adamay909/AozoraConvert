@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -194,27 +195,17 @@ func getbookFromURL(location string) *azrconvert.Book {
 
 	path, err := url.Parse(location)
 	if err != nil {
-		/*
-			printmessage(err)
-				logfile.Close()
-				os.Exit(1)
-		*/
+		panic(err)
 	}
 
 	r, err := http.Get(path.String())
 
 	if err != nil {
-		/*
-		   printmessage(err)
-		   		logfile.Close()
-		   		os.Exit(1)
-		*/
+		panic(err)
 	}
 
 	if r.StatusCode != 200 {
-		printmessage(r.Status)
-		logfile.Close()
-		os.Exit(1)
+		panic(errors.New(r.Status))
 	}
 
 	data, _ := io.ReadAll(r.Body)
