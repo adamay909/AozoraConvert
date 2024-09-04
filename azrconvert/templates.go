@@ -2,6 +2,7 @@ package azrconvert
 
 import (
 	_ "embed" //for embedding template files
+	"strings"
 	"text/template"
 )
 
@@ -59,4 +60,16 @@ var aozoracss []byte
 
 func aozoraCSS() []byte {
 	return aozoracss
+}
+
+func inlineCSSTemplate() *template.Template {
+
+	t := webpagetemplate
+
+	t = strings.ReplaceAll(t, `<link rel="stylesheet" type="text/css" href="vertical.css"/>`, `<style>`+string(verticalCSS())+`</style>`)
+
+	t = strings.ReplaceAll(t, `<link rel="stylesheet" type="text/css" href="aozora.css"/>`, `<style>`+string(aozoraCSS())+`</style>`)
+
+	return template.Must(template.New("monolithichtml").Parse(t))
+
 }

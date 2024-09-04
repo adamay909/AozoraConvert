@@ -46,16 +46,35 @@ func (b *Book) RenderWebpage() []byte {
 	return []byte(builder.String())
 }
 
+// RenderMonolithic returns b as a single, monolithic
+// webpage. All graphics are inline.
 func (b *Book) RenderMonolithicHTML() []byte {
 
 	b.EmbedImages()
 
-	d := b.RenderWebpage()
+	builder := new(strings.Builder)
+
+	err := inlineCSSTemplate().Execute(builder, b)
+
+	if err != nil {
+		log.Println(err)
+	}
 
 	b.UnembedImages()
 
-	return d
+	return []byte(builder.String())
 
+}
+
+func (b *Book) renderInlineCSS() []byte {
+
+	builder := new(strings.Builder)
+
+	err := inlineCSSTemplate().Execute(builder, b)
+	if err != nil {
+		log.Println(err)
+	}
+	return []byte(builder.String())
 }
 
 // RenderWebpagePackage returns a zip archive containing
