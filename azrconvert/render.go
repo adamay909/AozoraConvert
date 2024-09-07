@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -30,6 +31,7 @@ type fileData struct {
 	Name     string
 	Data     []byte
 	Mtype    string
+	CSS      string
 }
 
 // RenderWebpage returns b as a single web page.
@@ -312,8 +314,6 @@ func (b *Book) AddFiles() {
 			//fi.ID = "image" + strconv.Itoa(len(b.Files))
 			fi.ID = "image" + strings.TrimSuffix(fi.Name, filepath.Ext(fi.Name))
 
-			b.Files = append(b.Files, fi)
-
 			var im image.Image
 
 			if fi.Mtype == "image/png" {
@@ -324,7 +324,6 @@ func (b *Book) AddFiles() {
 				r := bytes.NewReader(fi.Data)
 				im, err = jpeg.Decode(r)
 			}
-			b.Images = append(b.Images, records.ImageRecord{Data: fi.Data, Ext: ext})
 
 			//fix css
 			if err != nil {
@@ -334,12 +333,18 @@ func (b *Book) AddFiles() {
 
 			width, height := getSize(im)
 
+			fi.CSS = "height: " + strconv.Itoa(height) + "px; width: " + strconv.Itoa(width) + "px;"
 			b.CSS = b.CSS + "." + fi.ID + " {\nheight: " + strconv.Itoa(height) + "px;\n width: " + strconv.Itoa(width) + "px;\n}\n"
 
 			t.Attr = nil
 			setAttr(t, "class", fi.ID)
 			setAttr(t, "src", fi.Name)
 			setAttr(t, "alt", alt)
+			setAttr(t, "style", fi.CSS)
+			fmt.Println("image CSS", fi.CSS)
+
+			b.Files = append(b.Files, fi)
+			b.Images = append(b.Images, records.ImageRecord{Data: fi.Data, Ext: ext})
 		}
 	}
 
@@ -348,13 +353,13 @@ func (b *Book) AddFiles() {
 
 	fi.ID = "css"
 	fi.Name = "aozora.css"
-	fi.Data = aozoraCSS()
+	fi.Data = []byte(string(aozoraCSS()) + b.CSS)
 	fi.Mtype = "text/css"
 	b.Files = append(b.Files, fi)
 
 	fi.ID = "vertical_css"
 	fi.Name = "vertical.css"
-	fi.Data = []byte(string(verticalCSS()) + b.CSS)
+	fi.Data = []byte(string(verticalCSS()))
 	fi.Mtype = "text/css"
 	b.Files = append(b.Files, fi)
 
@@ -555,7 +560,7 @@ func (b *Book) EmbedImages() {
 
 			t.Type = html.SelfClosingTagToken //need this to make sure tag self-closes
 
-			//find the connresponding file
+			//find the corresponding file
 
 			for _, fi := range b.Files {
 
@@ -573,7 +578,12 @@ func (b *Book) EmbedImages() {
 
 					setAttr(t, "data-original-src", source)
 
+					setAttr(t, "style", fi.CSS)
+
 					log.Println("embedded file:", fi.Name)
+
+					log.Println("set style to:", fi.CSS)
+
 					break
 				}
 			}
