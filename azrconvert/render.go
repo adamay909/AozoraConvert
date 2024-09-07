@@ -381,6 +381,13 @@ func (b *Book) RenderBody() string {
 
 }
 
+func (b *Book) RenderBodyInner() string {
+
+	s := renderTokens(b.Body[1 : len(b.Body)-1])
+
+	return s
+}
+
 func contains(e string, c []fileData) bool {
 	if len(c) == 0 {
 		return false
@@ -391,6 +398,18 @@ func contains(e string, c []fileData) bool {
 		}
 	}
 	return false
+
+}
+
+func (b *Book) RenderBodyInnerMonolithic() string {
+
+	b.EmbedImages()
+
+	d := renderTokens(b.Body[1 : len(b.Body)-1])
+
+	b.UnembedImages()
+
+	return d
 
 }
 

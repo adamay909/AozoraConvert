@@ -2,6 +2,7 @@ package jptools
 
 import (
 	_ "embed" //for embedding data
+	"strconv"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ func init() {
 			continue
 		}
 
-		Utf8of[d[0]] = d[1]
+		Utf8of[d[0]], _ = strconv.Unquote(d[1])
 
 	}
 }
