@@ -28,3 +28,10 @@ Huge thanks to the authors of these resources.
 ## License
 
 [MIT](./LICENSE) © Leo Gaskin 2020-2021
+
+
+## Modifications
+
+Small modifications have been made to enable vertical displaying of text.
+
+Masahiro Yamada
