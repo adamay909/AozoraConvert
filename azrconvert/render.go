@@ -225,44 +225,38 @@ func (b *Book) RenderAZW3() []byte {
 	text = ""
 	if b.TopSection != nil {
 
-		var ch *section
-		st := 0
-		for ch = b.TopSection; ch.nextSibling != nil; ch = ch.nextSibling {
-			chap := ""
-			if ch == b.TopSection {
-				text = renderTokens(b.Body[ch.start+1 : ch.nextSibling.start])
+		var sec *section
+		//		st := 0
+		for sec = b.TopSection; sec.nextSibling != nil; sec = sec.nextSibling {
+
+			if sec == b.TopSection {
+				text = renderTokens(b.Body[sec.start+1 : sec.nextSibling.start])
 			} else {
-				chap = renderTokens(b.Body[ch.start:ch.nextSibling.start])
-				text = text + chap
+				text = renderTokens(b.Body[sec.start:sec.nextSibling.start])
 			}
 
 			mb.Chapters = append(mb.Chapters, mobi.Chapter{
-				Title:  ch.content,
-				Start:  st,
-				Length: len(chap)})
+				Title:  sec.title,
+				Chunks: mobi.Chunks(text),
+			})
 
-			st = len(text)
 		}
 
-		chap := renderTokens(b.Body[ch.start:])
+		text = renderTokens(b.Body[sec.start:])
 		mb.Chapters = append(mb.Chapters, mobi.Chapter{
-			Title:  ch.content,
-			Start:  st,
-			Length: len(chap),
+			Title:  sec.title,
+			Chunks: mobi.Chunks(text),
 		})
-		text = text + chap
 
 	} else {
 		text = renderTokens(b.Body[1 : len(b.Body)-1])
 
 		mb.Chapters = append(mb.Chapters, mobi.Chapter{
 			Title:  b.Title,
-			Start:  0,
-			Length: len(text)})
+			Chunks: mobi.Chunks(text),
+		})
 
 	}
-
-	mb.Html = text + "\n</body>\n</html>"
 
 	buf := new(bytes.Buffer)
 	err := mb.Realize().Write(buf)

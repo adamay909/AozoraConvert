@@ -10,7 +10,7 @@ import (
 )
 
 type section struct {
-	id, content                                  string
+	id, title                                    string
 	level                                        int
 	parent, prevSibling, nextSibling, firstChild *section
 	node                                         *html.Token
@@ -34,7 +34,7 @@ func addToTOC(s *section, w *strings.Builder) {
 	//	if len(s.content) != 0 {
 	w.WriteString(lead + `<navPoint id="` + s.id + `" playOrder="` + strconv.Itoa(counter) + `">` + "\n")
 	w.WriteString(lead + "\t<navLabel>\n")
-	w.WriteString(lead + "\t\t<text>" + s.content + "</text>\n")
+	w.WriteString(lead + "\t\t<text>" + s.title + "</text>\n")
 	w.WriteString(lead + "\t</navLabel>\n")
 	w.WriteString(lead + "\t<content src=" + `"1.html#` + s.id + `" />` + "\n")
 	//	}
@@ -97,7 +97,7 @@ func getStructure(tokens []*html.Token) *section {
 		sec.nextSibling = nil
 		sec.firstChild = nil
 		sec.parent = nil
-		sec.content = getTextContent(tokens, i)
+		sec.title = getTextContent(tokens, i)
 		sec.node = new(html.Token)
 		sec.node.DataAtom = atom.H3
 		sec.node.Type = html.StartTagToken
@@ -112,7 +112,7 @@ func getStructure(tokens []*html.Token) *section {
 			newsec.start = i
 			newsec.end = len(tokens) - 1
 			newsec.id = getID(tok)
-			newsec.content = getTextContent(tokens, i)
+			newsec.title = getTextContent(tokens, i)
 			switch {
 			case isChild(newsec, sec):
 				sec.firstChild = newsec
@@ -138,7 +138,7 @@ func getStructure(tokens []*html.Token) *section {
 			}
 			sec.end = newsec.start - 1
 			sec = newsec
-			log.Println("Found section: ", newsec.content)
+			log.Println("Found section: ", newsec.title)
 		}
 		i++
 	}

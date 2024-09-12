@@ -13,6 +13,8 @@ func TestChunks(t *testing.T) {
 	list := Split(string(d))
 
 	for i := range list {
-		fmt.Println(len([]byte(list[i])))
+		//		fmt.Println(len([]byte(list[i])))
+
+		fmt.Println(list[i])
 	}
 }

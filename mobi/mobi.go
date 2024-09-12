@@ -83,8 +83,8 @@ func (m Book) GetThumbFilename() string {
 type Chapter struct {
 	Title  string
 	Chunks []Chunk
-	Start  int
-	Length int
+	// Start  int
+	// Length int
 }
 
 // Chunk represents a chunk of text in a MobiBook Chapter.
@@ -100,7 +100,7 @@ type Chunk struct {
 // Realize converts a MobiBook to a PalmDB Database.
 func (m Book) Realize() pdb.Database {
 	db := pdb.NewDatabase(m.Title, m.CreatedDate)
-	html, chunks, chaps, err := chaptersToText2(m)
+	html, chunks, chaps, err := chaptersToText(m)
 	text := html + strings.Join(m.CSSFlows, "")
 	textRecords := textToRecords(text, chaps)
 

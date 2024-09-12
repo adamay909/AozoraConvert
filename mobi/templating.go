@@ -44,7 +44,7 @@ type inventory struct {
 	}
 }
 
-func newInventory(m Book) inventory {
+func _newInventory(m Book) inventory {
 	return inventory{
 		Mobi: m,
 		Chapter: struct {
@@ -62,25 +62,24 @@ func newInventory(m Book) inventory {
 	}
 }
 
-/*
-	func newInventory(m Book, c Chapter, chapID int, chunkID int) inventory {
-		return inventory{
-			Mobi: m,
-			Chapter: struct {
-				Title string
-				ID    int
-			}{
-				Title: c.Title,
-				ID:    chapID,
-			},
-			Chunk: struct {
-				ID int
-			}{
-				ID: chunkID,
-			},
-		}
+func newInventory(m Book, c Chapter, chapID int, chunkID int) inventory {
+	return inventory{
+		Mobi: m,
+		Chapter: struct {
+			Title string
+			ID    int
+		}{
+			Title: c.Title,
+			ID:    chapID,
+		},
+		Chunk: struct {
+			ID int
+		}{
+			ID: chunkID,
+		},
 	}
-*/
+}
+
 func runTemplate(tpl template.Template, v interface{}) (string, error) {
 	buf := bytes.NewBuffer(nil)
 	err := tpl.Execute(buf, v)
