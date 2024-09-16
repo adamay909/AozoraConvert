@@ -41,11 +41,18 @@ func contentopfTemplate() *template.Template {
 	return template.Must(template.New("opf").Parse(contentopfxml))
 }
 
-//go:embed resources/toc.xml
-var tocxml string
+//go:embed resources/toc.ncx
+var tocncxt string
 
 func tocTemplate() *template.Template {
-	return template.Must(template.New("toc").Parse(tocxml))
+	return template.Must(template.New("toc").Parse(tocncxt))
+}
+
+//go:embed resources/toc.html
+var tocxml string
+
+func tocep3Template() *template.Template {
+	return template.Must(template.New("tocep3").Parse(tocxml))
 }
 
 //go:embed resources/vertical.css

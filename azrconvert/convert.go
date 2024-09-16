@@ -33,6 +33,7 @@ type Book struct {
 	Images                    []records.ImageRecord
 	CSS                       string
 	Hash                      string
+	DateMod                   string
 	// Log                       string
 }
 
@@ -69,11 +70,13 @@ func (bk *Book) GetBookFrom(d []byte) {
 
 	bk.Body = getBody(tokens)
 
-	bk.TopSection = getStructure(bk.Body)
-	if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
-		bk.TopSection = nil
-	}
+	bk.TopSection = bk.getStructure()
 
+	/*
+		if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
+			bk.TopSection = nil
+		}
+	*/
 	bk.AddFiles()
 
 	td := new(bytes.Buffer)
@@ -151,10 +154,12 @@ func NewBookFromZip(dz []byte) (bk *Book) {
 
 	bk.SetMetadataFromPreamble()
 
-	bk.TopSection = getStructure(bk.Body)
-	if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
-		bk.TopSection = nil
-	}
+	bk.TopSection = bk.getStructure()
+	/*
+		if bk.TopSection.firstChild == nil && bk.TopSection.nextSibling == nil {
+			bk.TopSection = nil
+		}
+	*/
 
 	td := new(bytes.Buffer)
 

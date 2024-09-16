@@ -19,8 +19,19 @@ type section struct {
 
 var counter int
 
-func (s *section) RenderTOC() string {
+func (b *Book) RenderTOC() string {
 	w := new(strings.Builder)
+
+	if b.TopSection.title == "" {
+		b.TopSection.title = b.Title
+	}
+
+	if b.TopSection.id == "" {
+		b.TopSection.id = "azbc_100"
+	}
+
+	s := b.TopSection
+
 	addToTOC(s, w)
 	return w.String()
 }
@@ -29,7 +40,7 @@ func addToTOC(s *section, w *strings.Builder) {
 
 	var lead string
 	counter++
-	lead = strings.Repeat("    ", headerLevel(s.node)-3)
+	//	lead = strings.Repeat("    ", headerLevel(s.node)-3)
 
 	//	if len(s.content) != 0 {
 	w.WriteString(lead + `<navPoint id="` + s.id + `" playOrder="` + strconv.Itoa(counter) + `">` + "\n")
@@ -49,6 +60,51 @@ func addToTOC(s *section, w *strings.Builder) {
 	return
 }
 
+func (b *Book) RenderEP3TOC() string {
+
+	w := new(strings.Builder)
+	log.Println("RenderEP3TOC: bok title is", b.Title)
+
+	if b.TopSection.title == "" {
+		b.TopSection.title = b.Title
+	}
+
+	s := b.TopSection
+
+	w.WriteString("<ol>\n")
+
+	addToEP3TOC(s, w)
+
+	w.WriteString("</ol>\n")
+
+	return w.String()
+}
+
+func addToEP3TOC(s *section, w *strings.Builder) {
+
+	var lead string
+	counter++
+	//lead = strings.Repeat("    ", headerLevel(s.node)-3)
+
+	//	if len(s.content) != 0 {
+	w.WriteString(lead + `<li>`)
+	w.WriteString(`<a href="1.html#` + s.id + `">` + s.title + "</a>")
+	//	}
+	if s.firstChild != nil {
+		w.WriteString("\n")
+		w.WriteString(lead + "<ol>\n")
+		addToEP3TOC(s.firstChild, w)
+		w.WriteString(lead + "</ol>\n")
+	}
+
+	w.WriteString("</li>\n")
+
+	if s.nextSibling != nil {
+		addToEP3TOC(s.nextSibling, w)
+	}
+	return
+}
+
 func insertSectionID(tokens []*html.Token) {
 	c := 100
 	for i, token := range tokens {
@@ -61,11 +117,17 @@ func insertSectionID(tokens []*html.Token) {
 		c = c + 10
 		tokens[i].Attr = append(tokens[i].Attr, html.Attribute{Namespace: "", Key: "id", Val: "azbc_" + strconv.Itoa(c)})
 	}
+
+	if c == 100 {
+		tokens[0].Attr = append(tokens[0].Attr, html.Attribute{Namespace: "", Key: "id", Val: "azbc_" + strconv.Itoa(c)})
+	}
+
 	return
 }
 
-func getStructure(tokens []*html.Token) *section {
+func (b *Book) getStructure() *section {
 
+	tokens := b.Body
 	sec := new(section)
 	sec.level = 1
 	sec.start = 0
@@ -73,6 +135,8 @@ func getStructure(tokens []*html.Token) *section {
 	sec.nextSibling = nil
 	sec.firstChild = nil
 	sec.parent = nil
+	sec.node = new(html.Token)
+	sec.node.DataAtom = atom.H3
 	first := sec
 	i := 0
 
@@ -85,7 +149,6 @@ func getStructure(tokens []*html.Token) *section {
 	if i == len(tokens) {
 		return first
 	}
-
 	//Guard against the possibility that the first
 	//section of document is level 2 rather than
 	//level 1.
@@ -150,6 +213,7 @@ func getStructure(tokens []*html.Token) *section {
 		first.nextSibling.start = 0
 		return first.nextSibling
 	}
+
 	return first
 
 }

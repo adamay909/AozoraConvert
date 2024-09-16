@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/adamay909/AozoraConvert/mobi"
 	"github.com/adamay909/AozoraConvert/mobi/records"
@@ -115,14 +116,30 @@ func (b *Book) RenderEpub() []byte {
 
 	w := zip.NewWriter(buf)
 
+	//set mod time
+	b.DateMod = time.Now().Format(time.DateOnly) + "T00:00:00Z"
+
 	//write mimetype file
-	f, err := w.Create("mimetype")
-	_, err = f.Write([]byte("application/epub+zip"))
+	fh := new(zip.FileHeader)
+	fh.Name = "mimetype"
+	fh.Method = 0
+	mt := []byte("application/epub+zip")
+	fh.UncompressedSize64 = uint64(len(mt))
+	iw, err := w.CreateRaw(fh)
 	if err != nil {
 		log.Println(err)
 	}
+	iw.Write(mt)
+
+	/*
+		f, err := w.Create("mimetype")
+		_, err = f.Write([]byte("application/epub+zip"))
+		if err != nil {
+			log.Println(err)
+		}
+	*/
 	//write META-INF
-	f, err = w.Create("META-INF/container.xml")
+	f, err := w.Create("META-INF/container.xml")
 	_, err = f.Write(metainf(b))
 	if err != nil {
 		log.Println(err)
@@ -158,9 +175,18 @@ func (b *Book) RenderEpub() []byte {
 		log.Println(err)
 	}
 
+	counter = 0
 	//write toc
 	f, err = w.Create("toc.ncx")
-	_, err = f.Write(toc(b))
+	_, err = f.Write(tocncx(b))
+	if err != nil {
+		log.Println(err)
+	}
+
+	counter = 0
+	//write Epub3 toc
+	f, err = w.Create("toc.xhtml")
+	_, err = f.Write(tocep3(b))
 	if err != nil {
 		log.Println(err)
 	}
@@ -456,10 +482,20 @@ func contentopf(b *Book) []byte {
 	return []byte(builder.String())
 }
 
-func toc(b *Book) []byte {
+func tocncx(b *Book) []byte {
 
 	builder := new(strings.Builder)
 	err := tocTemplate().Execute(builder, b)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return []byte(builder.String())
+}
+
+func tocep3(b *Book) []byte {
+	builder := new(strings.Builder)
+	err := tocep3Template().Execute(builder, b)
 	if err != nil {
 		log.Println(err)
 	}
