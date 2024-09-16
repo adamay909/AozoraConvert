@@ -63,7 +63,6 @@ func addToTOC(s *section, w *strings.Builder) {
 func (b *Book) RenderEP3TOC() string {
 
 	w := new(strings.Builder)
-	log.Println("RenderEP3TOC: bok title is", b.Title)
 
 	if b.TopSection.title == "" {
 		b.TopSection.title = b.Title
