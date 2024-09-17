@@ -87,3 +87,75 @@ func modifyNotes(src []byte) []byte {
 	log.Println("Moved all ※ inside notes.")
 	return []byte(s)
 }
+
+func convertLeftOverGaijiChuki(src []byte) []byte {
+
+	srcStr := string(src)
+
+	lines := strings.Split(srcStr, "\n")
+
+	var linesNew []string
+
+	for _, l := range lines {
+
+		if !hasLeftOverGaijiChuki(l) {
+			linesNew = append(linesNew, l)
+			continue
+		}
+
+		linesNew = append(linesNew, fixGaijiChuki(l))
+
+	}
+
+	return []byte(strings.Join(linesNew, "\n"))
+}
+
+func hasLeftOverGaijiChuki(l string) bool {
+
+	r := runes.Runes(l)
+
+	i := runes.Index(r, runes.Runes("※［＃"))
+
+	if i == -1 {
+		return false
+	}
+
+	j := runes.Index(r[i:], runes.Runes("］"))
+
+	if j <= -1 {
+		return false
+	}
+
+	return true
+
+}
+
+func fixGaijiChuki(l string) string {
+
+	r := runes.Runes(l)
+
+	i := runes.Index(r, runes.Runes("※［＃"))
+
+	j := runes.Index(r[i:], runes.Runes("］")) + i
+
+	note := r[i : j+1]
+
+	b := runes.NewBuilder()
+
+	b.WriteRunes(r[:i])
+
+	b.WriteRunes(runes.Runes(`<img alt="`))
+
+	b.WriteRunes(note)
+
+	b.WriteRunes(runes.Runes(`" class="gaiji" />`))
+
+	if j+1 < len(r) {
+		b.WriteRunes(r[j+1:])
+	}
+
+	log.Println("fixed left over gaiji chuki", note.String(), "; replaced with ", b.String())
+
+	return b.String()
+
+}

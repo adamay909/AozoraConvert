@@ -121,18 +121,18 @@ func isGaiji(t *html.Token) bool {
 		return false
 	}
 
+	j := jcodeOf(t)
+	if len(j) > 0 {
+		setAttr(t, "data-jcode", j)
+		return true
+	}
+
 	s := getAttr(t, "src")
 	if strings.HasPrefix(s, "../../../gaiji/") {
 		return true
 	}
 
 	if classOf(t) == "gaiji" {
-		return true
-	}
-
-	j := jcodeOf(t)
-	if len(j) > 0 {
-		setAttr(t, "jcode", j)
 		return true
 	}
 
@@ -365,10 +365,6 @@ func jcodeOf(t *html.Token) (jcode string) {
 		return
 	}
 
-	if runes.Index(a, runes.Runes("「")) == -1 {
-		return
-	}
-
 	i := runes.Index(a, runes.Runes("1-"))
 
 	if i == -1 {
@@ -380,7 +376,8 @@ func jcodeOf(t *html.Token) (jcode string) {
 	}
 
 	j := i
-	for ; strings.ContainsAny(string(a[j:j+1]), "0123456789-"); j++ {
+
+	for j = i; strings.ContainsAny(string(a[j:j+1]), "0123456789-"); j++ {
 	}
 
 	s := string(a[i:j])

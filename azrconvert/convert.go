@@ -106,6 +106,8 @@ func cleanhtml(d []byte) []byte {
 
 	d = modifyNotes(d)
 
+	d = convertLeftOverGaijiChuki(d)
+
 	d = markBlankLines(d)
 
 	return d
@@ -457,7 +459,7 @@ func fixBurasage(t *html.Token) *html.Token {
 
 func fixGaiji(t *html.Token) *html.Token {
 
-	jcode := getAttr(t, "jcode")
+	jcode := getAttr(t, "data-jcode")
 
 	if len(jcode) == 0 {
 		fn := getAttr(t, "src")
