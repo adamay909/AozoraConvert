@@ -102,11 +102,11 @@ func cleanhtml(d []byte) []byte {
 
 	d = fixLineBreaks(d)
 
+	d = fixLeftOverGaijiChuki(d)
+
 	d = fixKunojiten(d)
 
 	d = modifyNotes(d)
-
-	d = convertLeftOverGaijiChuki(d)
 
 	d = markBlankLines(d)
 
@@ -284,40 +284,13 @@ func getBody(tokens []*html.Token) (body []*html.Token) {
 
 func fixNodes(in []*html.Token) (out []*html.Token) {
 
+	//First Round
+
 	for i := 0; i < len(in); i++ {
 
 		t := in[i]
 
 		switch {
-
-		case isMetadata(t):
-			node := getNode(in[i:])
-			out = append(out, fixMetadata(node)...)
-			i = i + len(node) - 1
-
-		case isHeader(t):
-			node := getNode(in[i:])
-			if isDiv(in[i-1]) {
-				if in[i+len(node)].DataAtom == atom.Div && in[i+len(node)].Type == html.EndTagToken {
-					out = out[:len(out)-1]
-					out = append(out, node...)
-					i = i + len(node)
-					log.Println("Removed headers enclosed inside div. Styling should be done via css for h3, h4, etc.")
-					continue
-				}
-			}
-			out = append(out, node...)
-			i = i + len(node) - 1
-
-		case isRubyStart(t):
-			node := getNode(in[i:])
-			out = append(out, fixRubyNode(node)...)
-			i = i + len(node) - 1
-
-		case isEmStart(t):
-			node := getNode(in[i:])
-			out = append(out, fixEmNode(node)...)
-			i = i + len(node) - 1
 
 		case isNote(t):
 			node := getNode(in[i:])
@@ -338,6 +311,87 @@ func fixNodes(in []*html.Token) (out []*html.Token) {
 			out = append(out, t)
 		}
 	}
+
+	in = nil
+
+	in = append(in, out...)
+
+	out = nil
+
+	for i := 0; i < len(in); i++ {
+
+		t := in[i]
+
+		switch {
+
+		case isRubyStart(t):
+			node := getNode(in[i:])
+			out = append(out, fixRubyNode(node)...)
+			i = i + len(node) - 1
+
+		default:
+			out = append(out, t)
+		}
+	}
+
+	in = nil
+
+	in = append(in, out...)
+
+	out = nil
+
+	for i := 0; i < len(in); i++ {
+
+		t := in[i]
+
+		switch {
+
+		case isEmStart(t):
+			node := getNode(in[i:])
+			out = append(out, fixEmNode(node)...)
+			i = i + len(node) - 1
+
+		default:
+			out = append(out, t)
+		}
+	}
+
+	in = nil
+
+	in = append(in, out...)
+
+	out = nil
+
+	for i := 0; i < len(in); i++ {
+
+		t := in[i]
+
+		switch {
+
+		case isMetadata(t):
+			node := getNode(in[i:])
+			out = append(out, fixMetadata(node)...)
+			i = i + len(node) - 1
+
+		case isHeader(t):
+			node := getNode(in[i:])
+			if isDiv(in[i-1]) {
+				if in[i+len(node)].DataAtom == atom.Div && in[i+len(node)].Type == html.EndTagToken {
+					out = in[:len(out)-1]
+					out = append(out, node...)
+					i = i + len(node)
+					log.Println("Removed headers enclosed inside div. Styling should be done via css for h3, h4, etc.")
+					continue
+				}
+			}
+			out = append(out, node...)
+			i = i + len(node) - 1
+
+		default:
+			out = append(out, t)
+		}
+	}
+
 	return
 }
 
@@ -370,24 +424,40 @@ func fixNote(oldNode []*html.Token) (newNode []*html.Token) {
 
 	log.Println("fixing note:", renderTokens(oldNode))
 
-	if strings.Contains(oldNode[1].String(), "U+") {
-		r := runes.Runes(oldNode[1].String())
-		i := runes.Index(r, runes.Runes("U+"))
-		c, _ := strconv.Unquote(`"` + `\u` + string(r[i+2:i+6]) + `"`)
+	if strings.HasPrefix(oldNode[1].String(), "※") {
+
+		var c string
+		var err error
+
+		if strings.Contains(oldNode[1].String(), "U+") {
+			r := runes.Runes(oldNode[1].String())
+			i := runes.Index(r, runes.Runes("U+"))
+			c, _ = strconv.Unquote(`"` + `\u` + string(r[i+2:i+6]) + `"`)
+		}
+
+		jcode := jcodeOfStr(oldNode[1].String())
+		if len(jcode) > 0 {
+
+			c, err = jptools.Convert(jcode)
+			if err != nil {
+				log.Println("Gaiji. Convert failed for ", renderTokens(oldNode), " Error was: ", err)
+			}
+		}
+
+		if c == "" {
+			log.Println("Gaiji. Convert failed for ", renderTokens(oldNode), " Error was: ", err)
+			return oldNode
+		}
+
 		nn := new(html.Token)
 		nn.Data = c
 		nn.DataAtom = 0
 		nn.Type = html.TextToken
 		newNode = append(newNode, nn)
 		log.Println("Gaiji. Replaced ", renderTokens(oldNode), "with", renderTokens(newNode))
-		return
-	}
 
-	if strings.Contains(oldNode[1].String(), "※") {
-		delAttr(oldNode[0], "class")
-		setAttr(oldNode[0], "class", "charNote")
-		log.Println("Detected character note: ", renderTokens(oldNode))
-		return oldNode
+		return newNode
+
 	}
 
 	if strings.Contains(oldNode[1].String(), "［＃改丁］") {

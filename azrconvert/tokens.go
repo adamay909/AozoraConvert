@@ -404,3 +404,47 @@ func jcodeOf(t *html.Token) (jcode string) {
 
 	return
 }
+
+func jcodeOfStr(str string) (jcode string) {
+
+	a := runes.Runes(str)
+
+	i := runes.Index(a, runes.Runes("1-"))
+
+	if i == -1 {
+		i = runes.Index(a, runes.Runes("2-"))
+	}
+
+	if i == -1 {
+		return
+	}
+
+	j := i
+
+	for j = i; strings.ContainsAny(string(a[j:j+1]), "0123456789-"); j++ {
+	}
+
+	s := string(a[i:j])
+
+	c := strings.Split(s, "-")
+
+	if len(c) != 3 {
+		return
+	}
+
+	if len(c[0]) > 1 {
+		return
+	}
+
+	if len(c[1]) > 2 {
+		return
+	}
+
+	if len(c[2]) > 2 {
+		return
+	}
+
+	jcode = s
+
+	return
+}

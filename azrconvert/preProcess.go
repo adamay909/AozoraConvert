@@ -110,6 +110,28 @@ func convertLeftOverGaijiChuki(src []byte) []byte {
 	return []byte(strings.Join(linesNew, "\n"))
 }
 
+func fixLeftOverGaijiChuki(src []byte) []byte {
+
+	srcStr := string(src)
+
+	lines := strings.Split(srcStr, "\n")
+
+	var linesNew []string
+
+	for _, l := range lines {
+
+		if !hasLeftOverGaijiChuki(l) {
+			linesNew = append(linesNew, l)
+			continue
+		}
+
+		linesNew = append(linesNew, fixGaijiChuki(l))
+
+	}
+
+	return []byte(strings.Join(linesNew, "\n"))
+}
+
 func hasLeftOverGaijiChuki(l string) bool {
 
 	r := runes.Runes(l)
@@ -144,11 +166,11 @@ func fixGaijiChuki(l string) string {
 
 	b.WriteRunes(r[:i])
 
-	b.WriteRunes(runes.Runes(`<img alt="`))
+	b.WriteRunes(runes.Runes(`<span class="notes">`))
 
 	b.WriteRunes(note)
 
-	b.WriteRunes(runes.Runes(`" class="gaiji" />`))
+	b.WriteRunes(runes.Runes(`</span>`))
 
 	if j+1 < len(r) {
 		b.WriteRunes(r[j+1:])
