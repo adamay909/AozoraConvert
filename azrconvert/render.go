@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"hash/crc32"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -125,6 +126,8 @@ func (b *Book) RenderEpub() []byte {
 	fh.Method = 0
 	mt := []byte("application/epub+zip")
 	fh.UncompressedSize64 = uint64(len(mt))
+	fh.CompressedSize64 = uint64(len(mt))
+	fh.CRC32 = crc32.ChecksumIEEE(mt)
 	iw, err := w.CreateRaw(fh)
 	if err != nil {
 		log.Println(err)
@@ -145,7 +148,7 @@ func (b *Book) RenderEpub() []byte {
 		log.Println(err)
 	}
 	// write title image
-	f, err = w.Create("cover.png")
+	f, err = w.Create("OEBPF/cover.png")
 	//	b.genTitlePage()
 	img := new(bytes.Buffer)
 	_ = png.Encode(img, b.CoverImage)
@@ -155,37 +158,38 @@ func (b *Book) RenderEpub() []byte {
 	}
 	//write title page
 
-	f, err = w.Create("title.html")
+	f, err = w.Create("OEBPF/title.html")
 	_, err = f.Write(oebtitle(b))
 	if err != nil {
 		log.Println(err)
 	}
 
 	//write main file
-	f, err = w.Create("1.html")
+	f, err = w.Create("OEBPF/1.html")
 	_, err = f.Write(oebmain(b))
 	if err != nil {
 		log.Println(err)
 	}
 
 	//write opf
-	f, err = w.Create("content.opf")
+	f, err = w.Create("OEBPF/content.opf")
 	_, err = f.Write(contentopf(b))
 	if err != nil {
 		log.Println(err)
 	}
-
-	counter = 0
-	//write toc
-	f, err = w.Create("toc.ncx")
-	_, err = f.Write(tocncx(b))
-	if err != nil {
-		log.Println(err)
-	}
+	/*
+		counter = 0
+		//write toc
+		f, err = w.Create("toc.ncx")
+		_, err = f.Write(tocncx(b))
+		if err != nil {
+			log.Println(err)
+		}
+	*/
 
 	counter = 0
 	//write Epub3 toc
-	f, err = w.Create("toc.xhtml")
+	f, err = w.Create("OEBPF/toc.xhtml")
 	_, err = f.Write(tocep3(b))
 	if err != nil {
 		log.Println(err)
@@ -193,7 +197,7 @@ func (b *Book) RenderEpub() []byte {
 
 	//write support files
 	for _, file := range b.Files {
-		f, err = w.Create(file.Name)
+		f, err = w.Create("OEBPF/" + file.Name)
 		if err != nil {
 			log.Println(err)
 		}
