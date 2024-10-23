@@ -47,7 +47,7 @@ func addToTOC(s *section, w *strings.Builder) {
 	w.WriteString(lead + "\t<navLabel>\n")
 	w.WriteString(lead + "\t\t<text>" + s.title + "</text>\n")
 	w.WriteString(lead + "\t</navLabel>\n")
-	w.WriteString(lead + "\t<content src=" + `"1.html#` + s.id + `" />` + "\n")
+	w.WriteString(lead + "\t<content src=" + `"1.xhtml#` + s.id + `" />` + "\n")
 	//	}
 	if s.firstChild != nil {
 		addToTOC(s.firstChild, w)
@@ -87,7 +87,7 @@ func addToEP3TOC(s *section, w *strings.Builder) {
 
 	//	if len(s.content) != 0 {
 	w.WriteString(lead + `<li>`)
-	w.WriteString(`<a href="1.html#` + s.id + `">` + s.title + "</a>")
+	w.WriteString(`<a href="1.xhtml#` + s.id + `">` + s.title + "</a>")
 	//	}
 	if s.firstChild != nil {
 		w.WriteString("\n")

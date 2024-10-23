@@ -17,6 +17,10 @@ var Utf8of map[string]string
 // of the form "d-dd-dd".
 func UnicodeOf(mkt string) (s string, err error) {
 
+	if !initialized {
+		initmap()
+	}
+
 	jiscode, err := MktToJis(mkt)
 	if err != nil {
 		return
@@ -34,6 +38,9 @@ func UnicodeOf(mkt string) (s string, err error) {
 // err is nil if conversion succeeds.
 func Convert(mkt string) (s string, err error) {
 
+	if !initialized {
+		initmap()
+	}
 	jiscode, err := MktToJis(mkt)
 	if err != nil {
 		return
@@ -52,6 +59,9 @@ func Convert(mkt string) (s string, err error) {
 // mkt needs to be formatetted as a string of the form "d-dd-dd".
 func MktToJis(mkt string) (s string, err error) {
 
+	if !initialized {
+		initmap()
+	}
 	fields := strings.Split(mkt, "-")
 
 	if len(fields) != 3 {

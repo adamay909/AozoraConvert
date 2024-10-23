@@ -21,11 +21,11 @@
  
    <manifest>
    
-	<item id="html" href="1.html" media-type="application/xhtml+xml" />
+	<item id="html" href="1.xhtml" media-type="application/xhtml+xml" />
    
 	<item id="nav" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav" />
 	
-	<item id="title" href="title.html" media-type="application/xhtml+xml" />
+	<item id="title" href="title.xhtml" media-type="application/xhtml+xml" />
 	
 	<item id="cover" href="cover.png" properties="cover-image" media-type="image/png" />
 

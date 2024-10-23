@@ -13,7 +13,9 @@ type jisuni struct {
 	uni string
 }
 
-func init() {
+var initialized = false
+
+func initmap() {
 
 	Utf8of = make(map[string]string)
 
@@ -22,4 +24,6 @@ func init() {
 		Utf8of[d.jis] = d.uni
 
 	}
+	initialized = true
+
 }

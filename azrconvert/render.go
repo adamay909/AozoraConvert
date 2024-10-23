@@ -158,14 +158,14 @@ func (b *Book) RenderEpub() []byte {
 	}
 	//write title page
 
-	f, err = w.Create("OEBPF/title.html")
+	f, err = w.Create("OEBPF/title.xhtml")
 	_, err = f.Write(oebtitle(b))
 	if err != nil {
 		log.Println(err)
 	}
 
 	//write main file
-	f, err = w.Create("OEBPF/1.html")
+	f, err = w.Create("OEBPF/1.xhtml")
 	_, err = f.Write(oebmain(b))
 	if err != nil {
 		log.Println(err)
@@ -546,7 +546,8 @@ func renderTokens(in []*html.Token) string {
 		w.WriteString(t.String())
 	}
 
-	return w.String() //string(prettifyEmptyLines([]byte(w.String())))
+	return w.String()
+
 }
 
 func (bk *Book) addFilesFromZip(arch *zip.Reader) {
