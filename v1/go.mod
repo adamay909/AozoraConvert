@@ -1,4 +1,4 @@
-module github.com/adamay909/AozoraConvert
+module github.com/adamay909/AozoraConvert/v1
 
 go 1.22.4
 
