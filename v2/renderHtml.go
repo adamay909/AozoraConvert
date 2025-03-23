@@ -43,7 +43,7 @@ func azrHtmlFormatterOpen(n *node) string {
 		return newHtag("ruby").String()
 
 	case "ruby":
-		return newHtag("rt").String()
+		return rubyOpenHtml(n)
 
 	case "empty line":
 		return newHtag("br").String() + "\n"
@@ -138,6 +138,9 @@ func azrHtmlFormatterOpen(n *node) string {
 	case "special char":
 		return specialCharOpenHtml(n)
 
+	case "accent string":
+		return accentOpenHtml(n)
+
 	case "metadata":
 		return metadataOpenHtml(n)
 
@@ -170,11 +173,11 @@ func azrHtmlFormatterClose(n *node) string {
 		return "</p>\n"
 
 	case "ruby parent":
-		return rubyCloseHtml(n)
+		return rubyParentCloseHtml(n)
 	//	return newCloseHtag("ruby").String()
 
 	case "ruby":
-		return newCloseHtag("rt").String()
+		return rubyCloseHtml(n)
 
 	case "empty line":
 		return ""
@@ -996,7 +999,7 @@ func gaijiNoteOpenHtml(n *node) string {
 
 }
 
-func rubyCloseHtml(n *node) string {
+func rubyParentCloseHtml(n *node) string {
 
 	if !n.hasGaijiWithin {
 
@@ -1146,5 +1149,39 @@ func captionCloseHtml(n *node) string {
 	h.setAfter("\n")
 
 	return h.String()
+
+}
+
+func rubyOpenHtml(n *node) string {
+
+	h1 := newHtag("rp")
+
+	h1.setAfter("（")
+
+	h2 := newCloseHtag("rp")
+
+	h3 := newHtag("rt")
+
+	return h1.String() + h2.String() + h3.String()
+
+}
+
+func rubyCloseHtml(n *node) string {
+
+	h1 := newCloseHtag("rt")
+
+	h2 := newHtag("rp")
+
+	h2.setAfter("）")
+
+	h3 := newCloseHtag("rp")
+
+	return h1.String() + h2.String() + h3.String()
+
+}
+
+func accentOpenHtml(n *node) string {
+
+	return accentOpenTxt(n)
 
 }

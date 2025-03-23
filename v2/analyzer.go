@@ -28,7 +28,7 @@ const (
 	kunojiDakuTag
 )
 
-var (
+const (
 	markupNoteStartStr = `-------------------------------------------------------
 【テキスト中に現れる記号について】`
 
@@ -48,7 +48,7 @@ var (
 
 	noteEndStr = `］`
 
-	bibInfoStartStr = `底本：`
+	bibInfoStartStr = "\n" + `底本：`
 
 	emptyStr = ""
 
@@ -77,6 +77,8 @@ var (
 	accentStartStr = "〔"
 
 	accentEndStr = "〕"
+
+	mainTextEndStr = "本文終わり"
 )
 
 func typeOf(s string) atomType {
@@ -95,6 +97,12 @@ func typeOf(s string) atomType {
 	case strings.HasPrefix(s, rubyBaseStartStr):
 		return rubyBaseStartTag
 
+	case strings.HasPrefix(s, bibInfoStartStr):
+		return bibInfoTag
+
+	case strings.HasPrefix(s, lineBreakStr):
+		return endOfLine
+
 	case strings.HasPrefix(s, gaijiMarkerStr):
 		return gaijiMarker
 
@@ -103,9 +111,6 @@ func typeOf(s string) atomType {
 
 	case strings.HasPrefix(s, noteEndStr):
 		return noteEndTag
-
-	case strings.HasPrefix(s, bibInfoStartStr):
-		return bibInfoTag
 
 	case strings.HasPrefix(s, accentStartStr):
 		return accentStartTag
@@ -230,5 +235,28 @@ func (o atomType) rawString() string {
 	}
 
 	return ""
+
+}
+
+func matchingCloserStringIndex(s string, start, end string) int {
+
+	count := 0
+
+	for i := range s {
+
+		if strings.HasPrefix(s[i:], start) {
+			count++
+			continue
+		}
+
+		if strings.HasPrefix(s[i:], end) {
+			count--
+
+			if count == 0 {
+				return i
+			}
+		}
+	}
+	return -1
 
 }

@@ -7,14 +7,17 @@ import (
 )
 
 type token struct {
-	tokType    tokenType
-	next       *token
-	prev       *token
-	ref        string
-	content    string
-	altContent string
-	id         int
-	lineNo     int
+	tokType         tokenType
+	next            *token
+	prev            *token
+	ref             string
+	content         string
+	altContent      string
+	originalContent string
+	id              int
+	lineNo          int
+	modified        bool
+	inserted        bool
 	// extra   string
 }
 
@@ -50,6 +53,7 @@ const (
 	accentToken
 	gaijiCharToken
 	kunojiToken
+	dummyCloserToken
 )
 
 type tokenSubType int
@@ -141,6 +145,9 @@ func (t tokenType) String() string {
 	case kunojiToken:
 		return "kunojiToken"
 
+	case dummyCloserToken:
+		return "dummyCloserToken"
+
 	default:
 
 		return strconv.Itoa(int(t))
@@ -148,13 +155,22 @@ func (t tokenType) String() string {
 	}
 }
 
-func newToken() *token {
+func (t *token) errorinf() string {
 
-	return new(token)
+	return "line " + strconv.Itoa(t.lineNumber()) + "+offset: " + t.String()
 
 }
 
-func (t *token) insertTokenRight(t2 *token) {
+func newToken() *token {
+
+	t := new(token)
+
+	t.inserted = false
+
+	return t
+}
+
+func (t *token) addTokenRight(t2 *token) {
 
 	t2.next = t.next
 
@@ -167,20 +183,39 @@ func (t *token) insertTokenRight(t2 *token) {
 	t.next = t2
 
 }
+func (t *token) insertTokenRight(t2 *token) {
+
+	t2.next = t.next
+
+	if t2.next != nil {
+		t2.next.prev = t2
+	}
+
+	t2.prev = t
+
+	t.next = t2
+
+	t2.inserted = true
+
+}
 
 func (t *token) insertTokenLeft(t2 *token) {
 
-	if t.prev != nil {
+	if t.prev == nil {
 
-		t.prev.insertTokenRight(t2)
+		t2.next = t
+
+		t.prev = t2
+
+		t2.inserted = true
 
 		return
 
 	}
 
-	t.prev = t2
+	t.prev.insertTokenRight(t2)
 
-	t2.next = t
+	t2.inserted = true
 }
 
 func (t *token) joinTokens(t2 *token) {
@@ -281,15 +316,10 @@ func (t *token) String() string {
 
 	}
 
-	if t.content != "" {
-
-		return t.content
-	}
-
 	switch t.tokType {
 
 	case emptyToken:
-		return emptyStr
+		return ""
 
 	case emptyLineToken:
 		return ""
@@ -300,8 +330,8 @@ func (t *token) String() string {
 	case lineBreakToken:
 		return ""
 
-	case rubyParentStartToken:
-		return rubyBaseStartStr
+		//	case rubyParentStartToken:
+		//		return rubyBaseStartStr
 
 	}
 
@@ -414,7 +444,7 @@ func getRefStrings(s string) []string {
 
 	for i1 := strings.Index(s, refStartStr); i1 != -1; i1 = strings.Index(s, refStartStr) {
 
-		i2 := strings.Index(s, refEndStr)
+		i2 := matchingCloserStringIndex(s, refStartStr, refEndStr)
 
 		if i2 == -1 {
 			break
@@ -483,15 +513,33 @@ func (t *token) listAllTokens() string {
 
 	output := new(strings.Builder)
 
-	counter := 0
-
 	for e := t.firstToken(); e != nil; e = e.next {
-		counter++
-		addToStringsBuilder(output, strconv.Itoa(counter), ": ", e.tokType.String(), ": ", e.String(), " \n")
+
+		addToStringsBuilder(output, e.info(), "\n")
 
 	}
-
 	return output.String()
+
+}
+
+func (t *token) info() string {
+
+	output := new(strings.Builder)
+
+	addToStringsBuilder(output, "line ", strconv.Itoa(t.lineNumber()), ": ", t.tokType.String(), ": ", t.String())
+
+	if t.inserted {
+		addToStringsBuilder(output, "(inserted)")
+	}
+
+	if t.modified {
+		addToStringsBuilder(output, "(modified)")
+		if t.originalContent != "" {
+			addToStringsBuilder(output, " original string: ", t.originalContent)
+		}
+	}
+
+	return strings.ReplaceAll(output.String(), "\n", "\\n")
 
 }
 
@@ -504,6 +552,10 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	cr := 0
 
 	for e = t.prev; e != nil; e = e.prev {
+
+		if e.tokType == endOfLineToken {
+			break
+		}
 
 		if e.tokType == rubyEndToken {
 
@@ -531,9 +583,20 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	if e == nil {
 
-		tokenizerLog.Println("Can't find place to insert implied opener note. Defaulting to start of line.")
+		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.errorinf())
 
-		e.insertTokenLeft(nt)
+		//e.insertTokenLeft(nt)
+
+		return
+
+	}
+
+	if e.tokType == endOfLineToken {
+
+		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.errorinf())
+		//tokenizerLog.Println("Can't find place to insert implied opener note. Defaulting to start of line.")
+
+		//		e.insertTokenLeft(nt)
 
 		return
 
@@ -561,7 +624,11 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	t2.setString(e.content[:len(e.content)-k])
 
+	e.originalContent = e.content
+
 	e.setString(e.content[len(e.content)-k:])
+
+	e.modified = true
 
 	e.insertTokenLeft(nt)
 
@@ -648,6 +715,8 @@ func newTokenOfType(s tokenType) *token {
 
 	t.tokType = s
 
+	t.inserted = false
+
 	return t
 }
 
@@ -677,4 +746,77 @@ func (t *token) lineNumber() int {
 
 	return 0
 
+}
+
+func (t *token) lastTokenInLine() *token {
+
+	if t.next == nil {
+		return t
+	}
+
+	e := new(token)
+
+	for e = t; e.next.tokType != endOfLineToken; e = e.next {
+
+		if e.next == nil {
+			return e
+		}
+	}
+
+	return e
+}
+
+func (t *token) nextTokenOfType(c tokenType) *token {
+
+	if t.next == nil {
+		return nil
+	}
+
+	for pos := t.next; pos != nil; pos = pos.next {
+
+		if pos.tokType == c {
+			return pos
+		}
+	}
+
+	return nil
+
+}
+
+func (t *token) nextSignificantToken() *token {
+
+	e := t
+
+	if e.next == nil {
+		return nil
+	}
+
+	for e = e.next; e != nil; e = e.next {
+
+		if e.tokType != endOfLineToken {
+			break
+		}
+
+	}
+
+	return e
+}
+
+func (t *token) unicodeString() string {
+
+	switch t.tokType {
+
+	case gaijiCharToken:
+		return t.altContent
+
+	case specialCharToken:
+		return t.altContent
+
+	case kunojiToken:
+		return t.altContent
+
+	default:
+		return t.String()
+
+	}
 }

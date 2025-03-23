@@ -3,17 +3,17 @@ package aozoratext
 import (
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
 type opt int
 
-var o_full, o_raw, o_jis0208 bool
+var o_full, o_raw, o_jis0208, o_debug bool
 
 type tokenizer struct {
-	data     string
-	position int
+	data        string
+	position    int
+	lineCounter int
 }
 
 var tokenizerOption opt
@@ -29,6 +29,8 @@ func init() {
 	o_raw = false
 
 	o_jis0208 = false
+
+	o_debug = false
 
 	tokenizerLog = log.New(os.Stdout, "", 0)
 
@@ -57,15 +59,27 @@ func setOutputOption(o string) {
 	return
 }
 
-func tokenize(s string) *token {
+func setDebug() {
 
-	tknz := newTokenizer(s)
+	o_debug = true
+
+}
+
+func unsetDebug() {
+
+	o_debug = false
+
+}
+
+func tokenize(s string, offset int) *token {
+
+	tknz := newTokenizer(s, offset)
 
 	t0 := tknz.nextToken()
 
 	for t1 := t0; !tknz.empty(); t1 = t1.next {
 
-		t1.insertTokenRight(tknz.nextToken())
+		t1.addTokenRight(tknz.nextToken())
 
 	}
 
@@ -75,55 +89,35 @@ func tokenize(s string) *token {
 
 func tokenizeAll(text string, lineOffset int) *token {
 
-	fixline := fixfunc()
+	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[lineOffset:], "\n"), lineOffset)
 
-	lines := strings.Split(text, "\n")
+	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
-	if len(lines) == 0 {
-		return new(token)
-	}
+	tokenString.fixLines()
 
-	lineTokens := newToken()
-
-	tokenstring := newToken()
-
-	for counter := lineOffset; counter < len(lines); counter++ {
-
-		//fmt.Println(counter + 1)
-
-		tokenizerLog.SetPrefix("line " + strconv.Itoa(counter+1) + ": ")
-
-		lineTokens = fixline(tokenize(lines[counter]))
-
-		lineTokens.firstToken().lineNo = counter
-
-		tokenstring.joinTokens(lineTokens)
-
-	}
-
-	tokenstring.fixEmptyText()
+	tokenString.fixEmptyText()
 
 	if !o_raw {
 
-		tokenstring.fixDocument()
+		tokenString.fixDocument()
 
-		tokenstring.insertSectionEnds()
+		tokenString.insertSectionEnds()
 
 	}
 
-	tokenstring.firstToken().remove()
-
-	return tokenstring
+	return tokenString
 
 }
 
-func newTokenizer(d string) *tokenizer {
+func newTokenizer(d string, offset int) *tokenizer {
 
 	r := new(tokenizer)
 
 	r.data = d
 
 	r.position = 0
+
+	r.lineCounter = offset
 
 	return r
 }
@@ -142,10 +136,10 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 	switch typeOf(tknz.data[tknz.position:]) {
 
-	case emptyLine:
+	case text:
 
-		e.tokType = emptyLineToken
-		end = 0
+		e.tokType = textToken
+		end = findContiguousText(tknz.data[tknz.position:])
 
 	case rubyStartTag:
 
@@ -156,12 +150,16 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		e.tokType = rubyEndToken
 		end = len(rubyEndStr)
 
-	//	end = findMatchingCloser(typeOf(tknz.data[tknz.position:]), tknz.data[tknz.position:])
-
 	case rubyBaseStartTag:
 
 		e.tokType = rubyParentStartToken
 		end = len(rubyBaseStartStr)
+
+	case endOfLine:
+		e.tokType = endOfLineToken
+		tknz.lineCounter++
+		e.lineNo = tknz.lineCounter
+		end = len(lineBreakStr)
 
 	case gaijiMarker:
 
@@ -175,6 +173,8 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 	case bibInfoTag:
 		e.tokType = bibInfoToken
+		tknz.lineCounter++
+		e.lineNo = tknz.lineCounter
 		end = len(bibInfoStartStr)
 
 	case accentStartTag:
@@ -195,28 +195,20 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		end = findContiguousText(tknz.data[tknz.position:])
 
 	}
-	/*
-		switch e.tokType {
-
-		case textToken:
-			end = findContiguousText(tknz.data[tknz.position:])
-
-		case emptyLineToken:
-			end = 0
-
-		case bibInfoToken:
-			end = len(bibInfoStartStr)
-
-		case rubyParentStartToken:
-			end = len(rubyBaseStartStr)
-
-		default:
-			end = findMatchingCloser(typeOf(tknz.data[tknz.position:]), tknz.data[tknz.position:])
-		}
-	*/
 	e.content = tknz.data[tknz.position : tknz.position+end]
 
+	if e.tokType == noteToken {
+
+		if e.innerString() == mainTextEndStr {
+
+			e.tokType = bibInfoToken
+
+		}
+	}
+
 	tknz.position = tknz.position + end
+
+	//	fmt.Print(e)
 
 	return e
 }
