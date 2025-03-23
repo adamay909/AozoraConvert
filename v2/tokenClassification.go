@@ -228,19 +228,19 @@ func (t *token) isPairMarkerOpen() bool {
 	return false
 }
 
-func (t *token) isPairClose() bool {
+func (t *token) isPairMarkerClose() bool {
 
 	if t.tokType != noteToken {
 		return false
 	}
 
-	if !strings.HasSuffix(t.innerString(), "終わり") {
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
 		return false
 	}
 
 	for _, m := range pairMarker {
 
-		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), "終わり"), m) {
+		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), formatEndStr), m) {
 			return true
 		}
 	}
@@ -480,7 +480,7 @@ func matchingCloserToken(t *token) *token {
 			count++
 		}
 
-		if pos.isPairClose() {
+		if pos.isPairMarkerClose() {
 			count--
 		}
 

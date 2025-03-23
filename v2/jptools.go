@@ -19,6 +19,7 @@ const (
 	katakana
 	kanji
 	whitespace
+	punctuation
 )
 
 type jisuni struct {
@@ -281,6 +282,9 @@ func charType(r rune) charTypeID {
 	case ' ' == r:
 		return whitespace
 
+	case '　' == r:
+		return whitespace
+
 	case '※' == r:
 		return kanji
 
@@ -296,6 +300,9 @@ func charType(r rune) charTypeID {
 	case '〆' == r:
 		return kanji
 
+	case strings.ContainsAny("〳〴〵／″＼", string(r)):
+		return symbol
+
 	case unicode.IsOneOf(kanjiR, r):
 		return kanji
 
@@ -304,6 +311,9 @@ func charType(r rune) charTypeID {
 
 	case unicode.IsOneOf(katakanaR, r):
 		return katakana
+
+	case strings.ContainsAny("、。「」！？・", string(r)):
+		return punctuation
 
 	default:
 		return symbol

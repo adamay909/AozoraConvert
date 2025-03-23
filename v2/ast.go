@@ -62,7 +62,7 @@ func getAST(t *token) *node {
 
 	for e := t.firstToken(); e != nil; e = e.next {
 
-		//		fmt.Print(e)
+		//	fmt.Print(e)
 
 		n = newNode("")
 
@@ -104,6 +104,12 @@ func getAST(t *token) *node {
 			closeNode = false
 
 		case e.tokType == rubyParentEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
+		case e.tokType == dummyCloserToken:
 
 			nextIsChild = false
 
@@ -179,7 +185,7 @@ func getAST(t *token) *node {
 
 			closeNode = false
 
-		case e.isPairClose():
+		case e.isPairMarkerClose():
 
 			nextIsChild = false
 
@@ -343,7 +349,7 @@ func getAST(t *token) *node {
 
 			n.setType("pagination")
 
-			nextIsChild = true
+			nextIsChild = false
 
 			closeNode = false
 
@@ -449,13 +455,13 @@ func getAST(t *token) *node {
 
 			nextIsChild = false
 
-			prevNode = prevNode.parent()
+			if prevNode.parent() == nil {
 
-			if prevNode == nil {
-
-				log.Fatal("Structure is invalid. Immediate place of  error is around line ", strconv.Itoa(e.lineNumber()))
+				log.Fatal("Structure is invalid. Immediate place of  error is around line ", strconv.Itoa(e.lineNumber())+" "+prevNode.String(), n.String())
 
 			}
+
+			prevNode = prevNode.parent()
 
 			prevNode.setAttr("raw closer", e.innerString())
 

@@ -1,6 +1,8 @@
 package aozoratext
 
-import "strings"
+import (
+	"strings"
+)
 
 // A Node holds information about an individual
 // node in an abstract syntax tree.
@@ -92,7 +94,15 @@ func SetJIS0208(v bool) {
 // data should be a properly formatted Aozorabunko text.
 // If not, it will probably panic.
 func AST(data string) *Node {
-
+	/*
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("The document has errors.\n", r)
+				fmt.Println("Exiting")
+				return
+			}
+		}()
+	*/
 	rn := new(Node)
 
 	rn.nn = getAozoraAST(data)
@@ -111,6 +121,10 @@ func RenderAozoraText(ast *Node) string {
 
 // RenderHTML renders ast as an html fragment.
 func RenderHTML(ast *Node) string {
+
+	if ast == nil {
+		return ""
+	}
 
 	return renderHtml(ast.nn)
 

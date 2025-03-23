@@ -3,8 +3,10 @@ package main
 import (
 	_ "embed" //for embedding
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"unicode/utf8"
 
 	ac "github.com/adamay909/AozoraConvert/v2"
@@ -17,9 +19,11 @@ var (
 
 	sjisOut = flag.Bool("sjis", false, "generate SJIS encoded output")
 
-	format = flag.String("format", "html", "output file format; supported types are: html, text, json; defaults to html")
+	format = flag.String("format", "", "output file format; overrides format inferred from file extension of output file name; supported types are txt, html, json")
 
 	jis0208 = flag.Bool("jis0208", false, "output is JIS0208 compatible.")
+
+	check = flag.Bool("check", false, "check if input file has valid structure.")
 )
 
 func init() {
@@ -33,11 +37,34 @@ func init() {
 		return
 	}
 
-	inputFile = flag.Args()[0]
+	inputFile = filepath.Clean(flag.Args()[0])
+
+	*outputFile = filepath.Clean(*outputFile)
 
 	if *sjisOut {
 
 		*jis0208 = true
+
+	}
+
+	if *format == "" {
+
+		switch filepath.Ext(*outputFile) {
+
+		case ".txt":
+			*format = "text"
+
+		case ".html":
+			*format = "html"
+
+		case ".json":
+			*format = "json"
+
+		default:
+
+			log.Println("cannot determine output file type; defaulting to html")
+
+		}
 
 	}
 }
@@ -63,11 +90,27 @@ func main() {
 
 	}
 
+	if *check {
+
+		ac.CheckStructure(data)
+
+		return
+
+	}
+
 	converted := renderer(ac.AST(data))
 
 	if *sjisOut {
 
 		converted = ac.ToSJIS(converted)
+
+	}
+
+	if inputFile == *outputFile {
+
+		fmt.Println("Output and input have same file name. Renaming input to", inputFile+"~")
+
+		os.Rename(inputFile, inputFile+"~")
 
 	}
 
