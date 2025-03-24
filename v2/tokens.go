@@ -820,3 +820,19 @@ func (t *token) unicodeString() string {
 
 	}
 }
+
+func (t *token) nextLine() *token {
+
+	e := t.lastTokenInLine()
+
+	if e.next == nil {
+		return nil
+	}
+
+	if e.next.next == nil {
+		return nil
+	}
+
+	return e.next.next
+
+}

@@ -48,6 +48,19 @@ func (t *token) fixImpliedCloser() {
 	if strings.HasPrefix(t.innerString(), blockStartStr) {
 		return
 	}
+
+	m := emptyStr
+
+	for _, e := range impliedCloserMarker {
+
+		if strings.HasSuffix(t.innerString(), e) {
+
+			m = e
+
+			break
+		}
+	}
+
 	m := isMarker(t.innerString(), impliedCloserMarker)
 
 	if m == emptyStr {
@@ -70,10 +83,13 @@ func (t *token) fixImpliedCloser() {
 
 		t.modified = true
 
-		t.lastTokenInLine().insertTokenRight(newNote(sbe.String()))
+		if t.nextLine().innerString() != sbe.String() {
 
-		t.lastTokenInLine().insertTokenLeft(newTokenOfType(endOfLineToken))
+			t.lastTokenInLine().insertTokenRight(newNote(sbe.String()))
 
+			t.lastTokenInLine().insertTokenLeft(newTokenOfType(endOfLineToken))
+
+		}
 		t.insertTokenRight(newTokenOfType(endOfLineToken))
 
 		return
