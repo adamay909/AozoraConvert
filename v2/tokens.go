@@ -155,12 +155,6 @@ func (t tokenType) String() string {
 	}
 }
 
-func (t *token) errorinf() string {
-
-	return "line " + strconv.Itoa(t.lineNumber()) + "+offset: " + t.String()
-
-}
-
 func newToken() *token {
 
 	t := new(token)
@@ -273,39 +267,6 @@ func (t *token) lastToken() *token {
 
 	return e
 
-}
-
-func closingTagOf(o atomType) atomType {
-
-	switch o {
-
-	case rubyStartTag:
-
-		return rubyEndTag
-
-		//	case rubyBaseStartTag:
-
-		//		return rubyStartTag
-
-	case gaijiMarker:
-
-		return noteEndTag
-
-	case noteStartTag:
-
-		return noteEndTag
-
-	case accentStartTag:
-
-		return accentEndTag
-
-	default:
-
-		return emptyAtom
-
-	}
-
-	return emptyAtom
 }
 
 func (t *token) String() string {
@@ -583,7 +544,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	if e == nil {
 
-		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.errorinf())
+		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
 
 		//e.insertTokenLeft(nt)
 
@@ -593,7 +554,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	if e.tokType == endOfLineToken {
 
-		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.errorinf())
+		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
 		//tokenizerLog.Println("Can't find place to insert implied opener note. Defaulting to start of line.")
 
 		//		e.insertTokenLeft(nt)
@@ -834,5 +795,28 @@ func (t *token) nextLine() *token {
 	}
 
 	return e.next.next
+
+}
+
+func matchingCloserStringIndex(s string, start, end string) int {
+
+	count := 0
+
+	for i := range s {
+
+		if strings.HasPrefix(s[i:], start) {
+			count++
+			continue
+		}
+
+		if strings.HasPrefix(s[i:], end) {
+			count--
+
+			if count == 0 {
+				return i
+			}
+		}
+	}
+	return -1
 
 }

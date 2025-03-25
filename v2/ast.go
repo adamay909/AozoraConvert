@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-func ast(text string, offset int) *node {
+func ast(text string, offset int) *Node {
 
-	return getAST(tokenizeAll(text, offset))
+	return getAST(tokenizeAndFix(text, offset))
 
 }
 
-func getAozoraAST(text string) *node {
+func getAozoraAST(text string) *Node {
 
 	offset := aztextMainStart(text)
 
@@ -38,13 +38,13 @@ func getAozoraAST(text string) *node {
 
 }
 
-func getAST(t *token) *node {
+func getAST(t *token) *Node {
 
 	document := newNode("document")
 
 	document.level = 0
 
-	prevNode := new(node)
+	prevNode := new(Node)
 
 	prevNode = document
 
@@ -56,7 +56,7 @@ func getAST(t *token) *node {
 
 	figCounter := 0
 
-	n := new(node)
+	n := new(Node)
 
 	addNewNodeAsChild := nextIsChild
 
@@ -141,7 +141,7 @@ func getAST(t *token) *node {
 
 			n.setType("section")
 
-			n.setAttr("level", e.tokType.String())
+			n.SetAttr("level", e.tokType.String())
 
 			nextIsChild = true
 
@@ -159,7 +159,7 @@ func getAST(t *token) *node {
 
 			secCounter++
 
-			n.setAttr("id", "sec"+strconv.Itoa(secCounter))
+			n.SetAttr("id", "sec"+strconv.Itoa(secCounter))
 
 			nextIsChild = true
 
@@ -169,7 +169,7 @@ func getAST(t *token) *node {
 
 			n.setType("gaiji char")
 
-			n.setAttr("alt raw", e.altContent)
+			n.SetAttr("alt raw", e.altContent)
 
 			nextIsChild = false
 
@@ -179,7 +179,7 @@ func getAST(t *token) *node {
 
 			n.setType("kunoji")
 
-			n.setAttr("alt raw", e.altContent)
+			n.SetAttr("alt raw", e.altContent)
 
 			nextIsChild = false
 
@@ -247,7 +247,7 @@ func getAST(t *token) *node {
 
 			secCounter++
 
-			n.setAttr("id", "sec"+strconv.Itoa(secCounter))
+			n.SetAttr("id", "sec"+strconv.Itoa(secCounter))
 
 			nextIsChild = true
 
@@ -259,7 +259,7 @@ func getAST(t *token) *node {
 
 			secCounter++
 
-			n.setAttr("id", "sec"+strconv.Itoa(secCounter))
+			n.SetAttr("id", "sec"+strconv.Itoa(secCounter))
 
 			nextIsChild = true
 
@@ -315,7 +315,7 @@ func getAST(t *token) *node {
 
 			figCounter++
 
-			n.setAttr("id", "fig"+strconv.Itoa(figCounter))
+			n.SetAttr("id", "fig"+strconv.Itoa(figCounter))
 
 			nextIsChild = true
 
@@ -417,7 +417,7 @@ func getAST(t *token) *node {
 
 			n.setType("special char")
 
-			n.setAttr("alt raw", e.altContent)
+			n.SetAttr("alt raw", e.altContent)
 
 			nextIsChild = false
 
@@ -427,7 +427,7 @@ func getAST(t *token) *node {
 
 			n.setType("accent string")
 
-			n.setAttr("alt raw", e.altContent)
+			n.SetAttr("alt raw", e.altContent)
 
 			nextIsChild = false
 
@@ -455,15 +455,15 @@ func getAST(t *token) *node {
 
 			nextIsChild = false
 
-			if prevNode.parent() == nil {
+			if prevNode.Parent() == nil {
 
 				log.Fatal("Structure is invalid. Immediate place of  error is around line ", strconv.Itoa(e.lineNumber())+" "+prevNode.String(), n.String())
 
 			}
 
-			prevNode = prevNode.parent()
+			prevNode = prevNode.Parent()
 
-			prevNode.setAttr("raw closer", e.innerString())
+			prevNode.SetAttr("raw closer", e.innerString())
 
 		default:
 
@@ -501,7 +501,7 @@ func getAST(t *token) *node {
 
 }
 
-func getMetadata(text string) (metadataNode *node) {
+func getMetadata(text string) (metadataNode *Node) {
 
 	metadataNode = newNode("metadata")
 

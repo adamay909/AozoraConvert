@@ -6,9 +6,9 @@ import (
 
 var o_prettyStrings bool
 
-func renderJson(n *node) string {
+func renderJson(n *Node) string {
 
-	egressFunc := func(n *node) string {
+	egressFunc := func(n *Node) string {
 
 		output := new(strings.Builder)
 
@@ -32,7 +32,7 @@ func renderJson(n *node) string {
 
 		} else {
 
-			if n.parent() != nil {
+			if n.Parent() != nil {
 
 				output.WriteString("\n" + lead + `]` + "\n")
 
@@ -47,7 +47,7 @@ func renderJson(n *node) string {
 
 	}
 
-	ingressFunc := func(n *node) string {
+	ingressFunc := func(n *Node) string {
 
 		output := new(strings.Builder)
 
@@ -77,5 +77,5 @@ func renderJson(n *node) string {
 
 	}
 
-	return stringify(n, ingressFunc, egressFunc)
+	return Serialize(n, ingressFunc, egressFunc)
 }

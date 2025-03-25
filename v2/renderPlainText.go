@@ -4,29 +4,29 @@ import (
 	"strings"
 )
 
-func renderSimpleTxt(n *node) string {
+func renderSimpleTxt(n *Node) string {
 
-	return strings.TrimSpace(stringify(n, azrSimpleFormatterOpen, azrSimpleFormatterClose))
+	return strings.TrimSpace(Serialize(n, azrSimpleFormatterOpen, azrSimpleFormatterClose))
 
 }
 
 // For very simple output. Assumes only text, ruby, gaiji notes,  and forced
 // linebreak within warichu.
-func azrSimpleFormatterOpen(n *node) string {
+func azrSimpleFormatterOpen(n *Node) string {
 
-	switch n.attr["type"] {
+	switch n.Attr["type"] {
 
 	case "text":
-		return n.attr["raw"]
+		return n.Attr["raw"]
 
 	case "empty line":
 		return lineBreakStr
 
 	case "ruby parent":
-		return n.attr["raw"]
+		return n.Attr["raw"]
 
 	case "ruby":
-		return rubyStartStr + n.attr["raw"]
+		return rubyStartStr + n.Attr["raw"]
 
 	case "gaiji note":
 		return gaijiNoteOpenTxt(n)
@@ -41,9 +41,9 @@ func azrSimpleFormatterOpen(n *node) string {
 
 }
 
-func azrSimpleFormatterClose(n *node) string {
+func azrSimpleFormatterClose(n *Node) string {
 
-	switch n.attr["type"] {
+	switch n.Attr["type"] {
 
 	case "paragraph":
 		return "\n"

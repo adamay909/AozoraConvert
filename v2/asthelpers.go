@@ -6,32 +6,32 @@ import (
 	"strings"
 )
 
-func parentSection(pn *node, t *token) *node {
+func parentSection(pn *Node, t *token) *Node {
 
-	if pn.parent() == nil {
+	if pn.Parent() == nil {
 		return pn
 	}
 
 	target := t.tokType.String()
 
-	for e := pn; e.parent() != nil; e = e.parent() {
+	for e := pn; e.Parent() != nil; e = e.Parent() {
 
-		if e.attr["type"] == "section" {
-			if e.attr["level"] == target {
-				return e.parent()
+		if e.Attr["type"] == "section" {
+			if e.Attr["level"] == target {
+				return e.Parent()
 			}
 		}
 	}
 
-	return pn.parent()
+	return pn.Parent()
 }
 
-func (n *node) setDecoType(e *token, m []string) {
+func (n *Node) setDecoType(e *token, m []string) {
 
 	ft := strings.TrimPrefix(strings.TrimPrefix(e.innerString(), "ここから"), "左に")
 	for _, e := range m {
 		if ft == e {
-			n.setAttr("style", e)
+			n.SetAttr("style", e)
 			if e == "罫囲み" {
 				return
 			}
@@ -41,22 +41,22 @@ func (n *node) setDecoType(e *token, m []string) {
 
 	if e.decorationLeft() {
 
-		n.setAttr("position", "left")
+		n.SetAttr("position", "left")
 	} else {
-		n.setAttr("position", "right")
+		n.SetAttr("position", "right")
 	}
 
 	return
 
 }
 
-func (n *node) setFontShapeAttr(e *token) {
+func (n *Node) setFontShapeAttr(e *token) {
 
-	n.setAttr("font shape", strings.TrimPrefix(e.innerString(), "ここから"))
+	n.SetAttr("font shape", strings.TrimPrefix(e.innerString(), "ここから"))
 
 }
 
-func (n *node) setFontSizeAttr(e *token) {
+func (n *Node) setFontSizeAttr(e *token) {
 
 	str := strings.TrimPrefix(e.innerString(), "ここから")
 
@@ -70,13 +70,13 @@ func (n *node) setFontSizeAttr(e *token) {
 		}
 	}
 
-	n.setAttr("size", ft)
+	n.SetAttr("size", ft)
 
-	n.setAttr("step", getNumberString(strings.TrimSuffix(str, "段階"+ft)))
+	n.SetAttr("step", getNumberString(strings.TrimSuffix(str, "段階"+ft)))
 
 }
 
-func (n *node) setIndentationAttr(e *token) {
+func (n *Node) setIndentationAttr(e *token) {
 
 	str := strings.TrimPrefix(e.innerString(), "ここから")
 
@@ -86,9 +86,9 @@ func (n *node) setIndentationAttr(e *token) {
 
 		str = strings.TrimPrefix(str, "改行天付き、折り返して")
 
-		n.setAttr("top margin", getNumberString(str))
+		n.SetAttr("top margin", getNumberString(str))
 
-		n.setAttr("indent", "-"+getNumberString(str))
+		n.SetAttr("indent", "-"+getNumberString(str))
 
 	case strings.Contains(str, "折り返して"):
 
@@ -98,36 +98,36 @@ func (n *node) setIndentationAttr(e *token) {
 
 		b, _ := strconv.Atoi(getNumberString(part[1]))
 
-		n.setAttr("top margin", strconv.Itoa(b))
+		n.SetAttr("top margin", strconv.Itoa(b))
 
-		n.setAttr("indent", strconv.Itoa(a-b))
+		n.SetAttr("indent", strconv.Itoa(a-b))
 
 	case strings.HasSuffix(str, "字下げ"):
 
 		str = strings.TrimSuffix(str, "字下げ")
 
-		n.setAttr("top margin", getNumberString(str))
+		n.SetAttr("top margin", getNumberString(str))
 
-		n.setAttr("indent", "0")
+		n.SetAttr("indent", "0")
 
 	}
 
 	return
 }
 
-func (n *node) setNarrowParagraphAttr(e *token) {
+func (n *Node) setNarrowParagraphAttr(e *token) {
 
 	str := strings.TrimSuffix(strings.TrimPrefix(e.innerString(), "ここから"), "字詰め")
 
-	n.setAttr("width", getNumberString(str))
+	n.SetAttr("width", getNumberString(str))
 
 	return
 }
 
-func (n *node) setAlignAttr(e *token) {
+func (n *Node) setAlignAttr(e *token) {
 
 	if strings.HasPrefix(e.innerString(), "ここから") {
-		n.setAttr("scope", "block")
+		n.SetAttr("scope", "block")
 	}
 
 	str := strings.TrimPrefix(e.innerString(), "ここから")
@@ -136,11 +136,11 @@ func (n *node) setAlignAttr(e *token) {
 
 	case strings.HasSuffix(str, "地付き"):
 
-		n.setAttr("bottom margin", "0")
+		n.SetAttr("bottom margin", "0")
 
 	case strings.HasSuffix(str, "字上げ"):
 
-		n.setAttr("bottom margin", getNumberString(strings.TrimPrefix(strings.TrimSuffix(str, "字上げ"), "地から")))
+		n.SetAttr("bottom margin", getNumberString(strings.TrimPrefix(strings.TrimSuffix(str, "字上げ"), "地から")))
 
 	}
 
@@ -167,15 +167,15 @@ func getNumberString(str string) (num string) {
 	return num
 }
 
-func (n *node) setImageData(e *token) {
+func (n *Node) setImageData(e *token) {
 
 	p := strings.Split(e.innerString(), "（")
 
-	n.setAttr("alt text", p[0])
+	n.SetAttr("alt text", p[0])
 
 	p = strings.Split(strings.TrimSuffix(p[1], "）入る"), "、")
 
-	n.setAttr("file", p[0])
+	n.SetAttr("file", p[0])
 
 	if len(p) == 1 {
 
@@ -187,19 +187,19 @@ func (n *node) setImageData(e *token) {
 
 	p = strings.Split(p[1], "×")
 
-	n.setAttr("width", strings.TrimPrefix(p[0], "横"))
+	n.SetAttr("width", strings.TrimPrefix(p[0], "横"))
 
-	n.setAttr("height", strings.TrimPrefix(p[1], "縦"))
+	n.SetAttr("height", strings.TrimPrefix(p[1], "縦"))
 
 	return
 
 }
 
-func (n *node) setImageSizeFromFile() {
+func (n *Node) setImageSizeFromFile() {
 
-	n.setAttr("width", "Width")
+	n.SetAttr("width", "Width")
 
-	n.setAttr("height", "Height")
+	n.SetAttr("height", "Height")
 
 	log.Println("setting image from file not implemented")
 
@@ -207,23 +207,23 @@ func (n *node) setImageSizeFromFile() {
 
 }
 
-func (n *node) setPaginationStyle(e *token) {
+func (n *Node) setPaginationStyle(e *token) {
 
-	n.setAttr("pagination style", e.innerString())
+	n.SetAttr("pagination style", e.innerString())
 
 }
 
-func (n *node) setRubylikeAttr(e *token) {
+func (n *Node) setRubylikeAttr(e *token) {
 
 	if e.decorationLeft() {
 
-		n.setAttr("position", "left")
+		n.SetAttr("position", "left")
 	} else {
-		n.setAttr("position", "right")
+		n.SetAttr("position", "right")
 	}
 }
 
-func (n *node) setCenteringAttr(e *token) {
+func (n *Node) setCenteringAttr(e *token) {
 
 	rcounter := 0
 
@@ -260,26 +260,26 @@ func (n *node) setCenteringAttr(e *token) {
 	switch {
 
 	case rcounter == lcounter:
-		n.setAttr("offset", "none")
+		n.SetAttr("offset", "none")
 
 	case rcounter > lcounter:
-		n.setAttr("offset", "left")
+		n.SetAttr("offset", "left")
 
 	case rcounter < lcounter:
-		n.setAttr("offset", "right")
+		n.SetAttr("offset", "right")
 
 	}
 
-	n.setAttr("scope", "block")
+	n.SetAttr("scope", "block")
 
 	return
 }
 
-func (n *node) sectionLevel() string {
+func (n *Node) sectionLevel() string {
 
 	level := 0
 
-	for e := n; e != n.topNode(); e = e.parent() {
+	for e := n; e != n.topNode(); e = e.Parent() {
 		level++
 	}
 
@@ -287,27 +287,27 @@ func (n *node) sectionLevel() string {
 
 }
 
-func (n *node) setBlock(e *token) {
+func (n *Node) setBlock(e *token) {
 
 	if e.tokType != noteToken {
 		return
 	}
 
 	if strings.HasPrefix(e.innerString(), "ここから") {
-		n.setAttr("scope", "block")
+		n.SetAttr("scope", "block")
 	}
 
 	if e.isFormatOfType(centeringMarker) {
-		n.setAttr("scope", "block")
+		n.SetAttr("scope", "block")
 	}
 
 	return
 }
 
-func _matchedPair(n *node, t *token) bool {
+func _matchedPair(n *Node, t *token) bool {
 
 	return true
 
-	return strings.TrimPrefix(n.attr["raw"], blockStartStr) == strings.TrimPrefix(strings.TrimSuffix(t.innerString(), formatEndStr), blockEndStr)
+	return strings.TrimPrefix(n.Attr["raw"], blockStartStr) == strings.TrimPrefix(strings.TrimSuffix(t.innerString(), formatEndStr), blockEndStr)
 
 }

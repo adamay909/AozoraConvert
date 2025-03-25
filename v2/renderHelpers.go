@@ -11,25 +11,25 @@ var gaijiNoteExclusionMarker = []string{
 	"rubylike note",
 }
 
-func (n *node) isBlockFormat() bool {
+func (n *Node) isBlockFormat() bool {
 
-	return n.attr["scope"] == "block"
-
-}
-
-func (n *node) isJisage() bool {
-
-	return n.attr["type"] == "indentation"
+	return n.Attr["scope"] == "block"
 
 }
 
-func (n *node) isJiage() bool {
+func (n *Node) isJisage() bool {
+
+	return n.Attr["type"] == "indentation"
+
+}
+
+func (n *Node) isJiage() bool {
 
 	if n.isBlockFormat() {
 		return false
 	}
 
-	return n.attr["type"] == "bottom align"
+	return n.Attr["type"] == "bottom align"
 }
 
 func emphString(s string) string {
@@ -42,9 +42,9 @@ func emphString(s string) string {
 	return decoString[0]
 }
 
-func (n *node) decoOnLeft() bool {
+func (n *Node) decoOnLeft() bool {
 
-	position, ok := n.attr["position"]
+	position, ok := n.Attr["position"]
 
 	if !ok {
 		return false
@@ -53,11 +53,11 @@ func (n *node) decoOnLeft() bool {
 	return position == "left"
 }
 
-func (n *node) isChuki() bool {
+func (n *Node) isChuki() bool {
 
 	for _, m := range rubylikeNoteSimpleMarker {
 
-		if n.attr["style"] == m {
+		if n.Attr["style"] == m {
 			return true
 		}
 
@@ -66,11 +66,11 @@ func (n *node) isChuki() bool {
 	return false
 }
 
-func (n *node) isDeco() bool {
+func (n *Node) isDeco() bool {
 
 	for _, m := range decoMarker {
 
-		if n.attr["style"] == m {
+		if n.Attr["style"] == m {
 			return true
 		}
 
@@ -79,11 +79,11 @@ func (n *node) isDeco() bool {
 	return false
 }
 
-func (n *node) formatOfType(markerType []string) bool {
+func (n *Node) formatOfType(markerType []string) bool {
 
 	for _, m := range markerType {
 
-		if n.attr["style"] == m {
+		if n.Attr["style"] == m {
 			return true
 		}
 
@@ -92,19 +92,19 @@ func (n *node) formatOfType(markerType []string) bool {
 	return false
 }
 
-func (n *node) okuriganaString() string {
+func (n *Node) okuriganaString() string {
 
-	return strings.TrimSuffix(strings.TrimPrefix(n.attr["raw"], "（"), "）")
+	return strings.TrimSuffix(strings.TrimPrefix(n.Attr["raw"], "（"), "）")
 
 }
 
-func (n *node) headerLevel() int {
+func (n *Node) headerLevel() int {
 
 	level := 0
 
-	for e := n; e.parent() != nil; e = e.parent() {
+	for e := n; e.Parent() != nil; e = e.Parent() {
 
-		if e.attr["type"] == "section" {
+		if e.Attr["type"] == "section" {
 			level++
 		}
 	}
@@ -112,11 +112,11 @@ func (n *node) headerLevel() int {
 	return level
 }
 
-func (n *node) withinNoteExclScope() bool {
+func (n *Node) withinNoteExclScope() bool {
 
 	e := n
 
-	for e = n; e.parent().isOfNodeType(gaijiNoteExclusionMarker); e = e.parent() {
+	for e = n; e.Parent().isOfNodeType(gaijiNoteExclusionMarker); e = e.Parent() {
 	}
 
 	if e == n {
@@ -129,13 +129,13 @@ func (n *node) withinNoteExclScope() bool {
 
 }
 
-func (n *node) hasChildGaijiNotes() bool {
+func (n *Node) hasChildGaijiNotes() bool {
 
 	nodes := linearizeIsolate(n)
 
 	for _, e := range nodes {
 
-		if e.attr["type"] == "gaiji note" {
+		if e.Attr["type"] == "gaiji note" {
 
 			e.hasGaijiWithin = true
 
@@ -148,11 +148,11 @@ func (n *node) hasChildGaijiNotes() bool {
 
 }
 
-func (n *node) isOfNodeType(t []string) bool {
+func (n *Node) isOfNodeType(t []string) bool {
 
 	for _, c := range t {
 
-		if n.attr["type"] == c {
+		if n.Attr["type"] == c {
 			return true
 		}
 	}
@@ -160,15 +160,15 @@ func (n *node) isOfNodeType(t []string) bool {
 	return false
 }
 
-func (n *node) descendantsOfType(t string) []*node {
+func (n *Node) descendantsOfType(t string) []*Node {
 
 	l := linearizeIsolate(n)
 
-	out := []*node{}
+	out := []*Node{}
 
 	for _, e := range l {
 
-		if e.attr["type"] == t {
+		if e.Attr["type"] == t {
 
 			out = append(out, e)
 
@@ -179,25 +179,25 @@ func (n *node) descendantsOfType(t string) []*node {
 
 }
 
-func (n *node) firstDescendantOfType(t string) *node {
+func (n *Node) firstDescendantOfType(t string) *Node {
 
 	return n.descendantsOfType(t)[0]
 
 }
 
-func (n *node) innerText() string {
+func (n *Node) innerText() string {
 
 	return renderSimpleTxt(n.firstChild)
 
 }
 
-func (n *node) innerTextLength() int {
+func (n *Node) innerTextLength() int {
 
 	return len([]rune(renderSimpleTxt(n)))
 
 }
 
-func (n *node) innerParagraphCount() int {
+func (n *Node) innerParagraphCount() int {
 
 	count := 0
 
@@ -207,7 +207,7 @@ func (n *node) innerParagraphCount() int {
 
 	for _, e := range linearize(n.firstChild) {
 
-		if e.attr["type"] == "paragraph" {
+		if e.Attr["type"] == "paragraph" {
 
 			count++
 		}

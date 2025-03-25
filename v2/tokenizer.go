@@ -1,6 +1,7 @@
 package aozoratext
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -8,7 +9,7 @@ import (
 
 type opt int
 
-var o_full, o_raw, o_jis0208, o_debug bool
+var o_full, o_raw, o_jis0208 bool
 
 type tokenizer struct {
 	data        string
@@ -29,8 +30,6 @@ func init() {
 	o_raw = false
 
 	o_jis0208 = false
-
-	o_debug = false
 
 	tokenizerLog = log.New(os.Stdout, "", 0)
 
@@ -59,18 +58,7 @@ func setOutputOption(o string) {
 	return
 }
 
-func setDebug() {
-
-	o_debug = true
-
-}
-
-func unsetDebug() {
-
-	o_debug = false
-
-}
-
+// offset is setting line number in case s isn't the whole document being processed.
 func tokenize(s string, offset int) *token {
 
 	tknz := newTokenizer(s, offset)
@@ -87,17 +75,17 @@ func tokenize(s string, offset int) *token {
 
 }
 
-func tokenizeAll(text string, lineOffset int) *token {
+func tokenizeAndFix(text string, offset int) *token {
 
-	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[lineOffset:], "\n"), lineOffset)
+	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[offset:], "\n"), offset)
 
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
-	tokenString.fixLines()
-
-	tokenString.fixEmptyText()
-
 	if !o_raw {
+
+		tokenString.fixLines()
+
+		tokenString.fixEmptyText()
 
 		tokenString.fixDocument()
 
@@ -119,6 +107,12 @@ func newTokenizer(d string, offset int) *tokenizer {
 
 	r.lineCounter = offset
 
+	if !strings.HasPrefix(d, "\n") {
+
+		r.lineCounter++
+
+	}
+
 	return r
 }
 
@@ -128,74 +122,85 @@ func (tknz *tokenizer) empty() bool {
 
 }
 
+func (tknz *tokenizer) remainder() string {
+
+	return tknz.data[tknz.position:]
+
+}
+
+// read next i bytes
+func (tknz *tokenizer) readNext(i int) string {
+
+	tknz.position = tknz.position + i
+
+	return tknz.data[tknz.position-i : tknz.position]
+
+}
+
 func (tknz *tokenizer) nextToken() (e *token) {
+
+	defer func() {
+
+		r := recover()
+
+		if r != nil {
+
+			fmt.Println("The document has errors.")
+
+			fmt.Println("line ", tknz.lineCounter, ": ", r)
+
+			os.Exit(1)
+
+		}
+
+		return
+
+	}()
 
 	e = newToken()
 
 	end := 0
 
-	switch typeOf(tknz.data[tknz.position:]) {
+	e.tokType = typeOf(tknz)
 
-	case text:
+	switch e.tokType {
 
-		e.tokType = textToken
-		end = findContiguousText(tknz.data[tknz.position:])
+	case textToken:
+		end = findContiguousText(tknz)
 
-	case rubyStartTag:
-
-		e.tokType = rubyStartToken
+	case rubyStartToken:
 		end = len(rubyStartStr)
 
-	case rubyEndTag:
-		e.tokType = rubyEndToken
+	case rubyEndToken:
 		end = len(rubyEndStr)
 
-	case rubyBaseStartTag:
+	case rubyParentStartToken:
+		end = len(rubyParentStartStr)
 
-		e.tokType = rubyParentStartToken
-		end = len(rubyBaseStartStr)
-
-	case endOfLine:
-		e.tokType = endOfLineToken
+	case endOfLineToken:
 		tknz.lineCounter++
 		e.lineNo = tknz.lineCounter
 		end = len(lineBreakStr)
 
-	case gaijiMarker:
+	case gaijiToken:
+		end = findMatchingCloser(gaijiToken, tknz)
 
-		e.tokType = gaijiToken
-		end = findMatchingCloser(typeOf(tknz.data[tknz.position:]), tknz.data[tknz.position:])
+	case noteToken:
+		end = findMatchingCloser(noteToken, tknz)
 
-	case noteStartTag:
-
-		e.tokType = noteToken
-		end = findMatchingCloser(typeOf(tknz.data[tknz.position:]), tknz.data[tknz.position:])
-
-	case bibInfoTag:
-		e.tokType = bibInfoToken
+	case bibInfoToken:
 		tknz.lineCounter++
 		e.lineNo = tknz.lineCounter
 		end = len(bibInfoStartStr)
 
-	case accentStartTag:
-		e.tokType = accentToken
-		end = findMatchingCloser(typeOf(tknz.data[tknz.position:]), tknz.data[tknz.position:])
+	case accentToken:
+		end = findMatchingCloser(accentToken, tknz)
 
-	case kunojiTag:
-		e.tokType = kunojiToken
-		end = len(kunojiStr)
-
-	case kunojiDakuTag:
-		e.tokType = kunojiToken
-		end = len(kunojiDakuStr)
-
-	default:
-
-		e.tokType = textToken
-		end = findContiguousText(tknz.data[tknz.position:])
+	case kunojiToken:
+		end = findMatchingCloser(kunojiToken, tknz)
 
 	}
-	e.content = tknz.data[tknz.position : tknz.position+end]
+	e.content = tknz.readNext(end)
 
 	if e.tokType == noteToken {
 
@@ -206,26 +211,184 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		}
 	}
 
-	tknz.position = tknz.position + end
-
-	//	fmt.Print(e)
-
 	return e
 }
 
-func (t *token) fixEmptyText() {
+func typeOf(s *tokenizer) tokenType {
 
-	for pos := t.firstToken(); pos != nil; pos = pos.next {
+	switch {
 
-		if pos.tokType != textToken {
+	case strings.HasPrefix(s.data[s.position:], bibInfoStartStr):
+		//must come before detection of linebreak
+		return bibInfoToken
+
+	case strings.HasPrefix(s.data[s.position:], rubyStartStr):
+		return rubyStartToken
+
+	case strings.HasPrefix(s.data[s.position:], rubyEndStr):
+		return rubyEndToken
+
+	case strings.HasPrefix(s.data[s.position:], rubyParentStartStr):
+		return rubyParentStartToken
+
+	case strings.HasPrefix(s.data[s.position:], lineBreakStr):
+		return endOfLineToken
+
+	case strings.HasPrefix(s.data[s.position:], noteStartStr):
+		return noteToken
+
+	case strings.HasPrefix(s.data[s.position:], gaijiMarkerStr):
+		return gaijiToken
+
+	case strings.HasPrefix(s.data[s.position:], accentStartStr):
+		return accentToken
+
+	case strings.HasPrefix(s.data[s.position:], kunojiStr):
+		return kunojiToken
+
+	case strings.HasPrefix(s.data[s.position:], kunojiDakuStr):
+		return kunojiToken
+
+	case len(s.data[s.position:]) == 0:
+		return emptyLineToken
+
+	default:
+		return textToken
+
+	}
+}
+
+func findContiguousText(s *tokenizer) (i int) {
+
+	for i = range s.data[s.position:] {
+
+		switch {
+
+		case strings.HasPrefix(s.data[s.position+i:], rubyStartStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], rubyEndStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], rubyParentStartStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], lineBreakStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], gaijiMarkerStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], noteStartStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], noteEndStr):
+			panic("found unexpected: " + noteEndStr)
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], accentStartStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], accentEndStr):
+			panic("found unexpected: " + accentEndStr)
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], kunojiStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], kunojiDakuStr):
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], bibInfoStartStr):
+			return i
+		}
+
+	}
+
+	return len(s.data[s.position:])
+
+}
+
+func findMatchingCloser(o tokenType, s *tokenizer) int {
+
+	end := strings.Index(s.data[s.position:], lineBreakStr)
+
+	if o != noteToken && o != gaijiToken {
+
+		i := strings.Index(s.data[s.position:], closingStrOf(o))
+
+		if i == -1 {
+
+			panic("1 unmatched opening tag: " + o.String())
+
+		}
+
+		if i > end {
+
+			panic("2 unmatched opening tag: " + o.String())
+
+		}
+
+		return i + len(closingStrOf(o))
+
+	}
+
+	counter := 0
+
+	for i := range s.data[s.position:] {
+
+		if strings.HasPrefix(s.data[s.position+i:], noteStartStr) {
+			counter++
 			continue
 		}
 
-		if pos.String() == "" {
-			pos = pos.next
-			pos.prev.remove()
+		if strings.HasPrefix(s.data[s.position+i:], noteEndStr) {
+			counter--
+			if counter == 0 {
+				return i + len(noteEndStr)
+			}
 		}
+
+		if strings.HasPrefix(s.data[s.position+i:], lineBreakStr) {
+			break
+		}
+
 	}
 
-	return
+	panic("unmatched opening tag: " + o.String())
+
+	return -1
+
+}
+
+func closingStrOf(o tokenType) string {
+
+	switch o {
+
+	case rubyStartToken:
+
+		return rubyEndStr
+
+	case gaijiToken:
+
+		return noteEndStr
+
+	case noteToken:
+
+		return noteEndStr
+
+	case accentToken:
+
+		return accentEndStr
+
+	case kunojiToken:
+
+		return kunojiEndStr
+
+	default:
+
+		return emptyStr
+
+	}
+
 }
