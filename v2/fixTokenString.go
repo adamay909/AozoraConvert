@@ -24,18 +24,19 @@ func (t *token) fixLines() {
 		e.fixruby()
 
 		e.fixBibInfo()
+
+		e.fixImpliedCloser()
+		e.fixImpliedOpener()
 	}
+	/*
+		for f := t.lastToken(); f != nil; f = f.prev {
 
-	for f := t.lastToken(); f != nil; f = f.prev {
+			f.fixImpliedCloser()
+			f.fixImpliedOpener()
 
-		f.fixImpliedCloser()
-		f.fixImpliedOpener()
-
-	}
-
-	e = t.firstToken()
-
-	e.fixParagraphs()
+		}
+	*/
+	t.firstToken().fixParagraphs()
 
 }
 
@@ -60,8 +61,7 @@ func (t *token) fixImpliedCloser() {
 			break
 		}
 	}
-
-	m := isMarker(t.innerString(), impliedCloserMarker)
+	//m := isMarker(t.innerString(), impliedCloserMarker)
 
 	if m == emptyStr {
 		return
@@ -90,7 +90,7 @@ func (t *token) fixImpliedCloser() {
 			t.lastTokenInLine().insertTokenLeft(newTokenOfType(endOfLineToken))
 
 		}
-		t.insertTokenRight(newTokenOfType(endOfLineToken))
+		//t.insertTokenRight(newTokenOfType(endOfLineToken))
 
 		return
 	}
@@ -442,7 +442,19 @@ func (note *token) fixImpliedOpener() {
 		return
 	}
 
-	m := note.getFormattingMarker()
+	m := ""
+
+	for _, e := range impliedOpenerMarker {
+
+		if strings.HasSuffix(note.innerString(), e) {
+
+			m = e
+
+			break
+
+		}
+
+	}
 
 	switch m {
 
@@ -692,7 +704,9 @@ func fixParagraph(start, end *token) {
 
 	pos := start
 
-	if pos.isBlockStartNote() {
+	//	if pos.isBlockStartNote() {
+
+	if strings.HasPrefix(pos.innerString(), blockStartStr) {
 
 		for e := pos; e != end; e = e.next {
 
@@ -700,7 +714,8 @@ func fixParagraph(start, end *token) {
 				return
 			}
 
-			if e.isBlockStartNote() {
+			if strings.HasPrefix(pos.innerString(), blockStartStr) {
+				//			if e.isBlockStartNote() {
 				continue
 			}
 
@@ -716,7 +731,7 @@ func fixParagraph(start, end *token) {
 			}
 
 			if e.next == end {
-				break
+				return
 			}
 		}
 		return
@@ -821,10 +836,8 @@ func (t *token) insertSectionEnds() {
 			continue
 		}
 
-		if len(openers) > 0 {
-		}
-
 		if open != 0 {
+			//ensure proper nesting
 			end = openers[len(openers)-1].matchingCloserToken()
 		} else {
 			end = nil
@@ -952,7 +965,7 @@ func sectionTitleFormattingStart(t *token) (s *token) {
 			continue
 		}
 
-		if s.isBlockFormatterStart() {
+		if strings.HasPrefix(s.innerString(), blockStartStr) {
 			r = s
 			continue
 		}
@@ -969,37 +982,6 @@ func sectionTitleFormattingStart(t *token) (s *token) {
 
 	return r
 
-}
-
-func (t *token) isFormatted() bool {
-
-	if t.prev == nil {
-		return false
-	}
-
-	for s := t.prev; ; s = s.prev {
-
-		if s.tokType == endOfLineToken {
-			continue
-		}
-
-		if s.tokType == emptyLineToken {
-			continue
-		}
-
-		if s.isBlockFormatterStart() {
-			return true
-		}
-
-		if s.isFormatOfType(centeringMarker) {
-			return true
-		}
-
-		break
-
-	}
-
-	return false
 }
 
 func (t *token) fixaccent() {
@@ -1149,4 +1131,21 @@ func (t *token) fixDocument() {
 
 	}
 
+}
+
+func (t *token) fixEmptyText() {
+
+	for pos := t.firstToken(); pos != nil; pos = pos.next {
+
+		if pos.tokType != textToken {
+			continue
+		}
+
+		if pos.String() == "" {
+			pos = pos.next
+			pos.prev.remove()
+		}
+	}
+
+	return
 }

@@ -4,18 +4,18 @@ import (
 	"strings"
 )
 
-func renderAozoraText(n *node) string {
+func renderAozoraText(n *Node) string {
 
-	return stringify(n, azrTxtFormatterOpen, azrTxtFormatterClose)
+	return Serialize(n, azrTxtFormatterOpen, azrTxtFormatterClose)
 
 }
 
-func azrTxtFormatterOpen(n *node) string {
+func azrTxtFormatterOpen(n *Node) string {
 
-	switch n.attr["type"] {
+	switch n.Attr["type"] {
 
 	case "text":
-		return n.attr["raw"]
+		return n.Attr["raw"]
 
 	case "paragraph":
 		return ""
@@ -133,15 +133,15 @@ func azrTxtFormatterOpen(n *node) string {
 		return ""
 
 	default:
-		return noteStartStr + n.attr["raw"] + noteEndStr
+		return noteStartStr + n.Attr["raw"] + noteEndStr
 
 	}
 
 }
 
-func azrTxtFormatterClose(n *node) string {
+func azrTxtFormatterClose(n *Node) string {
 
-	switch n.attr["type"] {
+	switch n.Attr["type"] {
 
 	case "text":
 		return ""
@@ -251,11 +251,11 @@ func azrTxtFormatterClose(n *node) string {
 
 }
 
-func noteStringOpenTxt(n *node) string {
+func noteStringOpenTxt(n *Node) string {
 
 	output.Reset()
 
-	addToStringsBuilder(output, noteStartStr, n.attr["raw"], noteEndStr)
+	addToStringsBuilder(output, noteStartStr, n.Attr["raw"], noteEndStr)
 
 	if n.isBlockFormat() {
 
@@ -267,15 +267,15 @@ func noteStringOpenTxt(n *node) string {
 
 }
 
-func noteStringCloseTxt(n *node) string {
+func noteStringCloseTxt(n *Node) string {
 
 	output.Reset()
 
-	if n.attr["raw closer"] == "" {
-		addToStringsBuilder(output, noteStartStr, "missing closer:", n.attr["type"], " ", n.attr["raw"], noteEndStr)
+	if n.Attr["raw closer"] == "" {
+		addToStringsBuilder(output, noteStartStr, "missing closer:", n.Attr["type"], " ", n.Attr["raw"], noteEndStr)
 	} else {
 
-		addToStringsBuilder(output, noteStartStr, n.attr["raw closer"], noteEndStr)
+		addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
 	}
 
 	if n.isJiage() {
@@ -306,15 +306,15 @@ func noteStringCloseTxt(n *node) string {
 
 }
 
-func indentationOpenTxt(n *node) string {
+func indentationOpenTxt(n *Node) string {
 
 	return noteStringOpenTxt(n)
 
 	output.Reset()
 
-	if n.firstChild.attr["type"] == "section title" {
+	if n.firstChild.Attr["type"] == "section title" {
 
-		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.attr["raw"], blockStartStr), noteEndStr)
+		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
 
 		return output.String()
 
@@ -322,32 +322,32 @@ func indentationOpenTxt(n *node) string {
 
 	if n.innerParagraphCount() == 1 {
 
-		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.attr["raw"], blockStartStr), noteEndStr)
+		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
 
 		return output.String()
 
 	}
 
-	n.setAttr("open", "true")
+	n.SetAttr("open", "true")
 
 	return noteStringOpenTxt(n)
 
 }
 
-func indentationCloseTxt(n *node) string {
+func indentationCloseTxt(n *Node) string {
 
 	return noteStringCloseTxt(n)
 
 	if n.next != nil {
 
-		if n.next.attr["type"] == "indentation" {
+		if n.next.Attr["type"] == "indentation" {
 
 			return ""
 
 		}
 	}
 
-	if n.firstChild.attr["type"] == "section title" {
+	if n.firstChild.Attr["type"] == "section title" {
 
 		return ""
 
@@ -355,11 +355,11 @@ func indentationCloseTxt(n *node) string {
 
 	if n.innerParagraphCount() == 1 {
 
-		for e := n; e.attr["type"] == "indentation"; e = e.prev {
+		for e := n; e.Attr["type"] == "indentation"; e = e.prev {
 
-			if e.attr["open"] == "true" {
+			if e.Attr["open"] == "true" {
 
-				delete(e.attr, "open")
+				delete(e.Attr, "open")
 
 				return noteStringCloseTxt(n)
 
@@ -378,13 +378,13 @@ func indentationCloseTxt(n *node) string {
 
 }
 
-func bottomAlignOpenTxt(n *node) string {
+func bottomAlignOpenTxt(n *Node) string {
 
 	return noteStringOpenTxt(n)
 
 	output.Reset()
 
-	if n.firstChild.attr["scope"] == "block" {
+	if n.firstChild.Attr["scope"] == "block" {
 
 		return noteStringOpenTxt(n)
 
@@ -396,17 +396,17 @@ func bottomAlignOpenTxt(n *node) string {
 
 	}
 
-	addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.attr["raw"], blockStartStr), noteEndStr)
+	addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
 
 	return output.String()
 
 }
 
-func bottomAlignCloseTxt(n *node) string {
+func bottomAlignCloseTxt(n *Node) string {
 
 	return noteStringCloseTxt(n)
 
-	if n.firstChild.attr["scope"] == "block" {
+	if n.firstChild.Attr["scope"] == "block" {
 
 		return noteStringCloseTxt(n)
 
@@ -423,27 +423,27 @@ func bottomAlignCloseTxt(n *node) string {
 	return ""
 }
 
-func sectionTitleCloseTxt(n *node) string {
+func sectionTitleCloseTxt(n *Node) string {
 
 	output := new(strings.Builder)
 
-	addToStringsBuilder(output, noteStartStr, n.attr["raw closer"], noteEndStr, "\n")
+	addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr, "\n")
 
 	return output.String()
 
 }
 
-func bibinfostringTxt(n *node) string {
+func bibinfostringTxt(n *Node) string {
 
-	if n.attr["raw"] == "底本：" {
-		return n.attr["raw"]
+	if n.Attr["raw"] == "底本：" {
+		return n.Attr["raw"]
 	}
 
-	return noteStartStr + n.attr["raw"] + noteEndStr + lineBreakStr
+	return noteStartStr + n.Attr["raw"] + noteEndStr + lineBreakStr
 
 }
 
-func captionOpenTxt(n *node) string {
+func captionOpenTxt(n *Node) string {
 
 	//	return "［＃ここからキャプション］\n"
 
@@ -457,7 +457,7 @@ func captionOpenTxt(n *node) string {
 
 }
 
-func captionCloseTxt(n *node) string {
+func captionCloseTxt(n *Node) string {
 
 	//	return "［＃ここでキャプション終わり］\n"
 
@@ -470,67 +470,67 @@ func captionCloseTxt(n *node) string {
 	return "［＃キャプション終わり］\n"
 }
 
-func gaijiNoteOpenTxt(n *node) string {
+func gaijiNoteOpenTxt(n *Node) string {
 
-	return noteStartStr + strings.TrimPrefix(n.attr["raw"], referenceMarkStr+"は") + noteEndStr
-
-}
-
-func rubyBaseOpenTxt(n *node) string {
-
-	return rubyBaseStartStr
+	return noteStartStr + strings.TrimPrefix(n.Attr["raw"], referenceMarkStr+"は") + noteEndStr
 
 }
 
-func metadataCloseTxt(n *node) string {
+func rubyBaseOpenTxt(n *Node) string {
+
+	return rubyParentStartStr
+
+}
+
+func metadataCloseTxt(n *Node) string {
 
 	return "\n"
 
 }
 
-func specialCharOpenTxt(n *node) string {
+func specialCharOpenTxt(n *Node) string {
 
-	return n.attr["raw"]
+	return n.Attr["raw"]
 
 }
 
-func gaijiCharOpenTxt(n *node) string {
+func gaijiCharOpenTxt(n *Node) string {
 
 	if o_jis0208 {
 
-		return n.attr["raw"]
+		return n.Attr["raw"]
 
 	}
 
-	return n.attr["alt raw"]
+	return n.Attr["alt raw"]
 
 }
 
-func accentOpenTxt(n *node) string {
+func accentOpenTxt(n *Node) string {
 
 	if o_jis0208 {
 
-		return accentStartStr + n.attr["raw"] + accentEndStr
+		return accentStartStr + n.Attr["raw"] + accentEndStr
 	}
 
-	return n.attr["alt raw"]
+	return n.Attr["alt raw"]
 
 }
 
-func kunojiOpenTxt(n *node) string {
+func kunojiOpenTxt(n *Node) string {
 
 	if o_jis0208 {
 
-		return n.attr["raw"]
+		return n.Attr["raw"]
 	}
 
-	return n.attr["alt raw"]
+	return n.Attr["alt raw"]
 
 }
 
-func bibInfoOpenTxt(n *node) string {
+func bibInfoOpenTxt(n *Node) string {
 
-	if n.attr["raw"] != "" {
+	if n.Attr["raw"] != "" {
 
 		return noteStartStr + "本文終わり" + noteEndStr + "\n"
 	}

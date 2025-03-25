@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-type node struct {
-	next           *node
-	prev           *node
-	firstChild     *node
-	up             *node
+type Node struct {
+	next           *Node
+	prev           *Node
+	firstChild     *Node
+	up             *Node
 	level          int
-	attr           map[string]string
+	Attr           map[string]string
 	hasGaijiWithin bool
 	lineNo         int
 }
@@ -34,7 +34,8 @@ const (
 	aozoraEndnoteNode
 )
 
-func (n *node) String() string {
+// String returns the attributes of n.
+func (n *Node) String() string {
 
 	lead := new(strings.Builder)
 
@@ -49,23 +50,23 @@ func (n *node) String() string {
 
 	output.Reset()
 
-	addToStringsBuilder(output, lead.String(), `"type": `, `"`, n.attr["type"], `"`, ",\n")
+	addToStringsBuilder(output, lead.String(), `"type": `, `"`, n.Attr["type"], `"`, ",\n")
 
-	if n.attr["raw"] != "" {
+	if n.Attr["raw"] != "" {
 
-		addToStringsBuilder(output, lead.String(), `"raw": `, `"`, n.attr["raw"], `"`, ",\n")
+		addToStringsBuilder(output, lead.String(), `"raw": `, `"`, n.Attr["raw"], `"`, ",\n")
 
 	}
 
-	if n.attr["raw closer"] != "" {
+	if n.Attr["raw closer"] != "" {
 
-		addToStringsBuilder(output, lead.String(), `"raw closer": `, `"`, n.attr["raw closer"], `"`, ",\n")
+		addToStringsBuilder(output, lead.String(), `"raw closer": `, `"`, n.Attr["raw closer"], `"`, ",\n")
 
 	}
 
 	var keys []string
 
-	for k := range n.attr {
+	for k := range n.Attr {
 
 		keys = append(keys, k)
 
@@ -81,55 +82,89 @@ func (n *node) String() string {
 			continue
 
 		default:
-			addToStringsBuilder(output, lead.String(), `"`, k, `": `, `"`, n.attr[k], `"`, ",\n")
+			addToStringsBuilder(output, lead.String(), `"`, k, `": `, `"`, n.Attr[k], `"`, ",\n")
 
 		}
 	}
 	return strings.TrimSuffix(output.String(), ",\n")
 }
 
-func (n *node) parent() *node {
+// Parent returns the parent node of n. nil if n is top node.
+func (n *Node) Parent() *Node {
 
 	return n.firstSibling().up
 
 }
 
-func (n *node) topNode() *node {
+// Siblings returns a slice of all siblings including and after n.
+func (n *Node) Siblings() []*Node {
 
-	e := new(node)
+	var siblings []*Node
 
-	for e = n; e.parent() != nil; e = e.parent() {
+	if n == nil {
+		return siblings
+	}
+
+	for e := n; e != nil; e = e.next {
+
+		siblings = append(siblings, e)
+
+	}
+
+	return siblings
+}
+
+// Children returns the children of n in order as a slice, starting with
+// the the first child of n.
+func (n *Node) Children() []*Node {
+
+	return n.firstChild.Siblings()
+
+}
+
+// IsLastSiblings returns whether or not n has any further siblings.
+func (n *Node) IsLastSibling() bool {
+
+	return n.next == nil
+
+}
+
+func (n *Node) topNode() *Node {
+
+	e := new(Node)
+
+	for e = n; e.Parent() != nil; e = e.Parent() {
 	}
 
 	return e
 
 }
 
-func (n *node) setLevel(l int) {
+func (n *Node) setLevel(l int) {
 
 	n.level = l
 
 }
 
-func (n *node) setType(t string) {
+func (n *Node) setType(t string) {
 
-	n.setAttr("type", t)
-
-}
-
-func (n *node) setRaw(s string) {
-
-	n.setAttr("raw", s)
+	n.SetAttr("type", t)
 
 }
 
-func (n *node) setContent(s string) {
+func (n *Node) setRaw(s string) {
 
-	n.setAttr("content", s)
+	n.SetAttr("raw", s)
 
 }
 
-func (n *node) addChild(n2 *node) {
+func (n *Node) setContent(s string) {
+
+	n.SetAttr("content", s)
+
+}
+
+func (n *Node) addChild(n2 *Node) {
 
 	if n.firstChild == nil {
 
@@ -149,7 +184,7 @@ func (n *node) addChild(n2 *node) {
 
 }
 
-func (n *node) addFirstChild(n2 *node) {
+func (n *Node) addFirstChild(n2 *Node) {
 
 	if n.firstChild == nil {
 
@@ -171,11 +206,11 @@ func (n *node) addFirstChild(n2 *node) {
 
 }
 
-func (n *node) addSibling(n2 *node) {
+func (n *Node) addSibling(n2 *Node) {
 
 	if n == nil {
 
-		log.Fatal("FATAL: attempting to add sibling to NIL " + n2.attr["raw"] + " line: " + strconv.Itoa(n2.lineNo))
+		log.Fatal("FATAL: attempting to add sibling to NIL " + n2.Attr["raw"] + " line: " + strconv.Itoa(n2.lineNo))
 
 	}
 
@@ -191,7 +226,7 @@ func (n *node) addSibling(n2 *node) {
 
 }
 
-func (n *node) lastChild() *node {
+func (n *Node) lastChild() *Node {
 
 	if n.firstChild == nil {
 
@@ -203,7 +238,7 @@ func (n *node) lastChild() *node {
 
 }
 
-func (n *node) firstSibling() (e *node) {
+func (n *Node) firstSibling() (e *Node) {
 
 	for e = n; e.prev != nil; e = e.prev {
 	}
@@ -212,7 +247,7 @@ func (n *node) firstSibling() (e *node) {
 
 }
 
-func (n *node) lastSibling() (e *node) {
+func (n *Node) lastSibling() (e *Node) {
 
 	if n == nil {
 		return n
@@ -226,74 +261,35 @@ func (n *node) lastSibling() (e *node) {
 }
 
 // make node with "type" attribute set to t
-func newNode(t string) *node {
+func newNode(t string) *Node {
 
-	n := new(node)
+	n := new(Node)
 
-	n.attr = make(map[string]string)
+	n.Attr = make(map[string]string)
 
-	n.attr["type"] = t
+	n.Attr["type"] = t
 
 	return n
 
 }
 
-func (n *node) setAttr(key string, val string) {
+// SetAttr sets an Attr of n with the key-val pair.
+func (n *Node) SetAttr(key string, val string) {
 
-	n.attr[key] = val
+	n.Attr[key] = val
 
 	return
 
 }
 
-func (n *node) nestingLevel() (l int) {
+func (n *Node) nestingLevel() int {
 
-	l = 0
+	l := -1
 
-	e := n
-
-	for {
-
-		if e.parent() == nil {
-
-			return
-		}
-
-		e = e.parent()
+	for e := n; e != nil; e = e.Parent() {
 
 		l++
 	}
-}
 
-/*
-func sectionLevelN(n *node) secLevel {
-
-		switch n.attr["sectionLevel"] {
-
-		case sectionLevelMarker[0]:
-			return topsection
-
-		case sectionLevelMarker[1]:
-			return subsection
-
-		default:
-			return subsubsection
-
-		}
-	}
-*/
-func (n *node) firstTextOffspring() *node {
-
-	e := new(node)
-
-	for e = n.firstChild; e.attr["type"] != "text"; e = e.firstChild {
-
-		if e.firstChild == nil {
-			e.setAttr("type", "text")
-			e.setAttr("content", "NO TEXT CHILD!")
-			break
-		}
-	}
-
-	return e
+	return l
 }

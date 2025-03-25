@@ -20,7 +20,7 @@ func CheckStructure(text string) {
 
 	fmt.Println("offset", offset)
 
-	t := tokenizeAll(text, offset)
+	t := tokenizeAndFix(text, offset)
 
 	var openers []*token
 
