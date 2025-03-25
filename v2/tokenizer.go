@@ -149,6 +149,8 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 			fmt.Println("line ", tknz.lineCounter, ": ", r)
 
+			os.Exit(1)
+
 		}
 
 		return
@@ -159,12 +161,12 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 	end := 0
 
-	e.tokType = typeOf(tknz.remainder())
+	e.tokType = typeOf(tknz)
 
 	switch e.tokType {
 
 	case textToken:
-		end = findContiguousText(tknz.remainder())
+		end = findContiguousText(tknz)
 
 	case rubyStartToken:
 		end = len(rubyStartStr)
@@ -181,10 +183,10 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		end = len(lineBreakStr)
 
 	case gaijiToken:
-		end = findMatchingCloser(gaijiToken, tknz.remainder())
+		end = findMatchingCloser(gaijiToken, tknz)
 
 	case noteToken:
-		end = findMatchingCloser(noteToken, tknz.remainder())
+		end = findMatchingCloser(noteToken, tknz)
 
 	case bibInfoToken:
 		tknz.lineCounter++
@@ -192,10 +194,10 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		end = len(bibInfoStartStr)
 
 	case accentToken:
-		end = findMatchingCloser(accentToken, tknz.remainder())
+		end = findMatchingCloser(accentToken, tknz)
 
 	case kunojiToken:
-		end = findMatchingCloser(kunojiToken, tknz.remainder())
+		end = findMatchingCloser(kunojiToken, tknz)
 
 	}
 	e.content = tknz.readNext(end)
@@ -212,43 +214,43 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	return e
 }
 
-func typeOf(s string) tokenType {
+func typeOf(s *tokenizer) tokenType {
 
 	switch {
 
-	case len(s) == 0:
-		return emptyLineToken
-
-	case strings.HasPrefix(s, bibInfoStartStr):
+	case strings.HasPrefix(s.data[s.position:], bibInfoStartStr):
 		//must come before detection of linebreak
 		return bibInfoToken
 
-	case strings.HasPrefix(s, rubyStartStr):
+	case strings.HasPrefix(s.data[s.position:], rubyStartStr):
 		return rubyStartToken
 
-	case strings.HasPrefix(s, rubyEndStr):
+	case strings.HasPrefix(s.data[s.position:], rubyEndStr):
 		return rubyEndToken
 
-	case strings.HasPrefix(s, rubyParentStartStr):
+	case strings.HasPrefix(s.data[s.position:], rubyParentStartStr):
 		return rubyParentStartToken
 
-	case strings.HasPrefix(s, lineBreakStr):
+	case strings.HasPrefix(s.data[s.position:], lineBreakStr):
 		return endOfLineToken
 
-	case strings.HasPrefix(s, noteStartStr):
+	case strings.HasPrefix(s.data[s.position:], noteStartStr):
 		return noteToken
 
-	case strings.HasPrefix(s, gaijiMarkerStr):
+	case strings.HasPrefix(s.data[s.position:], gaijiMarkerStr):
 		return gaijiToken
 
-	case strings.HasPrefix(s, accentStartStr):
+	case strings.HasPrefix(s.data[s.position:], accentStartStr):
 		return accentToken
 
-	case strings.HasPrefix(s, kunojiStr):
+	case strings.HasPrefix(s.data[s.position:], kunojiStr):
 		return kunojiToken
 
-	case strings.HasPrefix(s, kunojiDakuStr):
+	case strings.HasPrefix(s.data[s.position:], kunojiDakuStr):
 		return kunojiToken
+
+	case len(s.data[s.position:]) == 0:
+		return emptyLineToken
 
 	default:
 		return textToken
@@ -256,105 +258,107 @@ func typeOf(s string) tokenType {
 	}
 }
 
-func findContiguousText(s string) (i int) {
+func findContiguousText(s *tokenizer) (i int) {
 
-	for i = range s {
+	for i = range s.data[s.position:] {
 
 		switch {
 
-		case strings.HasPrefix(s[i:], rubyStartStr):
+		case strings.HasPrefix(s.data[s.position+i:], rubyStartStr):
 			return i
 
-		case strings.HasPrefix(s[i:], rubyEndStr):
+		case strings.HasPrefix(s.data[s.position+i:], rubyEndStr):
 			return i
 
-		case strings.HasPrefix(s[i:], rubyParentStartStr):
+		case strings.HasPrefix(s.data[s.position+i:], rubyParentStartStr):
 			return i
 
-		case strings.HasPrefix(s[i:], lineBreakStr):
+		case strings.HasPrefix(s.data[s.position+i:], lineBreakStr):
 			return i
 
-		case strings.HasPrefix(s[i:], gaijiMarkerStr):
+		case strings.HasPrefix(s.data[s.position+i:], gaijiMarkerStr):
 			return i
 
-		case strings.HasPrefix(s[i:], noteStartStr):
+		case strings.HasPrefix(s.data[s.position+i:], noteStartStr):
 			return i
 
-		case strings.HasPrefix(s[i:], noteEndStr):
+		case strings.HasPrefix(s.data[s.position+i:], noteEndStr):
 			panic("found unexpected: " + noteEndStr)
 			return i
 
-		case strings.HasPrefix(s[i:], accentStartStr):
+		case strings.HasPrefix(s.data[s.position+i:], accentStartStr):
 			return i
 
-		case strings.HasPrefix(s[i:], accentEndStr):
+		case strings.HasPrefix(s.data[s.position+i:], accentEndStr):
 			panic("found unexpected: " + accentEndStr)
 			return i
 
-		case strings.HasPrefix(s[i:], kunojiStr):
+		case strings.HasPrefix(s.data[s.position+i:], kunojiStr):
 			return i
 
-		case strings.HasPrefix(s[i:], kunojiDakuStr):
+		case strings.HasPrefix(s.data[s.position+i:], kunojiDakuStr):
 			return i
 
-		case strings.HasPrefix(s[i:], bibInfoStartStr):
+		case strings.HasPrefix(s.data[s.position+i:], bibInfoStartStr):
 			return i
 		}
 
 	}
 
-	return len(s)
+	return len(s.data[s.position:])
 
 }
 
-func findMatchingCloser(o tokenType, s string) (i int) {
+func findMatchingCloser(o tokenType, s *tokenizer) int {
+
+	end := strings.Index(s.data[s.position:], lineBreakStr)
+
+	if o != noteToken && o != gaijiToken {
+
+		i := strings.Index(s.data[s.position:], closingStrOf(o))
+
+		if i == -1 {
+
+			panic("1 unmatched opening tag: " + o.String())
+
+		}
+
+		if i > end {
+
+			panic("2 unmatched opening tag: " + o.String())
+
+		}
+
+		return i + len(closingStrOf(o))
+
+	}
 
 	counter := 0
 
-	i = 0
+	for i := range s.data[s.position:] {
 
-	for i = range s {
-
-		if typeOf(s[i:]) == o {
+		if strings.HasPrefix(s.data[s.position+i:], noteStartStr) {
 			counter++
 			continue
 		}
 
-		if o == noteToken {
-
-			if typeOf(s[i:]) == gaijiToken {
-				counter++
-				continue
-			}
-		}
-
-		if strings.HasPrefix(s[i:], closingStrOf(o)) {
-
+		if strings.HasPrefix(s.data[s.position+i:], noteEndStr) {
 			counter--
-
 			if counter == 0 {
-				break
+				return i + len(noteEndStr)
 			}
 		}
 
-		if typeOf(s[i:]) == endOfLineToken {
-
+		if strings.HasPrefix(s.data[s.position+i:], lineBreakStr) {
 			break
 		}
 
 	}
 
-	if o == rubyParentStartToken {
-		return i
-	}
+	panic("unmatched opening tag: " + o.String())
 
-	if counter != 0 {
+	return -1
 
-		panic("Found unclosed opening tag: " + o.String())
-
-	}
-
-	return i + len(closingStrOf(o))
 }
 
 func closingStrOf(o tokenType) string {
