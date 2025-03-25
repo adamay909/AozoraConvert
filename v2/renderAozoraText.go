@@ -271,30 +271,7 @@ func noteStringCloseTxt(n *Node) string {
 
 	output.Reset()
 
-	if n.Attr["raw closer"] == "" {
-		addToStringsBuilder(output, noteStartStr, "missing closer:", n.Attr["type"], " ", n.Attr["raw"], noteEndStr)
-	} else {
-
-		addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
-	}
-
-	if n.isJiage() {
-
-		return ""
-
-	}
-
-	if n.isJisage() {
-
-		if n.next != nil {
-
-			if n.next.isJisage() {
-
-				return ""
-			}
-		}
-
-	}
+	addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
 
 	if n.isBlockFormat() {
 
@@ -304,11 +281,30 @@ func noteStringCloseTxt(n *Node) string {
 
 	return output.String()
 
+	/*
+		if n.isJiage() {
+
+			return ""
+
+		}
+
+		if n.isJisage() {
+
+			if n.next != nil {
+
+				if n.next.isJisage() {
+
+					return ""
+				}
+			}
+
+		}
+
+
+	*/
 }
 
 func indentationOpenTxt(n *Node) string {
-
-	return noteStringOpenTxt(n)
 
 	output.Reset()
 
@@ -320,32 +316,10 @@ func indentationOpenTxt(n *Node) string {
 
 	}
 
-	if n.innerParagraphCount() == 1 {
-
-		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
-
-		return output.String()
-
-	}
-
-	n.SetAttr("open", "true")
-
 	return noteStringOpenTxt(n)
-
 }
 
 func indentationCloseTxt(n *Node) string {
-
-	return noteStringCloseTxt(n)
-
-	if n.next != nil {
-
-		if n.next.Attr["type"] == "indentation" {
-
-			return ""
-
-		}
-	}
 
 	if n.firstChild.Attr["type"] == "section title" {
 
@@ -353,22 +327,7 @@ func indentationCloseTxt(n *Node) string {
 
 	}
 
-	if n.innerParagraphCount() == 1 {
-
-		for e := n; e.Attr["type"] == "indentation"; e = e.prev {
-
-			if e.Attr["open"] == "true" {
-
-				delete(e.Attr, "open")
-
-				return noteStringCloseTxt(n)
-
-			}
-
-			if e == nil {
-				break
-			}
-		}
+	if n.next.isJisage() {
 
 		return ""
 
@@ -382,45 +341,16 @@ func bottomAlignOpenTxt(n *Node) string {
 
 	return noteStringOpenTxt(n)
 
-	output.Reset()
-
-	if n.firstChild.Attr["scope"] == "block" {
-
-		return noteStringOpenTxt(n)
-
-	}
-
-	if n.innerParagraphCount() > 1 {
-
-		return noteStringOpenTxt(n)
-
-	}
-
-	addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
-
-	return output.String()
-
 }
 
 func bottomAlignCloseTxt(n *Node) string {
 
-	return noteStringCloseTxt(n)
-
-	if n.firstChild.Attr["scope"] == "block" {
-
+	if n.Attr["scope"] == "block" {
 		return noteStringCloseTxt(n)
-
-	}
-
-	return noteStringCloseTxt(n)
-
-	if n.innerParagraphCount() > 1 {
-
-		return noteStringCloseTxt(n)
-
 	}
 
 	return ""
+
 }
 
 func sectionTitleCloseTxt(n *Node) string {

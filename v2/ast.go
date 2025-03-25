@@ -109,7 +109,7 @@ func getAST(t *token) *Node {
 
 			closeNode = true
 
-		case e.tokType == dummyCloserToken:
+		case e.tokType == alignBottomCloserToken:
 
 			nextIsChild = false
 

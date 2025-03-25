@@ -53,7 +53,7 @@ const (
 	accentToken
 	gaijiCharToken
 	kunojiToken
-	dummyCloserToken
+	alignBottomCloserToken
 )
 
 type tokenSubType int
@@ -145,8 +145,8 @@ func (t tokenType) String() string {
 	case kunojiToken:
 		return "kunojiToken"
 
-	case dummyCloserToken:
-		return "dummyCloserToken"
+	case alignBottomCloserToken:
+		return "alignBottomCloserToken"
 
 	default:
 
@@ -818,5 +818,23 @@ func matchingCloserStringIndex(s string, start, end string) int {
 		}
 	}
 	return -1
+
+}
+
+func (t *token) isFirstTokenInLine() bool {
+
+	if t.prev == nil {
+		return true
+	}
+
+	if t.prev.tokType == endOfLineToken {
+		return true
+	}
+
+	if t.prev.tokType == lineBreakToken {
+		return true
+	}
+
+	return false
 
 }
