@@ -19,11 +19,19 @@ func (n *Node) isBlockFormat() bool {
 
 func (n *Node) isJisage() bool {
 
+	if n == nil {
+		return false
+	}
+
 	return n.Attr["type"] == "indentation"
 
 }
 
 func (n *Node) isJiage() bool {
+
+	if n == nil {
+		return false
+	}
 
 	if n.isBlockFormat() {
 		return false

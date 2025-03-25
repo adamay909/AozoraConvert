@@ -6,41 +6,30 @@ import (
 
 func (t *token) fixLines() {
 
-	if o_raw {
-		return
-	}
+	for e := t.firstToken(); e != nil; e = e.next {
 
-	e := t.firstToken()
-
-	for ; e != nil; e = e.next {
-
-		if o_full {
-
-			e.fixkunoji()
-			e.fixaccent()
-			e.fixgaiji()
-		}
+		e.fixkunoji()
+		e.fixaccent()
+		e.fixgaiji()
 
 		e.fixruby()
 
 		e.fixBibInfo()
 
-		e.fixImpliedCloser()
+		e.fixAbbreviatedBlockFormat()
+		e.fixInlineAlignBottom()
 		e.fixImpliedOpener()
 	}
-	/*
-		for f := t.lastToken(); f != nil; f = f.prev {
 
-			f.fixImpliedCloser()
-			f.fixImpliedOpener()
-
-		}
-	*/
 	t.firstToken().fixParagraphs()
 
 }
 
-func (t *token) fixImpliedCloser() {
+func (t *token) fixAbbreviatedBlockFormat() {
+
+	if !t.isFirstTokenInLine() {
+		return
+	}
 
 	if t.tokType != noteToken {
 		return
@@ -61,41 +50,90 @@ func (t *token) fixImpliedCloser() {
 			break
 		}
 	}
-	//m := isMarker(t.innerString(), impliedCloserMarker)
 
 	if m == emptyStr {
 		return
 	}
 
-	sbs := new(strings.Builder)
+	//now we know we are dealing with a relevant token
 
-	sbe := new(strings.Builder)
+	//first fix t itself.
+	sbs := new(strings.Builder)
 
 	addToStringsBuilder(sbs, blockStartStr, t.innerString())
 
-	addToStringsBuilder(sbe, blockEndStr, m, formatEndStr)
-
 	t.originalContent = t.content
 
-	if t.prev == nil || t.prev.tokType == endOfLineToken {
+	t.setInnerString(sbs.String())
 
-		t.setInnerString(sbs.String())
+	t.modified = true
 
-		t.modified = true
+	//need to check if we have to insert a new closing token.
 
-		if t.nextLine().innerString() != sbe.String() {
+	sbe := new(strings.Builder)
 
-			t.lastTokenInLine().insertTokenRight(newNote(sbe.String()))
+	addToStringsBuilder(sbe, blockEndStr, m, formatEndStr)
 
-			t.lastTokenInLine().insertTokenLeft(newTokenOfType(endOfLineToken))
+	if t.nextLine() != nil {
+
+		if t.nextLine().tokType == noteToken && t.nextLine().innerString() == sbe.String() {
+
+			//need to insert new eol
+			t.insertTokenRight(newTokenOfType(endOfLineToken))
+
+			return
 
 		}
-		//t.insertTokenRight(newTokenOfType(endOfLineToken))
+	}
 
+	//we need to insert a new closing token.
+
+	t.lastTokenInLine().insertTokenRight(newNote(sbe.String()))
+
+	t.lastTokenInLine().insertTokenLeft(newTokenOfType(endOfLineToken))
+
+	//need to insert new eol
+	t.insertTokenRight(newTokenOfType(endOfLineToken))
+
+	return
+
+}
+
+func (t *token) fixInlineAlignBottom() {
+
+	if t.isFirstTokenInLine() {
+
+		return
+
+	}
+
+	if t.tokType != noteToken {
+
+		return
+
+	}
+
+	m := emptyStr
+
+	for _, e := range impliedCloserMarker {
+
+		if strings.HasSuffix(t.innerString(), e) {
+
+			m = e
+
+			break
+		}
+	}
+
+	if m == emptyStr {
 		return
 	}
 
-	t.lastTokenInLine().insertTokenRight(newTokenOfType(dummyCloserToken))
+	//now we know we are dealing with a relevant token.
+
+	t.lastTokenInLine().insertTokenRight(newTokenOfType(alignBottomCloserToken))
+
+	return
 
 }
 
@@ -698,6 +736,10 @@ func fixParagraph(start, end *token) {
 
 	}
 
+	if start.isSectionTitleStart() {
+		return
+	}
+
 	if start.isFormatOfType(captionMarker) {
 		return
 	}
@@ -1117,16 +1159,6 @@ func (t *token) fixDocument() {
 		case pos.isImage():
 
 			pos.fixFigures()
-			/*
-				case pos.tokType == bibInfoToken:
-
-					pos.fixBibInfo()
-
-				case pos.tokType == noteToken && pos.innerString() == "本文終わり":
-
-					pos.fixBibInfo()
-
-			*/
 		}
 
 	}
