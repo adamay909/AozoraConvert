@@ -1,9 +1,7 @@
 package aozoratext
 
 import (
-	"log"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -15,7 +13,7 @@ type Node struct {
 	level          int
 	Attr           map[string]string
 	hasGaijiWithin bool
-	lineNo         int
+	tok            *token
 }
 
 type nodeType int
@@ -210,7 +208,7 @@ func (n *Node) addSibling(n2 *Node) {
 
 	if n == nil {
 
-		log.Fatal("FATAL: attempting to add sibling to NIL " + n2.Attr["raw"] + " line: " + strconv.Itoa(n2.lineNo))
+		return
 
 	}
 

@@ -1,7 +1,6 @@
 package aozoratext
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -113,7 +112,7 @@ func (t *token) matchingIndentationCloser() *token {
 		}
 	}
 
-	panic(t.String() + " has no matching closer")
+	panic(t.info() + " No matching closer.\n Textual context:")
 
 	return pos
 }
@@ -230,8 +229,7 @@ func (t *token) matchingCloserToken() *token {
 func matchingCloserToken(t *token) *token {
 
 	if t.next == nil {
-		fmt.Println(printContext(t, 10))
-		panic("malformed aozora text 1")
+		panic(t.info() + " missing matching closer")
 	}
 
 	pos := new(token)
@@ -255,8 +253,7 @@ func matchingCloserToken(t *token) *token {
 		}
 
 		if pos.next == nil {
-			fmt.Println(printContext(t, 10))
-			panic("malformed aozora text 2")
+			panic(t.info() + " missing matching closer")
 		}
 	}
 

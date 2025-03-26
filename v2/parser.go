@@ -1,7 +1,6 @@
 package aozoratext
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -16,8 +15,6 @@ func ast(text string, offset int) *Node {
 func getAozoraAST(text string) *Node {
 
 	offset := aztextMainStart(text)
-
-	fmt.Println("offset", offset)
 
 	document := ast(text, offset)
 
@@ -39,6 +36,21 @@ func getAozoraAST(text string) *Node {
 }
 
 func getAST(t *token) *Node {
+
+	defer func() {
+
+		if r := recover(); r != nil {
+
+			log.Println(r)
+
+		}
+	}()
+
+	if t == nil {
+
+		panic("No tokens to process.")
+
+	}
 
 	document := newNode("document")
 
@@ -104,12 +116,6 @@ func getAST(t *token) *Node {
 			closeNode = false
 
 		case e.tokType == rubyParentEndToken:
-
-			nextIsChild = false
-
-			closeNode = true
-
-		case e.tokType == alignBottomCloserToken:
 
 			nextIsChild = false
 
@@ -389,6 +395,12 @@ func getAST(t *token) *Node {
 
 			closeNode = false
 
+		case e.tokType == centeringEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
 		case e.tokType == bibInfoToken:
 
 			n.setType("bibliographical info")
@@ -404,6 +416,12 @@ func getAST(t *token) *Node {
 			nextIsChild = false
 
 			closeNode = false
+
+		case e.tokType == alignBottomCloserToken:
+
+			nextIsChild = false
+
+			closeNode = true
 
 		case e.isFormatOfType(warichuLineBreakMarker):
 
@@ -455,13 +473,9 @@ func getAST(t *token) *Node {
 
 			nextIsChild = false
 
-			if prevNode.Parent() == nil {
-
-				log.Fatal("Structure is invalid. Immediate place of  error is around line ", strconv.Itoa(e.lineNumber())+" "+prevNode.String(), n.String())
-
-			}
-
 			prevNode = prevNode.Parent()
+
+			validStructure(prevNode, e)
 
 			prevNode.SetAttr("raw closer", e.innerString())
 
@@ -471,7 +485,7 @@ func getAST(t *token) *Node {
 
 			n.setBlock(e)
 
-			n.lineNo = e.lineNo
+			n.tok = e
 
 			if e.isSectionStart() {
 

@@ -166,19 +166,35 @@ func (t *token) fixruby() {
 
 	e := new(token)
 
+	found := false
+
 	for e = t.next; e != nil; e = e.next {
 
 		if e.tokType == rubyEndToken {
 
 			e.insertTokenRight(newTokenOfType(rubyParentEndToken))
 
+			found = true
+
 			break
 		}
+
+		if e.tokType == endOfLineToken {
+			break
+		}
+
+		if e.tokType == rubyStartToken {
+			break
+		}
+
+		if e.tokType == rubyParentStartToken {
+			break
+		}
+
 	}
+	if !found {
 
-	if e == nil {
-
-		t.lastToken().insertTokenRight(newTokenOfType(rubyParentEndToken))
+		panic("unclosed ruby tag: " + t.info() + "\n surrounding text: " + t.textContext())
 
 	}
 
@@ -821,7 +837,7 @@ func (t *token) fixCentering() {
 	for ; !pos.next.isPagination(); pos = pos.next {
 	}
 
-	pos.next.insertTokenLeft(newNote("ページの左右中央終わり"))
+	pos.next.insertTokenLeft(newTokenOfType(centeringEndToken))
 
 	return
 }
@@ -868,7 +884,7 @@ func (t *token) insertSectionEnds() {
 		if pos.isBlockClosingNote() {
 			open--
 			if open < 0 {
-				panic("Closing tag without matching opener! " + pos.info())
+				panic(pos.info() + " closing tag without matching opener! ")
 			}
 
 			openers = openers[:len(openers)-1]

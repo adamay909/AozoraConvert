@@ -72,6 +72,12 @@ func init() {
 var renderer func(*ac.Node) string
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+
+			log.Println("Exiting with errors.")
+		}
+	}()
 
 	ac.SetJIS0208(*jis0208)
 
@@ -84,6 +90,14 @@ func main() {
 
 	case "json":
 		renderer = ac.RenderJSON
+
+	case "rawtokens":
+		fmt.Println(ac.ListRawTokens(data))
+		return
+
+	case "tokens":
+		fmt.Println(ac.ListProcessedTokens(data))
+		return
 
 	default:
 		renderer = ac.RenderHTML

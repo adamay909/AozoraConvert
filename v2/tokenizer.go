@@ -65,7 +65,8 @@ func tokenize(s string, offset int) *token {
 
 	t0 := tknz.nextToken()
 
-	for t1 := t0; !tknz.empty(); t1 = t1.next {
+	//for t1 := t0; !tknz.empty(); t1 = t1.next {
+	for t1 := t0; t1 != nil; t1 = t1.next {
 
 		t1.addTokenRight(tknz.nextToken())
 
@@ -76,6 +77,14 @@ func tokenize(s string, offset int) *token {
 }
 
 func tokenizeAndFix(text string, offset int) *token {
+
+	defer func() {
+		if r := recover(); r != nil {
+
+			log.Println(r)
+
+		}
+	}()
 
 	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[offset:], "\n"), offset)
 
@@ -105,27 +114,9 @@ func newTokenizer(d string, offset int) *tokenizer {
 
 	r.position = 0
 
-	r.lineCounter = offset
-
-	if !strings.HasPrefix(d, "\n") {
-
-		r.lineCounter++
-
-	}
+	r.lineCounter = offset + 1
 
 	return r
-}
-
-func (tknz *tokenizer) empty() bool {
-
-	return tknz.position == len(tknz.data)
-
-}
-
-func (tknz *tokenizer) remainder() string {
-
-	return tknz.data[tknz.position:]
-
 }
 
 // read next i bytes
@@ -162,6 +153,10 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	end := 0
 
 	e.tokType = typeOf(tknz)
+
+	if e.tokType == eofToken {
+		return nil
+	}
 
 	switch e.tokType {
 
@@ -250,7 +245,7 @@ func typeOf(s *tokenizer) tokenType {
 		return kunojiToken
 
 	case len(s.data[s.position:]) == 0:
-		return emptyLineToken
+		return eofToken
 
 	default:
 		return textToken
@@ -319,13 +314,12 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("1 unmatched opening tag: " + o.String())
+			panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
 		if i > end {
-
-			panic("2 unmatched opening tag: " + o.String())
+			panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
@@ -355,7 +349,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 	}
 
-	panic("unmatched opening tag: " + o.String())
+	panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
 
 	return -1
 
@@ -390,5 +384,34 @@ func closingStrOf(o tokenType) string {
 		return emptyStr
 
 	}
+
+}
+
+func (t *tokenizer) textContext() (tctx string) {
+
+	r1 := []rune(t.data[:t.position])
+
+	r2 := []rune(t.data[t.position:])
+
+	if len(r1) > 4 {
+
+		tctx = string(r1[len(r1)-4:])
+
+	} else {
+		tctx = string(r1)
+
+	}
+
+	if len(r2) > 6 {
+
+		tctx = tctx + string(r2[:6])
+
+	} else {
+
+		tctx = tctx + string(r2)
+
+	}
+
+	return
 
 }

@@ -30,15 +30,6 @@ func SetJIS0208(v bool) {
 // data should be a properly formatted Aozorabunko text.
 // If not, it will probably panic.
 func AST(data string) *Node {
-	/*
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Println("The document has errors.\n", r)
-				fmt.Println("Exiting")
-				return
-			}
-		}()
-	*/
 
 	return getAozoraAST(data)
 

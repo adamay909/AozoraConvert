@@ -54,6 +54,8 @@ const (
 	gaijiCharToken
 	kunojiToken
 	alignBottomCloserToken
+	centeringEndToken
+	eofToken
 )
 
 type tokenSubType int
@@ -165,6 +167,10 @@ func newToken() *token {
 }
 
 func (t *token) addTokenRight(t2 *token) {
+
+	if t2 == nil {
+		return
+	}
 
 	t2.next = t.next
 
@@ -470,19 +476,6 @@ func newParagraphToken() *token {
 
 }
 
-func (t *token) listAllTokens() string {
-
-	output := new(strings.Builder)
-
-	for e := t.firstToken(); e != nil; e = e.next {
-
-		addToStringsBuilder(output, e.info(), "\n")
-
-	}
-	return output.String()
-
-}
-
 func (t *token) info() string {
 
 	output := new(strings.Builder)
@@ -705,7 +698,7 @@ func (t *token) lineNumber() int {
 
 	}
 
-	return 0
+	return 1
 
 }
 
@@ -836,5 +829,49 @@ func (t *token) isFirstTokenInLine() bool {
 	}
 
 	return false
+
+}
+
+func (t *token) textContext() string {
+
+	var s1 []rune
+
+	maxlen := 10 + len(t.content)
+
+	for e := t; len(s1) < maxlen/2+1; e = e.prev {
+
+		if e == nil {
+			break
+		}
+
+		s1 = append([]rune(e.content), s1...)
+
+	}
+
+	if len(s1) > maxlen/2+1 {
+
+		s1 = s1[len(s1)-maxlen/2+1:]
+
+	}
+
+	for e := t.next; len(s1) < maxlen; e = e.next {
+
+		if e == nil {
+			break
+		}
+
+		s1 = append(s1, []rune(e.content)...)
+
+	}
+
+	var r []rune
+
+	if len(s1) > maxlen {
+		r = append(r, s1[:maxlen]...)
+	} else {
+		r = append(r, s1...)
+	}
+
+	return string(r)
 
 }
