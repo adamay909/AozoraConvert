@@ -59,9 +59,9 @@ func setOutputOption(o string) {
 }
 
 // offset is setting line number in case s isn't the whole document being processed.
-func tokenize(s string, offset int) *token {
+func tokenize(s string) *token {
 
-	tknz := newTokenizer(s, offset)
+	tknz := newTokenizer(s)
 
 	t0 := tknz.nextToken()
 
@@ -76,7 +76,7 @@ func tokenize(s string, offset int) *token {
 
 }
 
-func tokenizeAndFix(text string, offset int) *token {
+func tokenizeAndFix(text string) *token {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -86,7 +86,7 @@ func tokenizeAndFix(text string, offset int) *token {
 		}
 	}()
 
-	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[offset:], "\n"), offset)
+	tokenString := tokenize(text)
 
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
@@ -106,7 +106,7 @@ func tokenizeAndFix(text string, offset int) *token {
 
 }
 
-func newTokenizer(d string, offset int) *tokenizer {
+func newTokenizer(d string) *tokenizer {
 
 	r := new(tokenizer)
 
@@ -114,7 +114,7 @@ func newTokenizer(d string, offset int) *tokenizer {
 
 	r.position = 0
 
-	r.lineCounter = offset + 1
+	r.lineCounter = 1
 
 	return r
 }
@@ -194,6 +194,9 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	case kunojiToken:
 		end = findMatchingCloser(kunojiToken, tknz)
 
+	case markupNoteToken:
+		end = findMatchingCloser(markupNoteToken, tknz)
+
 	}
 	e.content = tknz.readNext(end)
 
@@ -206,12 +209,21 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		}
 	}
 
+	if e.tokType == markupNoteToken {
+
+		tknz.lineCounter = tknz.lineCounter + len(strings.Split(e.content, "\n")) - 1
+
+	}
+
 	return e
 }
 
 func typeOf(s *tokenizer) tokenType {
 
 	switch {
+
+	case strings.HasPrefix(s.data[s.position:], markupNoteStartStr):
+		return markupNoteToken
 
 	case strings.HasPrefix(s.data[s.position:], bibInfoStartStr):
 		//must come before detection of linebreak
@@ -306,6 +318,20 @@ func findContiguousText(s *tokenizer) (i int) {
 
 func findMatchingCloser(o tokenType, s *tokenizer) int {
 
+	if o == markupNoteToken {
+
+		i := strings.Index(s.data[s.position+len(openingStrOf(o)):], markupNoteEndStr)
+
+		if i == -1 {
+
+			panic("markup notes do not end")
+
+		}
+
+		return i + len(openingStrOf(o)) + len(closingStrOf(o))
+
+	}
+
 	end := strings.Index(s.data[s.position:], lineBreakStr)
 
 	if o != noteToken && o != gaijiToken {
@@ -379,6 +405,10 @@ func closingStrOf(o tokenType) string {
 
 		return kunojiEndStr
 
+	case markupNoteToken:
+
+		return markupNoteEndStr
+
 	default:
 
 		return emptyStr
@@ -387,6 +417,41 @@ func closingStrOf(o tokenType) string {
 
 }
 
+func openingStrOf(o tokenType) string {
+
+	switch o {
+
+	case rubyStartToken:
+
+		return rubyStartStr
+
+	case gaijiToken:
+
+		return gaijiMarkerStr
+
+	case noteToken:
+
+		return noteStartStr
+
+	case accentToken:
+
+		return accentStartStr
+
+	case kunojiToken:
+
+		return kunojiStr
+
+	case markupNoteToken:
+
+		return markupNoteStartStr
+
+	default:
+
+		return emptyStr
+
+	}
+
+}
 func (t *tokenizer) textContext() (tctx string) {
 
 	r1 := []rune(t.data[:t.position])

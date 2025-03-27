@@ -12,10 +12,15 @@ func CheckStructure(text string) {
 
 func ListRawTokens(text string) string {
 
-	offset := aztextMainStart(text)
+	t := tokenize(text)
 
-	d := strings.Join(strings.Split(text, "\n")[offset:], "\n")
-	t := tokenize(d, offset)
+	return listAllTokens(t)
+
+}
+
+func ListProcessedTokens(text string) string {
+
+	t := tokenizeAndFix(text)
 
 	return listAllTokens(t)
 
@@ -31,15 +36,5 @@ func listAllTokens(t *token) string {
 
 	}
 	return output.String()
-
-}
-
-func ListProcessedTokens(text string) string {
-
-	offset := aztextMainStart(text)
-
-	t := tokenizeAndFix(text, offset)
-
-	return listAllTokens(t)
 
 }

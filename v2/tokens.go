@@ -55,6 +55,7 @@ const (
 	kunojiToken
 	alignBottomCloserToken
 	centeringEndToken
+	markupNoteToken
 	eofToken
 )
 
@@ -146,6 +147,9 @@ func (t tokenType) String() string {
 
 	case kunojiToken:
 		return "kunojiToken"
+
+	case markupNoteToken:
+		return "markupNoteToken"
 
 	case alignBottomCloserToken:
 		return "alignBottomCloserToken"

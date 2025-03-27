@@ -8,7 +8,7 @@ import (
 
 func ast(text string, offset int) *Node {
 
-	return getAST(tokenizeAndFix(text, offset))
+	return getAST(tokenizeAndFix(text))
 
 }
 
@@ -451,6 +451,10 @@ func getAST(t *token) *Node {
 
 			closeNode = false
 
+		case e.tokType == markupNoteToken:
+
+			continue
+
 		case e.tokType == emptyToken:
 
 			continue
@@ -459,7 +463,7 @@ func getAST(t *token) *Node {
 
 			n.setType("unknown")
 
-			log.Println("Warning: unknown annotation type: " + e.String())
+			log.Println("Warning: unknown annotation type: " + e.info())
 
 			nextIsChild = false
 

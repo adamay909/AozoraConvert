@@ -399,7 +399,7 @@ func (tok *token) fixgaiji() {
 
 	case tok.tokType == noteToken:
 
-		tk2 := tokenize(tok.innerString(), 0)
+		tk2 := tokenize(tok.innerString())
 
 		for tk3 := tk2; tk3 != nil; tk3 = tk3.next {
 
@@ -416,7 +416,7 @@ func (tok *token) fixgaiji() {
 
 	if tok.tokType == gaijiToken {
 
-		tokenizerLog.Println("gaiji conversion failed:", tok.String())
+		tokenizerLog.Println("gaiji conversion failed:", tok.info())
 
 		tok.reformgaiji()
 
