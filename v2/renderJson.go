@@ -14,7 +14,7 @@ func renderJson(n *Node) string {
 
 		o_prettyStrings = true
 
-		for i := 0; i < n.level; i++ {
+		for i := 0; i < n.nestingLevel(); i++ {
 
 			output.WriteString("\t")
 
@@ -53,7 +53,7 @@ func renderJson(n *Node) string {
 
 		o_prettyStrings = true
 
-		for i := 0; i < n.level; i++ {
+		for i := 0; i < n.nestingLevel(); i++ {
 
 			output.WriteString("\t")
 

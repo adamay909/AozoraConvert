@@ -49,11 +49,10 @@ func (t *token) isSectionTitleStart() bool {
 
 	for _, m := range sectionMarker {
 
-		if t.innerString() == m {
+		if strings.TrimPrefix(t.innerString(), blockStartStr) == m {
 			return true
 		}
 	}
-
 	return false
 }
 
@@ -65,7 +64,7 @@ func (t *token) isSectionTitleEnd() bool {
 
 	}
 
-	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+	if !strings.HasSuffix(strings.TrimPrefix(t.innerString(), blockEndStr), formatEndStr) {
 		return false
 	}
 
@@ -112,7 +111,7 @@ func (t *token) matchingIndentationCloser() *token {
 		}
 	}
 
-	panic(t.info() + " No matching closer.\n Textual context:")
+	panic(t.info() + " No matching closer.")
 
 	return pos
 }
@@ -132,6 +131,10 @@ func (t *token) isImage() bool {
 }
 
 func (t *token) isCaption() bool {
+
+	if t == nil {
+		return false
+	}
 
 	if t.tokType != noteToken {
 		return false
@@ -375,4 +378,20 @@ func (t *token) isSectionEnd() bool {
 		return false
 
 	}
+}
+
+func (t *token) isBlock() bool {
+
+	return strings.HasPrefix(t.innerString(), blockStartStr)
+
+}
+
+func (t *token) isBlockEnd() bool {
+
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+		return false
+	}
+
+	return strings.HasPrefix(t.innerString(), blockEndStr)
+
 }

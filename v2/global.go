@@ -88,7 +88,7 @@ var inlineSectionMarker = []string{
 var windowSectionMarker = []string{
 	"窓中見出し",
 	"窓大見出し",
-	"窓中見出し",
+	"窓小見出し",
 }
 
 //emphasis

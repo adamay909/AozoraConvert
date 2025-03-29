@@ -12,7 +12,7 @@ type token struct {
 	prev            *token
 	ref             string
 	content         string
-	altContent      string
+	unicodeContent  string
 	originalContent string
 	id              int
 	lineNo          int
@@ -34,9 +34,10 @@ const (
 	rubyEndToken
 	noteToken
 	bibInfoToken
+	bibInfoEndToken
 	emptyLineToken
 	endOfLineToken
-	lineBreakToken
+	paragraphEndToken
 	paragraphToken
 	sectionTitleStartToken
 	sectionTitleEndToken
@@ -56,12 +57,15 @@ const (
 	alignBottomCloserToken
 	centeringEndToken
 	markupNoteToken
+	mainTextStartToken
+	mainTextEndToken
 	eofToken
 )
 
 type tokenSubType int
 
 func (t tokenType) String() string {
+
 	switch t {
 
 	case emptyToken:
@@ -91,23 +95,26 @@ func (t tokenType) String() string {
 	case bibInfoToken:
 		return "bibInfoToken"
 
+	case bibInfoEndToken:
+		return "bibInfoEndToken"
+
 	case emptyLineToken:
 		return "emptyLineToken"
 
 	case endOfLineToken:
 		return "endOfLineToken"
 
-	case lineBreakToken:
-		return "lineBreakToken"
+	case paragraphEndToken:
+		return "paragraphEndToken"
 
 	case paragraphToken:
 		return "paragraphToken"
 
 	case sectionTitleStartToken:
-		return "sectionTitleStart"
+		return "sectionTitleStartToken"
 
 	case sectionTitleEndToken:
-		return "sectionTitleEnd"
+		return "sectionTitleEndToken"
 
 	case sectionToken:
 		return "sectionToken"
@@ -125,7 +132,7 @@ func (t tokenType) String() string {
 		return "subsectionEndToken"
 
 	case subsubsectionEndToken:
-		return "subsubsectionEndtoken"
+		return "subsubsectionEndToken"
 
 	case figureStartToken:
 		return "figureStartToken"
@@ -148,11 +155,23 @@ func (t tokenType) String() string {
 	case kunojiToken:
 		return "kunojiToken"
 
+	case alignBottomCloserToken:
+		return "alignBottomCloserToken"
+
+	case centeringEndToken:
+		return "centeringEndToken"
+
 	case markupNoteToken:
 		return "markupNoteToken"
 
-	case alignBottomCloserToken:
-		return "alignBottomCloserToken"
+	case mainTextStartToken:
+		return "mainTextStartToken"
+
+	case mainTextEndToken:
+		return "mainTextEndToken"
+
+	case eofToken:
+		return "eofToken"
 
 	default:
 
@@ -187,6 +206,7 @@ func (t *token) addTokenRight(t2 *token) {
 	t.next = t2
 
 }
+
 func (t *token) insertTokenRight(t2 *token) {
 
 	t2.next = t.next
@@ -298,7 +318,7 @@ func (t *token) String() string {
 	case endOfLineToken:
 		return ""
 
-	case lineBreakToken:
+	case paragraphEndToken:
 		return ""
 
 		//	case rubyParentStartToken:
@@ -465,7 +485,7 @@ func newLineBreakToken() *token {
 
 	t := newToken()
 
-	t.tokType = lineBreakToken
+	t.tokType = paragraphEndToken
 
 	return t
 }
@@ -497,6 +517,10 @@ func (t *token) info() string {
 		}
 	}
 
+	if t.unicodeContent != "" {
+		addToStringsBuilder(output, "unicode: ", t.unicodeContent)
+	}
+
 	return strings.ReplaceAll(output.String(), "\n", "\\n")
 
 }
@@ -508,6 +532,8 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	c := 0
 
 	cr := 0
+
+	nesting := 0
 
 	for e = t.prev; e != nil; e = e.prev {
 
@@ -521,6 +547,11 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 			}
 
 			e = e.prev
+		}
+
+		if e.isFormatCloseToken() {
+			nesting++
+			continue
 		}
 
 		if e.tokType != textToken {
@@ -543,8 +574,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
 
-		//e.insertTokenLeft(nt)
-
 		return
 
 	}
@@ -552,9 +581,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	if e.tokType == endOfLineToken {
 
 		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
-		//tokenizerLog.Println("Can't find place to insert implied opener note. Defaulting to start of line.")
-
-		//		e.insertTokenLeft(nt)
 
 		return
 
@@ -568,6 +594,11 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		}
 
+		for range nesting {
+
+			e = e.prev
+
+		}
 		e.insertTokenLeft(nt)
 
 		return
@@ -708,15 +739,23 @@ func (t *token) lineNumber() int {
 
 func (t *token) lastTokenInLine() *token {
 
-	if t.next == nil {
+	if t == nil {
 		return t
 	}
 
 	e := new(token)
 
-	for e = t; e.next.tokType != endOfLineToken; e = e.next {
+	for e = t; e != nil; e = e.next {
 
 		if e.next == nil {
+			return e
+		}
+
+		if e.next.tokType == endOfLineToken {
+			return e
+		}
+
+		if e.next.tokType == paragraphEndToken {
 			return e
 		}
 	}
@@ -765,13 +804,13 @@ func (t *token) unicodeString() string {
 	switch t.tokType {
 
 	case gaijiCharToken:
-		return t.altContent
+		return t.unicodeContent
 
 	case specialCharToken:
-		return t.altContent
+		return t.unicodeContent
 
 	case kunojiToken:
-		return t.altContent
+		return t.unicodeContent
 
 	default:
 		return t.String()
@@ -786,7 +825,6 @@ func (t *token) nextLine() *token {
 	if e.next == nil {
 		return nil
 	}
-
 	if e.next.next == nil {
 		return nil
 	}
@@ -828,7 +866,7 @@ func (t *token) isFirstTokenInLine() bool {
 		return true
 	}
 
-	if t.prev.tokType == lineBreakToken {
+	if t.prev.tokType == paragraphEndToken {
 		return true
 	}
 
@@ -878,4 +916,40 @@ func (t *token) textContext() string {
 
 	return string(r)
 
+}
+
+func (t *token) mainTextStart() *token {
+
+	if o_fragment {
+		return t.firstToken()
+	}
+
+	for e := t.firstToken(); e != nil; e = e.next {
+		if e.tokType == mainTextStartToken {
+			return e
+		}
+	}
+
+	return t.firstToken()
+
+}
+
+func (t *token) isFormatCloseToken() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+		return false
+	}
+
+	for _, m := range pairMarker {
+
+		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), formatEndStr), m) {
+			return true
+		}
+	}
+
+	return false
 }

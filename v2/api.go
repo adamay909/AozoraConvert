@@ -18,20 +18,40 @@ func init() {
 func SetJIS0208(v bool) {
 
 	if v {
+
 		o_jis0208 = true
+
 	} else {
+
 		o_full = true
+
 		o_jis0208 = false
+
 	}
 	return
+}
+
+// SetFragment controls whether input should be treated
+// as a full aozorabunko text or just a fragment.
+func SetFragment(v bool) {
+
+	if v {
+
+		o_fragment = true
+
+	} else {
+
+		o_fragment = false
+	}
+
 }
 
 // AST returns the root node of the AST for data.
 // data should be a properly formatted Aozorabunko text.
 // If not, it will probably panic.
-func AST(data string) *Node {
+func AST(data string) (*Node, error) {
 
-	return getAozoraAST(data)
+	return parse(data)
 
 }
 

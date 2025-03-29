@@ -139,7 +139,7 @@ func (n *Node) withinNoteExclScope() bool {
 
 func (n *Node) hasChildGaijiNotes() bool {
 
-	nodes := linearizeIsolate(n)
+	nodes := linearizeBranch(n)
 
 	for _, e := range nodes {
 
@@ -170,7 +170,7 @@ func (n *Node) isOfNodeType(t []string) bool {
 
 func (n *Node) descendantsOfType(t string) []*Node {
 
-	l := linearizeIsolate(n)
+	l := linearizeBranch(n)
 
 	out := []*Node{}
 
@@ -184,6 +184,12 @@ func (n *Node) descendantsOfType(t string) []*Node {
 	}
 
 	return out
+
+}
+
+func (n *Node) HasDescendantOfType(t string) bool {
+
+	return len(n.descendantsOfType(t)) > 0
 
 }
 
@@ -223,4 +229,32 @@ func (n *Node) innerParagraphCount() int {
 	}
 
 	return count
+}
+
+func (n *Node) RawString() string {
+
+	if o_jis0208 {
+		return n.Attr["raw"]
+	}
+
+	if n.Attr["unicode raw"] != "" {
+		return n.Attr["unicode raw"]
+	}
+
+	return n.Attr["raw"]
+
+}
+
+func (n *Node) RawCloserString() string {
+
+	if o_jis0208 {
+		return n.Attr["raw closer"]
+	}
+
+	if n.Attr["raw unicode closer"] != "" {
+		return n.Attr["raw unicode closer"]
+	}
+
+	return n.Attr["raw closer"]
+
 }

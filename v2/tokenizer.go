@@ -1,7 +1,6 @@
 package aozoratext
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -9,7 +8,7 @@ import (
 
 type opt int
 
-var o_full, o_raw, o_jis0208 bool
+var o_full, o_fragment, o_jis0208, o_raw bool
 
 type tokenizer struct {
 	data        string
@@ -76,16 +75,20 @@ func tokenize(s string) *token {
 
 }
 
-func tokenizeAndFix(text string) *token {
+func tokenizeAndFix(text string) (tk *token, err error) {
+	/*
+		defer func() {
 
-	defer func() {
-		if r := recover(); r != nil {
+			if r := recover(); r != nil {
 
-			log.Println(r)
+				log.Println(r)
 
-		}
-	}()
+				err = errors.New("error")
+				return
 
+			}
+		}()
+	*/
 	tokenString := tokenize(text)
 
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
@@ -100,9 +103,13 @@ func tokenizeAndFix(text string) *token {
 
 		tokenString.insertSectionEnds()
 
+		if !o_fragment {
+			tokenString.insertAozoraBookMarker()
+		}
+
 	}
 
-	return tokenString
+	return tokenString, err
 
 }
 
@@ -129,24 +136,6 @@ func (tknz *tokenizer) readNext(i int) string {
 }
 
 func (tknz *tokenizer) nextToken() (e *token) {
-
-	defer func() {
-
-		r := recover()
-
-		if r != nil {
-
-			fmt.Println("The document has errors.")
-
-			fmt.Println("line ", tknz.lineCounter, ": ", r)
-
-			os.Exit(1)
-
-		}
-
-		return
-
-	}()
 
 	e = newToken()
 
@@ -212,6 +201,9 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	if e.tokType == markupNoteToken {
 
 		tknz.lineCounter = tknz.lineCounter + len(strings.Split(e.content, "\n")) - 1
+
+		//we discard explanation of aozorabunko-style markup!!
+		return tknz.nextToken()
 
 	}
 
@@ -375,7 +367,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 	}
 
-	panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
+	panic("note not terminated. " + "\n surrounding text: " + s.textContext())
 
 	return -1
 
@@ -452,24 +444,27 @@ func openingStrOf(o tokenType) string {
 	}
 
 }
+
 func (t *tokenizer) textContext() (tctx string) {
+
+	maxlen := 20
 
 	r1 := []rune(t.data[:t.position])
 
 	r2 := []rune(t.data[t.position:])
 
-	if len(r1) > 4 {
+	if len(r1) > maxlen/2+1 {
 
-		tctx = string(r1[len(r1)-4:])
+		tctx = string(r1[len(r1)-maxlen/2+1:])
 
 	} else {
 		tctx = string(r1)
 
 	}
 
-	if len(r2) > 6 {
+	if len(r2) > maxlen/2+1 {
 
-		tctx = tctx + string(r2[:6])
+		tctx = tctx + string(r2[:maxlen/2+1])
 
 	} else {
 

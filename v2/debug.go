@@ -20,7 +20,13 @@ func ListRawTokens(text string) string {
 
 func ListProcessedTokens(text string) string {
 
-	t := tokenizeAndFix(text)
+	t, err := tokenizeAndFix(text)
+
+	if err != nil {
+
+		return "ERROR:\n" + err.Error()
+
+	}
 
 	return listAllTokens(t)
 

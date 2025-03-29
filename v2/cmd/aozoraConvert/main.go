@@ -23,7 +23,7 @@ var (
 
 	jis0208 = flag.Bool("jis0208", false, "output is JIS0208 compatible.")
 
-	check = flag.Bool("check", false, "check if input file has valid structure.")
+	frag = flag.Bool("fragment", false, "set to true if input is a fragment of aozorabunko text.")
 )
 
 func init() {
@@ -67,19 +67,15 @@ func init() {
 		}
 
 	}
+
+	ac.SetJIS0208(*jis0208)
+
+	ac.SetFragment(*frag)
 }
 
 var renderer func(*ac.Node) string
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-
-			log.Println("Exiting with errors.")
-		}
-	}()
-
-	ac.SetJIS0208(*jis0208)
 
 	data := readFile(inputFile)
 
@@ -104,15 +100,17 @@ func main() {
 
 	}
 
-	if *check {
+	ast, err := ac.AST(data)
 
-		ac.CheckStructure(data)
+	if err != nil {
+
+		log.Println("\nExiting.")
 
 		return
 
 	}
 
-	converted := renderer(ac.AST(data))
+	converted := renderer(ast)
 
 	if *sjisOut {
 

@@ -1,6 +1,7 @@
 package aozoratext
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -145,14 +146,14 @@ func (t *token) fixkunoji() {
 
 	if t.content == kunojiStr {
 
-		t.altContent = kunojiStrU
+		t.unicodeContent = kunojiStrU
 
 		t.modified = true
 
 		return
 	}
 
-	t.altContent = kunojiDakuStrU
+	t.unicodeContent = kunojiDakuStrU
 
 	t.modified = true
 }
@@ -401,13 +402,23 @@ func (tok *token) fixgaiji() {
 
 		tk2 := tokenize(tok.innerString())
 
+		hasgaiji := false
+
 		for tk3 := tk2; tk3 != nil; tk3 = tk3.next {
 
-			tk3.fixgaiji()
+			if tk3.tokType == gaijiToken {
+				fmt.Println("check")
+				tk3.fixgaiji()
+				hasgaiji = true
 
+			}
 		}
 
-		tok.setInnerString(tk2.StringAll())
+		if hasgaiji {
+			for e := tk2; e != nil; e = e.next {
+				tok.unicodeContent = tok.unicodeContent + e.unicodeString()
+			}
+		}
 
 	default:
 
@@ -448,7 +459,7 @@ func (tok *token) replaceGaiji() {
 
 	tok.content = tok.content
 
-	tok.altContent = uni
+	tok.unicodeContent = uni
 
 	switch uni {
 
@@ -587,10 +598,7 @@ func fixFontSize(note *token) {
 		return
 	}
 
-	//	sb := strings.TrimPrefix(note.innerString(), refStartStr+rs[0]+refEndStr+"は")
-
 	sb := strings.Split(note.innerString(), refEndStr+"は")[1]
-	//	sb := note.innerString()
 
 	note.originalContent = note.content
 
@@ -726,11 +734,11 @@ func fixParagraph(start, end *token) {
 
 	switch start.tokType {
 
-	case textToken, rubyParentStartToken, gaijiCharToken, specialCharToken:
+	case textToken, rubyParentStartToken, gaijiCharToken, specialCharToken, accentToken:
 
 		start.insertTokenLeft(newParagraphToken())
 
-		end.tokType = lineBreakToken
+		end.tokType = paragraphEndToken
 
 		end.modified = true
 
@@ -744,7 +752,7 @@ func fixParagraph(start, end *token) {
 
 		start.insertTokenRight(newParagraphToken())
 
-		end.tokType = lineBreakToken
+		end.tokType = paragraphEndToken
 
 		end.modified = true
 
@@ -781,7 +789,7 @@ func fixParagraph(start, end *token) {
 
 				pos.insertTokenLeft(newParagraphToken())
 
-				end.tokType = lineBreakToken
+				end.tokType = paragraphEndToken
 
 				end.modified = true
 
@@ -804,7 +812,7 @@ func fixParagraph(start, end *token) {
 
 				pos.insertTokenLeft(newParagraphToken())
 
-				end.tokType = lineBreakToken
+				end.tokType = paragraphEndToken
 
 				end.modified = true
 
@@ -848,7 +856,7 @@ func (t *token) fixSectionFormatting() {
 
 	e1 := sectionTitleFormattingStart(pos)
 
-	switch pos.innerString() {
+	switch strings.TrimPrefix(pos.innerString(), blockStartStr) {
 	case "大見出し":
 		e1.insertTokenLeft(newTokenOfType(sectionToken))
 
@@ -1038,7 +1046,16 @@ func sectionTitleFormattingStart(t *token) (s *token) {
 
 	}
 
-	return r
+	for s = r; s.tokType == emptyLineToken; s = s.next {
+	}
+
+	if s == nil {
+
+		s = t.firstToken()
+
+	}
+
+	return s
 
 }
 
@@ -1048,11 +1065,11 @@ func (t *token) fixaccent() {
 		return
 	}
 
-	t.altContent = convertAccent(t.innerString())
+	t.unicodeContent = convertAccent(t.innerString())
 
 	t.modified = true
 
-	if len([]rune(t.altContent)) == len([]rune(t.innerString())) {
+	if len([]rune(t.unicodeContent)) == len([]rune(t.innerString())) {
 		t.tokType = textToken
 		return
 
@@ -1081,7 +1098,7 @@ func (t *token) fixFigures() {
 	if !e.nextSignificantToken().isCaption() {
 
 		e.insertTokenRight(n)
-		if n.next.tokType == lineBreakToken {
+		if n.next.tokType == paragraphEndToken {
 			n.next.remove()
 		}
 
@@ -1098,7 +1115,9 @@ func (t *token) fixBibInfo() {
 		return
 	}
 
-	for pos := t.next; pos != nil; pos = pos.next {
+	pos := new(token)
+
+	for pos = t.next; pos != nil; pos = pos.next {
 
 		if pos.tokType == bibInfoToken {
 
@@ -1114,6 +1133,11 @@ func (t *token) fixBibInfo() {
 
 		}
 	}
+
+	for pos = t.lastToken(); pos.tokType != endOfLineToken; pos = pos.prev {
+	}
+
+	pos.insertTokenLeft(newTokenOfType(bibInfoEndToken))
 
 	if t.innerString() == noteStartStr+mainTextEndStr+noteEndStr {
 		return
@@ -1196,4 +1220,34 @@ func (t *token) fixEmptyText() {
 	}
 
 	return
+}
+
+func (t *token) insertAozoraBookMarker() {
+
+	e := new(token)
+
+	for e = t.firstToken(); e.tokType != emptyLineToken; e = e.nextLine() {
+		if e.nextLine() == nil {
+			return
+		}
+	}
+
+	if e.lineNumber() < 3 {
+		return
+	}
+
+	e.insertTokenRight(newTokenOfType(mainTextStartToken))
+
+	for ; e.tokType != bibInfoToken; e = e.next {
+
+		if e.next == nil {
+			t.lastToken().insertTokenRight(newTokenOfType(mainTextEndToken))
+			return
+		}
+	}
+
+	e.insertTokenLeft(newTokenOfType(mainTextEndToken))
+
+	return
+
 }

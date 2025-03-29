@@ -1,11 +1,12 @@
 package aozoratext
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
 
-func validStructure(prevNode *Node, tok *token) (bool, string) {
+func isValidStructure(prevNode *Node, tok *token) (err error) {
 
 	msgBuilder := new(strings.Builder)
 
@@ -13,41 +14,42 @@ func validStructure(prevNode *Node, tok *token) (bool, string) {
 
 	case prevNode == nil:
 
-		val := false
+		addToStringsBuilder(msgBuilder, "\nline ", strconv.Itoa(tok.lineNumber()), ": ", "ERROR: attempting to close node without opener: ", tok.info())
 
-		addToStringsBuilder(msgBuilder, "line ", strconv.Itoa(tok.lineNumber()), ": ", "attempting to close node without opener: ", tok.info())
+		return errors.New(msgBuilder.String())
 
-		//textContext())
+	case prevNode.tok == nil:
 
-		panic(msgBuilder.String())
+		addToStringsBuilder(msgBuilder, "\nline ", strconv.Itoa(tok.lineNumber()), ": ", "ERROR: attempting to close node without opener: ", tok.info())
 
-		return val, msgBuilder.String()
+		return errors.New(msgBuilder.String())
 
 	case !matched(tok, prevNode.tok):
 
-		val := false
-
-		addToStringsBuilder(msgBuilder, "mismatched annotation start and end:\n")
+		addToStringsBuilder(msgBuilder, "\nERROR: mismatched annotation start and end:\n")
 
 		addToStringsBuilder(msgBuilder, prevNode.tok.info(), "\n closed by: \n")
 
 		addToStringsBuilder(msgBuilder, tok.info())
 
-		panic(msgBuilder.String())
-		return val, msgBuilder.String()
+		return errors.New(msgBuilder.String())
 
 	default:
 
-		return true, ""
+		return err
 
 	}
 }
 
 func matched(closer, opener *token) bool {
 
+	if closer == nil || opener == nil {
+		return false
+	}
+
 	switch closer.tokType {
 
-	case lineBreakToken:
+	case paragraphEndToken:
 		return opener.tokType == paragraphToken
 
 	case rubyEndToken:
@@ -70,6 +72,12 @@ func matched(closer, opener *token) bool {
 
 	case centeringEndToken:
 		return opener.isFormatOfType(centeringMarker)
+
+	case bibInfoEndToken:
+		return opener.tokType == bibInfoToken
+
+	case mainTextEndToken:
+		return opener.tokType == mainTextStartToken
 	}
 
 	if opener.isBlockStartNote() {

@@ -12,6 +12,10 @@ func parentSection(pn *Node, t *token) *Node {
 		return pn
 	}
 
+	if pn.Attr["type"] == "main text" {
+		return pn
+	}
+
 	target := t.tokType.String()
 
 	for e := pn; e.Parent() != nil; e = e.Parent() {
@@ -229,11 +233,16 @@ func (n *Node) setCenteringAttr(e *token) {
 
 	f := new(token)
 
-	for f = e.next; f.tokType == emptyLineToken; f = f.next {
+	if e.next == nil {
+		return
+	}
 
-		rcounter++
+	for f = e.next; f.tokType == emptyLineToken || f.tokType == endOfLineToken; f = f.next {
 
-		if f == nil {
+		if f.tokType == emptyLineToken {
+			rcounter++
+		}
+		if f.next == nil {
 			return
 		}
 
@@ -248,11 +257,13 @@ func (n *Node) setCenteringAttr(e *token) {
 
 	lcounter := 0
 
-	for f := f.prev; f.tokType == emptyLineToken; f = f.prev {
+	for f := f.prev; f.tokType == emptyLineToken || f.tokType == endOfLineToken; f = f.prev {
 
-		lcounter++
+		if f.tokType == emptyLineToken {
+			lcounter++
+		}
 
-		if f == nil {
+		if f.next == nil {
 			return
 		}
 	}

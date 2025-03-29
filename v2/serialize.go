@@ -62,7 +62,7 @@ func linearize(n *Node) []*Node {
 
 }
 
-func linearizeIsolate(n *Node) []*Node {
+func linearizeBranch(n *Node) []*Node {
 
 	return linearizeNode(n, true)
 }
@@ -72,15 +72,15 @@ func Serialize(n *Node, ingressFunc, egressFunc func(*Node) string) string {
 
 	var output = new(strings.Builder)
 
-	var flatten func(*Node)
+	var linearize func(*Node)
 
-	flatten = func(m *Node) {
+	linearize = func(m *Node) {
 
 		output.WriteString(ingressFunc(m))
 
 		for _, childNode := range m.Children() {
 
-			flatten(childNode)
+			linearize(childNode)
 
 			output.WriteString(egressFunc(childNode))
 
@@ -90,7 +90,37 @@ func Serialize(n *Node, ingressFunc, egressFunc func(*Node) string) string {
 
 	}
 
-	flatten(n)
+	linearize(n)
+
+	output.WriteString(egressFunc(n))
+
+	return output.String()
+}
+
+// SerializeDescendants leaves out the top node n in serializing.
+func SerializeDescendants(n *Node, ingressFunc, egressFunc func(*Node) string) string {
+
+	var output = new(strings.Builder)
+
+	var linearize func(*Node)
+
+	linearize = func(m *Node) {
+
+		for _, childNode := range m.Children() {
+
+			output.WriteString(ingressFunc(childNode))
+
+			linearize(childNode)
+
+			output.WriteString(egressFunc(childNode))
+
+		}
+
+		return
+
+	}
+
+	linearize(n)
 
 	return output.String()
 }

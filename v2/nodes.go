@@ -14,6 +14,7 @@ type Node struct {
 	Attr           map[string]string
 	hasGaijiWithin bool
 	tok            *token
+	closed         bool
 }
 
 type nodeType int
@@ -39,7 +40,7 @@ func (n *Node) String() string {
 
 	if o_prettyStrings {
 
-		for i := 0; i < n.level; i++ {
+		for i := 0; i < n.nestingLevel(); i++ {
 
 			lead.WriteString("\t")
 

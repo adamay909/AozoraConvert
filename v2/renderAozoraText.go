@@ -10,12 +10,18 @@ func renderAozoraText(n *Node) string {
 
 }
 
+func renderInnerAozoraText(n *Node) string {
+
+	return SerializeDescendants(n, azrTxtFormatterOpen, azrTxtFormatterClose)
+
+}
+
 func azrTxtFormatterOpen(n *Node) string {
 
 	switch n.Attr["type"] {
 
 	case "text":
-		return n.Attr["raw"]
+		return n.RawString()
 
 	case "paragraph":
 		return ""
@@ -129,11 +135,17 @@ func azrTxtFormatterOpen(n *Node) string {
 	case "accent string":
 		return accentOpenTxt(n)
 
+	case "main text":
+		return ""
+
 	case "document":
 		return ""
 
 	default:
-		return noteStartStr + n.Attr["raw"] + noteEndStr
+		if o_jis0208 {
+			return noteStartStr + n.RawString() + noteEndStr
+		}
+		return noteStartStr + n.Attr["unicode raw"] + noteEndStr
 
 	}
 
@@ -255,7 +267,7 @@ func noteStringOpenTxt(n *Node) string {
 
 	output.Reset()
 
-	addToStringsBuilder(output, noteStartStr, n.Attr["raw"], noteEndStr)
+	addToStringsBuilder(output, noteStartStr, n.RawString(), noteEndStr)
 
 	if n.isBlockFormat() {
 
@@ -271,7 +283,20 @@ func noteStringCloseTxt(n *Node) string {
 
 	output.Reset()
 
-	addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
+	if o_jis0208 {
+
+		addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
+
+	} else {
+		if n.Attr["raw unicode closer"] != "" {
+
+			addToStringsBuilder(output, noteStartStr, n.Attr["raw unicode closer"], noteEndStr)
+
+		} else {
+
+			addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
+		}
+	}
 
 	if n.isBlockFormat() {
 
@@ -281,27 +306,6 @@ func noteStringCloseTxt(n *Node) string {
 
 	return output.String()
 
-	/*
-		if n.isJiage() {
-
-			return ""
-
-		}
-
-		if n.isJisage() {
-
-			if n.next != nil {
-
-				if n.next.isJisage() {
-
-					return ""
-				}
-			}
-
-		}
-
-
-	*/
 }
 
 func indentationOpenTxt(n *Node) string {
@@ -310,7 +314,7 @@ func indentationOpenTxt(n *Node) string {
 
 	if n.firstChild.Attr["type"] == "section title" {
 
-		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
+		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.RawString(), blockStartStr), noteEndStr)
 
 		return output.String()
 
@@ -365,17 +369,15 @@ func sectionTitleCloseTxt(n *Node) string {
 
 func bibinfostringTxt(n *Node) string {
 
-	if n.Attr["raw"] == "底本：" {
-		return n.Attr["raw"]
+	if n.RawString() == "底本：" {
+		return n.RawString()
 	}
 
-	return noteStartStr + n.Attr["raw"] + noteEndStr + lineBreakStr
+	return noteStartStr + n.RawString() + noteEndStr + lineBreakStr
 
 }
 
 func captionOpenTxt(n *Node) string {
-
-	//	return "［＃ここからキャプション］\n"
 
 	if n.innerParagraphCount() > 1 {
 
@@ -389,8 +391,6 @@ func captionOpenTxt(n *Node) string {
 
 func captionCloseTxt(n *Node) string {
 
-	//	return "［＃ここでキャプション終わり］\n"
-
 	if n.innerParagraphCount() > 1 {
 
 		return "［＃ここでキャプション終わり］\n"
@@ -402,7 +402,7 @@ func captionCloseTxt(n *Node) string {
 
 func gaijiNoteOpenTxt(n *Node) string {
 
-	return noteStartStr + strings.TrimPrefix(n.Attr["raw"], referenceMarkStr+"は") + noteEndStr
+	return noteStartStr + strings.TrimPrefix(n.RawString(), referenceMarkStr+"は") + noteEndStr
 
 }
 
@@ -426,13 +426,7 @@ func specialCharOpenTxt(n *Node) string {
 
 func gaijiCharOpenTxt(n *Node) string {
 
-	if o_jis0208 {
-
-		return n.Attr["raw"]
-
-	}
-
-	return n.Attr["alt raw"]
+	return n.RawString()
 
 }
 
@@ -443,24 +437,19 @@ func accentOpenTxt(n *Node) string {
 		return accentStartStr + n.Attr["raw"] + accentEndStr
 	}
 
-	return n.Attr["alt raw"]
+	return n.Attr["unicode raw"]
 
 }
 
 func kunojiOpenTxt(n *Node) string {
 
-	if o_jis0208 {
-
-		return n.Attr["raw"]
-	}
-
-	return n.Attr["alt raw"]
+	return n.RawString()
 
 }
 
 func bibInfoOpenTxt(n *Node) string {
 
-	if n.Attr["raw"] != "" {
+	if n.RawString() != "" {
 
 		return noteStartStr + "本文終わり" + noteEndStr + "\n"
 	}

@@ -157,7 +157,7 @@ func azrHtmlFormatterOpen(n *Node) string {
 		return ""
 
 	default:
-		return n.Attr["raw"]
+		return unknownOpenHtml(n)
 	}
 
 }
@@ -386,7 +386,7 @@ func rubyLikeCloseHtml(n *Node) string {
 
 	} else {
 
-		output.WriteString(getRefStrings(n.Attr["raw closer"])[0])
+		output.WriteString(getRefStrings(n.RawCloserString())[0])
 
 	}
 
@@ -586,7 +586,7 @@ func inlineNoteOpenHtml(n *Node) string {
 
 	h.addClass("warichu")
 
-	s := strings.Split(n.innerText(), "\n")
+	s := strings.Split(renderInnerAozoraText(n), "［＃改行］")
 
 	l := 0
 
@@ -1028,7 +1028,7 @@ func specialCharOpenHtml(n *Node) string {
 		return n.Attr["raw"]
 	}
 
-	return n.Attr["alt raw"]
+	return n.Attr["unicode raw"]
 
 }
 
@@ -1039,7 +1039,7 @@ func gaijiCharOpenHtml(n *Node) string {
 		return n.Attr["raw"]
 	}
 
-	return n.Attr["alt raw"]
+	return n.Attr["unicode raw"]
 
 }
 
@@ -1050,7 +1050,7 @@ func kunojiOpenHtml(n *Node) string {
 		return n.Attr["raw"]
 	}
 
-	return n.Attr["alt raw"]
+	return n.Attr["unicode raw"]
 
 }
 
@@ -1183,5 +1183,11 @@ func rubyCloseHtml(n *Node) string {
 func accentOpenHtml(n *Node) string {
 
 	return accentOpenTxt(n)
+
+}
+
+func unknownOpenHtml(n *Node) string {
+
+	return noteStartStr + n.Attr["raw"] + noteEndStr
 
 }

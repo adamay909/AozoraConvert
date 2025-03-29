@@ -39,7 +39,7 @@ func prepText(text string) []string {
 	return rt
 }
 
-func isAozoraText(text string) bool {
+func _isAozoraText(text string) bool {
 
 	idx1 := strings.Index(text, markupNoteStartStr)
 
