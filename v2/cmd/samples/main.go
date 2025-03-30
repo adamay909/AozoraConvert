@@ -54,13 +54,16 @@ func main() {
 			continue
 		}
 
+		w := new(strings.Builder)
 		fmt.Println()
 
 		fmt.Println("生成された青空注記:")
 
 		fmt.Println()
 
-		fmt.Println(ac.RenderAozoraText(n))
+		ac.RenderAozoraText(n, w)
+
+		fmt.Println(w)
 
 		if n.HasDescendantOfType("gaiji char") || n.HasDescendantOfType("accent string") || n.HasDescendantOfType("special char") || n.HasDescendantOfType("gaiji node") {
 
@@ -70,7 +73,11 @@ func main() {
 
 			fmt.Println("JIS0208互換で生成された注記:")
 
-			fmt.Println(ac.RenderAozoraText(n))
+			w.Reset()
+
+			ac.RenderAozoraText(n, w)
+
+			fmt.Println(w)
 
 			ac.SetJIS0208(false)
 
@@ -82,7 +89,11 @@ func main() {
 
 		fmt.Println()
 
-		fmt.Println(ac.RenderHTML(n))
+		w.Reset()
+
+		ac.RenderHTML(n, w)
+
+		fmt.Println(w)
 
 		fmt.Println()
 
@@ -90,7 +101,11 @@ func main() {
 
 		fmt.Println()
 
-		fmt.Println(ac.RenderJSON(n))
+		w.Reset()
+
+		ac.RenderJSON(n, w)
+
+		fmt.Println(w)
 
 		fmt.Println()
 

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"unicode/utf8"
 
 	ac "github.com/adamay909/AozoraConvert/v2"
@@ -73,7 +74,7 @@ func init() {
 	ac.SetFragment(*frag)
 }
 
-var renderer func(*ac.Node) string
+var renderer func(*ac.Node, *strings.Builder)
 
 func main() {
 
@@ -110,7 +111,11 @@ func main() {
 
 	}
 
-	converted := renderer(ast)
+	w := new(strings.Builder)
+
+	renderer(ast, w)
+
+	converted := w.String()
 
 	if *sjisOut {
 

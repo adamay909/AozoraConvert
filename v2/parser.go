@@ -539,7 +539,7 @@ func getAST(t *token) (nd *Node, err error) {
 		fmt.Println("last node is ", prevNode.Attr["type"])
 		fmt.Println("Parent is ", prevNode.Parent().Attr["type"])
 
-		for _, e := range linearize(document) {
+		for _, e := range linearizeNode(document) {
 
 			if !e.closed {
 				log.Print("unclosed node: ")

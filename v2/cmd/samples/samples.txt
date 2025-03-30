@@ -26,27 +26,37 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "頗る理論の品価を増たるもの多し。明治八年三月二十五日、福沢諭吉記。"
+		"raw": "頗る理論の品価を増たるもの多し。明治八年三月二十五日、福沢諭吉記。",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "pagination",
-	"raw": "改丁"
+	"raw": "改丁",
+	"unicode raw": ""
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "軽重、長短、善悪、是非等の字は、相対したる考えより生じたるものなり。"
+		"raw": "軽重、長短、善悪、是非等の字は、相対したる考えより生じたるものなり。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -73,11 +83,13 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "pagination",
-	"raw": "改ページ"
+	"raw": "改ページ",
+	"unicode raw": ""
 	}
 	]
 }
@@ -102,11 +114,13 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "pagination",
-	"raw": "改見開き"
+	"raw": "改見開き",
+	"unicode raw": ""
 	}
 	]
 }
@@ -131,11 +145,13 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "pagination",
-	"raw": "改段"
+	"raw": "改段",
+	"unicode raw": ""
 	}
 	]
 }
@@ -168,22 +184,30 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから３字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "3",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "灰いろの抽象の世に住まんには濃きに過ぎたる煩悩の色"
+			"raw": "灰いろの抽象の世に住まんには濃きに過ぎたる煩悩の色",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -218,22 +242,30 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから３字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "3",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "灰いろの抽象の世に住まんには濃きに過ぎたる煩悩の色"
+			"raw": "灰いろの抽象の世に住まんには濃きに過ぎたる煩悩の色",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -268,22 +300,30 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから５字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "5",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "白は大正七年一月十四日の夜半病死し、赤沢君の山の上の小家の梅の木陰に葬られました。"
+			"raw": "白は大正七年一月十四日の夜半病死し、赤沢君の山の上の小家の梅の木陰に葬られました。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -334,22 +374,30 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから２字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "神様、私の死にます日が美しく清らかでありますやうに。"
+			"raw": "神様、私の死にます日が美しく清らかでありますやうに。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -360,42 +408,61 @@
 	"raw": "ここから４字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "4",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "私の文学上のまた他の不安が、そして生涯の皮肉が、きつと私の額の大きな疲れを離れるでせう"
+			"raw": "私の文学上のまた他の不安が、そして生涯の皮肉が、きつと私の額の大きな疲れを離れるでせう",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "この日が大きな平和のうちにありますやうに。"
+			"raw": "この日が大きな平和のうちにありますやうに。",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "私が死を望むのは、それは全く身振りを作る者達のやうにではありません、本当に全く素朴に、"
+			"raw": "私が死を望むのは、それは全く身振りを作る者達のやうにではありません、本当に全く素朴に、",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "人形のやうに、小さな子供のやうにです。……"
+			"raw": "人形のやうに、小さな子供のやうにです。……",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -433,31 +500,43 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから２字下げ、折り返して３字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "-1",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "3",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "一、托児所は、村から追放された富農ブガーノフの小舎におくこと。"
+			"raw": "一、托児所は、村から追放された富農ブガーノフの小舎におくこと。",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "一、集団農場と村ソヴェト衛生委員会との協力によって毎月二十ルーブリ支出し、ブローホフ村の医者を七日に一遍ずつまねくこと。"
+			"raw": "一、集団農場と村ソヴェト衛生委員会との協力によって毎月二十ルーブリ支出し、ブローホフ村の医者を七日に一遍ずつまねくこと。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -495,31 +574,43 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから改行天付き、折り返して１字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "-1",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "1",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "一　余死せば朝日新聞社より多少の涙金渡るべし"
+			"raw": "一　余死せば朝日新聞社より多少の涙金渡るべし",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "一　此金を受取りたる時は年齢に拘らず平均に六人の家族に頭割りにすべし例せば社より六百円渡りたる時は頭割にして一人の所得百円となる計算也"
+			"raw": "一　此金を受取りたる時は年齢に拘らず平均に六人の家族に頭割りにすべし例せば社より六百円渡りたる時は頭割にして一人の所得百円となる計算也",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -592,31 +683,43 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから２字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（叫ぶ。）「何だ。まっくらじゃないか。今ごろになってまだあかりも点けんのか。」"
+			"raw": "（叫ぶ。）「何だ。まっくらじゃないか。今ごろになってまだあかりも点けんのか。」",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "兵士等辛うじて立ちあがり挙手の礼。"
+			"raw": "兵士等辛うじて立ちあがり挙手の礼。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -627,15 +730,22 @@
 	"raw": "ここから改行天付き、折り返して１字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "-1",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "1",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "大将「灯をつけろ、間抜けめ。」"
+			"raw": "大将「灯をつけろ、間抜けめ。」",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -646,15 +756,22 @@
 	"raw": "ここから２字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "曹長点燈す。兵士等大将のエボレット勲章等を見て食せんとするの衝動甚し。"
+			"raw": "曹長点燈す。兵士等大将のエボレット勲章等を見て食せんとするの衝動甚し。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -665,15 +782,22 @@
 	"raw": "ここから改行天付き、折り返して１字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "-1",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "1",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "大将「間抜けめ、どれもみんなまるで泥人形だ。」"
+			"raw": "大将「間抜けめ、どれもみんなまるで泥人形だ。」",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -684,15 +808,22 @@
 	"raw": "ここから２字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "脚を重ねて椅子に座す。ポケットより新聞と老眼鏡とを取り出し殊更に顔をしかめつつこれを読む。しきりにゲップす。やがて睡る。"
+			"raw": "脚を重ねて椅子に座す。ポケットより新聞と老眼鏡とを取り出し殊更に顔をしかめつつこれを読む。しきりにゲップす。やがて睡る。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -703,15 +834,22 @@
 	"raw": "ここから改行天付き、折り返して１字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "-1",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "1",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "曹長（低く。）「大将の勲章は実に甘そうだなあ。」"
+			"raw": "曹長（低く。）「大将の勲章は実に甘そうだなあ。」",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -756,22 +894,30 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから２字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "恋しき恋しき恋しき"
+			"raw": "恋しき恋しき恋しき",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -782,15 +928,22 @@
 	"raw": "ここから４字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "4",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "武男様"
+			"raw": "武男様",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -801,15 +954,22 @@
 	"raw": "ここから７字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "7",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "御もとへ"
+			"raw": "御もとへ",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -845,14 +1005,19 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "四月に於けるわが収入は、金五十二円八十銭であった。大学卒業後今日までに於ける最低収入の月であった。記憶に値する。"
+		"raw": "四月に於けるわが収入は、金五十二円八十銭であった。大学卒業後今日までに於ける最低収入の月であった。記憶に値する。",
+		"unicode raw": ""
 		}
 		]
 	},
@@ -861,14 +1026,21 @@
 	"raw": "ここから地付き",
 	"raw closer": "ここで地付き終わり",
 	"bottom margin": "0",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（この日記終り）"
+			"raw": "（この日記終り）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -897,23 +1069,32 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "二人はそれぎり黙って風呂へはいった。"
+		"raw": "二人はそれぎり黙って風呂へはいった。",
+		"unicode raw": ""
 		},
 		{
 		"type": "bottom align",
 		"raw": "地付き",
 		"bottom margin": "0",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（掲載誌不詳、『十番随筆』所収）"
+			"raw": "（掲載誌不詳、『十番随筆』所収）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -954,14 +1135,19 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "さう思ひながら、私はここにこの思ひ出、第十一の筆を擱く。"
+		"raw": "さう思ひながら、私はここにこの思ひ出、第十一の筆を擱く。",
+		"unicode raw": ""
 		}
 		]
 	},
@@ -970,23 +1156,34 @@
 	"raw": "ここから地付き",
 	"raw closer": "ここで地付き終わり",
 	"bottom margin": "0",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "┌昭和十八年四月二十四日稿了┐"
+			"raw": "┌昭和十八年四月二十四日稿了┐",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "└　　同　　四月二十九日清書┘"
+			"raw": "└　　同　　四月二十九日清書┘",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -1025,14 +1222,19 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "さう思ひながら、私はここにこの思ひ出、第十一の筆を擱く。"
+		"raw": "さう思ひながら、私はここにこの思ひ出、第十一の筆を擱く。",
+		"unicode raw": ""
 		}
 		]
 	},
@@ -1041,27 +1243,39 @@
 	"raw": "ここから地付き",
 	"raw closer": "ここで地付き終わり",
 	"bottom margin": "0",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "inline note",
 			"raw": "割り注",
 			"raw closer": "割り注終わり",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "昭和十八年四月二十四日稿了"
+				"raw": "昭和十八年四月二十四日稿了",
+				"unicode raw": ""
 				},
 				{
 				"type": "warichu line break",
-				"raw": "改行"
+				"raw": "改行",
+				"unicode raw": ""
 				},
 				{
 				"type": "text",
-				"raw": "　　同　　四月二十九日清書"
+				"raw": "　　同　　四月二十九日清書",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -1099,14 +1313,19 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "自分らの欠点を改善し、また自分らの過誤を除去することは、実に自分らの幸福と言わねばならない。"
+		"raw": "自分らの欠点を改善し、また自分らの過誤を除去することは、実に自分らの幸福と言わねばならない。",
+		"unicode raw": ""
 		}
 		]
 	},
@@ -1115,14 +1334,21 @@
 	"raw": "ここから地から２字上げ",
 	"raw closer": "ここで字上げ終わり",
 	"bottom margin": "2",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（昭和十一年五月、麻布飯倉にて）"
+			"raw": "（昭和十一年五月、麻布飯倉にて）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -1151,23 +1377,32 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "まれに、きわめてまれに、天の焔を取って来てこの境界のガラス板をすっかり熔かしてしまう人がある。"
+		"raw": "まれに、きわめてまれに、天の焔を取って来てこの境界のガラス板をすっかり熔かしてしまう人がある。",
+		"unicode raw": ""
 		},
 		{
 		"type": "bottom align",
 		"raw": "地から１字上げ",
 		"bottom margin": "1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（大正九年五月、渋柿）"
+			"raw": "（大正九年五月、渋柿）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -1208,14 +1443,19 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "推定十万ポンドに達している。"
+		"raw": "推定十万ポンドに達している。",
+		"unicode raw": ""
 		}
 		]
 	},
@@ -1224,23 +1464,34 @@
 	"raw": "ここから地から１字上げ",
 	"raw closer": "ここで字上げ終わり",
 	"bottom margin": "1",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "――一九七一年四月二十七日付"
+			"raw": "――一九七一年四月二十七日付",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "　　　　　　≪ザ・タイムズ≫"
+			"raw": "　　　　　　≪ザ・タイムズ≫",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -1296,57 +1547,76 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "subsectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "centering",
 		"raw": "ページの左右中央",
 		"offset": "left",
+		"raw unicode closer": "",
 		"scope": "block",
+		"unicode raw": ""
+,
 		"children": [
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
 			"type": "indentation",
 			"raw": "ここから３字下げ",
 			"raw closer": "ここで字下げ終わり",
 			"indent": "0",
+			"raw unicode closer": "",
 			"scope": "block",
 			"top margin": "3",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "section title",
 				"raw": "中見出し",
 				"raw closer": "中見出し終わり",
 				"id": "sec1",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "短章　その一"
+					"raw": "短章　その一",
+					"unicode raw": ""
 					}
 					]
 				}
 				]
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "pagination",
-		"raw": "改ページ"
+		"raw": "改ページ",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -1407,77 +1677,105 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "centering",
 	"raw": "ページの左右中央",
 	"offset": "left",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
-		"type": "empty line"
+		"type": "empty line",
+		"unicode raw": ""
 		},
 		{
-		"type": "empty line"
+		"type": "empty line",
+		"unicode raw": ""
 		},
 		{
 		"type": "indentation",
 		"raw": "ここから５字下げ",
 		"raw closer": "ここで字下げ終わり",
 		"indent": "0",
+		"raw unicode closer": "",
 		"scope": "block",
 		"top margin": "5",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "棄てた一粒の柿の種"
+				"raw": "棄てた一粒の柿の種",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "生えるも生えぬも"
+				"raw": "生えるも生えぬも",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "甘いも渋いも"
+				"raw": "甘いも渋いも",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "畑の土のよしあし"
+				"raw": "畑の土のよしあし",
+				"unicode raw": ""
 				}
 				]
 			}
 			]
 		},
 		{
-		"type": "empty line"
+		"type": "empty line",
+		"unicode raw": ""
 		},
 		{
-		"type": "empty line"
+		"type": "empty line",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "pagination",
-	"raw": "改ページ"
+	"raw": "改ページ",
+	"unicode raw": ""
 	}
 	]
 }
@@ -1525,57 +1823,76 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "sectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "centering",
 		"raw": "ページの左右中央",
 		"offset": "left",
+		"raw unicode closer": "",
 		"scope": "block",
+		"unicode raw": ""
+,
 		"children": [
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			},
 			{
 			"type": "indentation",
 			"raw": "ここから３字下げ",
 			"raw closer": "ここで字下げ終わり",
 			"indent": "0",
+			"raw unicode closer": "",
 			"scope": "block",
 			"top margin": "3",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "section title",
 				"raw": "大見出し",
 				"raw closer": "大見出し終わり",
 				"id": "sec1",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "海道東征"
+					"raw": "海道東征",
+					"unicode raw": ""
 					}
 					]
 				}
 				]
 			},
 			{
-			"type": "empty line"
+			"type": "empty line",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "pagination",
-		"raw": "改ページ"
+		"raw": "改ページ",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -1610,29 +1927,40 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "sectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "indentation",
 		"raw": "ここから２字下げ",
 		"raw closer": "ここで字下げ終わり",
 		"indent": "0",
+		"raw unicode closer": "",
 		"scope": "block",
 		"top margin": "2",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "section title",
 			"raw": "大見出し",
 			"raw closer": "大見出し終わり",
 			"id": "sec1",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "上　先生と私"
+				"raw": "上　先生と私",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -1667,29 +1995,40 @@
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "subsectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "indentation",
 		"raw": "ここから５字下げ",
 		"raw closer": "ここで字下げ終わり",
 		"indent": "0",
+		"raw unicode closer": "",
 		"scope": "block",
 		"top margin": "5",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "section title",
 			"raw": "中見出し",
 			"raw closer": "中見出し終わり",
 			"id": "sec1",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "一"
+				"raw": "一",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -1726,17 +2065,24 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "subsectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "section title",
 		"raw": "中見出し",
 		"raw closer": "中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "gaiji char",
@@ -1772,33 +2118,48 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "subsectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "section title",
 		"raw": "中見出し",
 		"raw closer": "中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "亜細亜"
+				"raw": "亜細亜",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "アジア"
+					"raw": "アジア",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -1806,23 +2167,32 @@ JIS0208互換で生成された注記:
 			},
 			{
 			"type": "text",
-			"raw": "の"
+			"raw": "の",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "曙"
+				"raw": "曙",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "あけぼの"
+					"raw": "あけぼの",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -1865,34 +2235,49 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "sectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "section title",
 		"raw": "ここから大見出し",
 		"raw closer": "ここで大見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
 		"scope": "block",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "○○○○○○○○○○"
+				"raw": "○○○○○○○○○○",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "○○○○○○○○○○"
+				"raw": "○○○○○○○○○○",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -1937,42 +2322,60 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "subsectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "indentation",
 		"raw": "ここから○字下げ",
 		"raw closer": "ここで字下げ終わり",
 		"indent": "0",
+		"raw unicode closer": "",
 		"scope": "block",
 		"top margin": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "section title",
 			"raw": "ここから中見出し",
 			"raw closer": "ここで中見出し終わり",
 			"id": "sec1",
+			"raw unicode closer": "",
 			"scope": "block",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "paragraph",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "○○○○○○○○○○"
+					"raw": "○○○○○○○○○○",
+					"unicode raw": ""
 					}
 					]
 				},
 				{
 				"type": "paragraph",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "○○○○○○○○○○"
+					"raw": "○○○○○○○○○○",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -2005,26 +2408,35 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "inline section",
 		"raw": "同行中見出し",
 		"raw closer": "同行中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "入藏を思ひ立ツた原因"
+			"raw": "入藏を思ひ立ツた原因",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "　でありまして"
+		"raw": "　でありまして",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2051,30 +2463,40 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "入藏を思ひ立ツた"
+		"raw": "入藏を思ひ立ツた",
+		"unicode raw": ""
 		},
 		{
 		"type": "inline section",
 		"raw": "同行中見出し",
 		"raw closer": "同行中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "原因"
+			"raw": "原因",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "　でありまして"
+		"raw": "　でありまして",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2101,20 +2523,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "inline section",
 		"raw": "同行中見出し",
 		"raw closer": "同行中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "○○○○○"
+			"raw": "○○○○○",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -2143,26 +2573,35 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "window section",
 		"raw": "窓中見出し",
 		"raw closer": "窓中見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "龍王岬"
+			"raw": "龍王岬",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "　峨々たる岩岬海中に兀出す。"
+		"raw": "　峨々たる岩岬海中に兀出す。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2189,20 +2628,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "window section",
 		"raw": "窓小見出し",
 		"raw closer": "窓小見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "○○○○○"
+			"raw": "○○○○○",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -2239,10 +2686,14 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "gaiji char",
@@ -2278,10 +2729,14 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "gaiji char",
@@ -2314,18 +2769,24 @@ gaiji conversion failed: line 1: gaijiToken: ※［＃「土へん＋竒」、�
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "※"
+		"raw": "※",
+		"unicode raw": ""
 		},
 		{
 		"type": "gaiji note",
-		"raw": "※は「土へん＋竒」、ページ数-行数"
+		"raw": "※は「土へん＋竒」、ページ数-行数",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2356,10 +2817,14 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "gaiji char",
@@ -2395,10 +2860,14 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "gaiji char",
@@ -2434,14 +2903,19 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "繁雑な日本の "
+		"raw": "繁雑な日本の ",
+		"unicode raw": ""
 		},
 		{
 		"type": "accent string",
@@ -2450,7 +2924,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": " も"
+		"raw": " も",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2493,19 +2968,27 @@ Son coeur est un luth suspendu;
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "Son coeur est un luth suspendu;"
+		"raw": "Son coeur est un luth suspendu;",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "accent string",
@@ -2516,19 +2999,27 @@ Son coeur est un luth suspendu;
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "「彼が心は懸かれる琵琶にして、"
+		"raw": "「彼が心は懸かれる琵琶にして、",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "触るればたちまち鳴りひびく」"
+		"raw": "触るればたちまち鳴りひびく」",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2559,14 +3050,19 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "'bless"
+		"raw": "'bless",
+		"unicode raw": ""
 		},
 		{
 		"type": "accent string",
@@ -2575,7 +3071,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "e'"
+		"raw": "e'",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2606,38 +3103,49 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "自"
+		"raw": "自",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "二"
+		"raw": "二",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "女王國"
+		"raw": "女王國",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "一"
+		"raw": "一",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "東度"
+		"raw": "東度",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "レ"
+		"raw": "レ",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "海千餘里。"
+		"raw": "海千餘里。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2664,30 +3172,39 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "見"
+		"raw": "見",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "二"
+		"raw": "二",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "大人所"
+		"raw": "大人所",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "一レ"
+		"raw": "一レ",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "敬。"
+		"raw": "敬。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2714,30 +3231,39 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "山城"
+		"raw": "山城",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ノ）"
+		"raw": "（ノ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "國久世"
+		"raw": "國久世",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ノ）"
+		"raw": "（ノ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "郡水主"
+		"raw": "郡水主",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2764,38 +3290,49 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "爾時倭姫命見悦給"
+		"raw": "爾時倭姫命見悦給",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（弖）"
+		"raw": "（弖）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "、其處"
+		"raw": "、其處",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（爾）"
+		"raw": "（爾）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "魚見社定賜"
+		"raw": "魚見社定賜",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（支）"
+		"raw": "（支）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "とあり。"
+		"raw": "とあり。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2822,58 +3359,74 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "噛"
+		"raw": "噛",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（テ）"
+		"raw": "（テ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "二"
+		"raw": "二",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "古人貧交行"
+		"raw": "古人貧交行",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ノ）"
+		"raw": "（ノ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "之詩"
+		"raw": "之詩",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ヲ）"
+		"raw": "（ヲ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "一"
+		"raw": "一",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "吐"
+		"raw": "吐",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（テ）"
+		"raw": "（テ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "而戯序"
+		"raw": "而戯序",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ス）"
+		"raw": "（ス）",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2900,50 +3453,65 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左にルビ付き",
 		"raw closer": "左に「ザル」のルビ付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "未"
+			"raw": "未",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "okurigana",
-		"raw": "（ダ）"
+		"raw": "（ダ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "レ"
+		"raw": "レ",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "若"
+		"raw": "若",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（カ）"
+		"raw": "（カ）",
+		"unicode raw": ""
 		},
 		{
 		"type": "kunten",
-		"raw": "二"
+		"raw": "二",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "貧"
+		"raw": "貧",
+		"unicode raw": ""
 		},
 		{
 		"type": "okurigana",
-		"raw": "（シクシテ）"
+		"raw": "（シクシテ）",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -2974,31 +3542,41 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "腹がへっても、"
+		"raw": "腹がへっても、",
+		"unicode raw": ""
 		},
 		{
 		"type": "emphasis",
 		"raw": "傍点",
 		"raw closer": "傍点終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "ひもじゅうない"
+			"raw": "ひもじゅうない",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "とかぶりを振っている"
+		"raw": "とかぶりを振っている",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3025,27 +3603,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "emphasis",
 		"raw": "丸傍点",
 		"raw closer": "丸傍点終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "丸傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "責"
+			"raw": "責",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "空文庫"
+		"raw": "空文庫",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3072,27 +3659,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "emphasis",
 		"raw": "ばつ傍点",
 		"raw closer": "ばつ傍点終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "ばつ傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "責"
+			"raw": "責",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "空文庫"
+		"raw": "空文庫",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3119,27 +3715,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "emphasis",
 		"raw": "白ゴマ傍点",
 		"raw closer": "白ゴマ傍点終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "白ゴマ傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫で読書しよう"
+			"raw": "青空文庫で読書しよう",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "。"
+		"raw": "。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3166,27 +3771,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "emphasis",
 		"raw": "左に蛇の目傍点",
 		"raw closer": "左に蛇の目傍点終わり",
 		"position": "left",
+		"raw unicode closer": "",
 		"style": "蛇の目傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "責"
+			"raw": "責",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "空文庫"
+		"raw": "空文庫",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3213,27 +3827,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "emphasis",
 		"raw": "左に黒三角傍点",
 		"raw closer": "左に黒三角傍点終わり",
 		"position": "left",
+		"raw unicode closer": "",
 		"style": "黒三角傍点",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫で読書しよう"
+			"raw": "青空文庫で読書しよう",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "。"
+		"raw": "。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3260,31 +3883,41 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "この形は"
+		"raw": "この形は",
+		"unicode raw": ""
 		},
 		{
 		"type": "line decoration",
 		"raw": "傍線",
 		"raw closer": "傍線終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "傍線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "傍線"
+			"raw": "傍線",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "と書いてください。"
+		"raw": "と書いてください。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3311,27 +3944,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "line decoration",
 		"raw": "鎖線",
 		"raw closer": "鎖線終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "鎖線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "責"
+			"raw": "責",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "空文庫"
+		"raw": "空文庫",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3358,27 +4000,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "line decoration",
 		"raw": "二重傍線",
 		"raw closer": "二重傍線終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "二重傍線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫で読書しよう"
+			"raw": "青空文庫で読書しよう",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "。"
+		"raw": "。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3405,27 +4056,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "line decoration",
 		"raw": "左に波線",
 		"raw closer": "左に波線終わり",
 		"position": "left",
+		"raw unicode closer": "",
 		"style": "波線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "責"
+			"raw": "責",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "空文庫"
+		"raw": "空文庫",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3452,27 +4112,36 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "line decoration",
 		"raw": "左に破線",
 		"raw closer": "左に破線終わり",
 		"position": "left",
+		"raw unicode closer": "",
 		"style": "破線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫で読書しよう"
+			"raw": "青空文庫で読書しよう",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "。"
+		"raw": "。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3503,30 +4172,40 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "宇宙航行委員会が"
+		"raw": "宇宙航行委員会が",
+		"unicode raw": ""
 		},
 		{
 		"type": "font shape",
 		"raw": "太字",
 		"raw closer": "太字終わり",
 		"font shape": "太字",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "選考"
+			"raw": "選考",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "するんだ。"
+		"raw": "するんだ。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -3553,20 +4232,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "font shape",
 		"raw": "太字",
 		"raw closer": "太字終わり",
 		"font shape": "太字",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "クリス、宇宙航行委員会が選考するんだ。きみは志願できない。待つんだ"
+			"raw": "クリス、宇宙航行委員会が選考するんだ。きみは志願できない。待つんだ",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3601,21 +4288,29 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "font shape",
 	"raw": "ここから太字",
 	"raw closer": "ここで太字終わり",
 	"font shape": "太字",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。"
+			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3644,24 +4339,33 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "Which, teaching us, hath this exordium: "
+		"raw": "Which, teaching us, hath this exordium: ",
+		"unicode raw": ""
 		},
 		{
 		"type": "font shape",
 		"raw": "斜体",
 		"raw closer": "斜体終わり",
 		"font shape": "斜体",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "Nothing from nothing ever yet was born."
+			"raw": "Nothing from nothing ever yet was born.",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3690,20 +4394,28 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "font shape",
 		"raw": "斜体",
 		"raw closer": "斜体終わり",
 		"font shape": "斜体",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "クリス、宇宙航行委員会が選考するんだ。きみは志願できない。待つんだ"
+			"raw": "クリス、宇宙航行委員会が選考するんだ。きみは志願できない。待つんだ",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3738,21 +4450,29 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "font shape",
 	"raw": "ここから斜体",
 	"raw closer": "ここで斜体終わり",
 	"font shape": "斜体",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。"
+			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3787,11 +4507,15 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "figure",
 	"id": "fig1",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "image",
@@ -3799,6 +4523,7 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		"alt text": "コンドル博士の図",
 		"file": "fig47728_06.png",
 		"height": "322",
+		"unicode raw": "",
 		"width": "320"
 		}
 		]
@@ -3833,11 +4558,15 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "figure",
 	"id": "fig1",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "image",
@@ -3845,16 +4574,21 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		"alt text": "「阿耨達池とカイラス雪峰」のキャプション付きの図",
 		"file": "fig49966_15.png",
 		"height": "350",
+		"unicode raw": "",
 		"width": "453"
 		},
 		{
 		"type": "caption",
 		"raw": "キャプション",
 		"raw closer": "キャプション終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "阿耨達池とカイラス雪峰"
+			"raw": "阿耨達池とカイラス雪峰",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3890,11 +4624,15 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "figure",
 	"id": "fig1",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "image",
@@ -3902,16 +4640,21 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		"alt text": "「阿耨達池とカイラス雪峰」のキャプション付きの図",
 		"file": "fig49966_15.png",
 		"height": "350",
+		"unicode raw": "",
 		"width": "453"
 		},
 		{
 		"type": "caption",
 		"raw": "キャプション",
 		"raw closer": "キャプション終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "阿耨達池とカイラス雪峰"
+			"raw": "阿耨達池とカイラス雪峰",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -3935,9 +4678,10 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 
 ［＃「第３図『雪華図説』図版第十面」のキャプション付きの図（fig52468_15.png、横360×縦507）入る］
 ［＃ここからキャプション］
-第３図『雪華図説』図版第十面
+［＃キャプション］第３図『雪華図説』図版第十面
 　本図は加納一郎氏所蔵原本より複写したもので，貴重な原本を貸与された同氏の厚志を謝す．なお文久二年大槻磐渓の重刻本もただ一箇順序のちがったものがあるが，図は原本と同じものである．
 ［＃ここでキャプション終わり］
+［＃キャプション終わり］
 
 
 生成されたHTML:
@@ -3954,11 +4698,15 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "figure",
 	"id": "fig1",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "image",
@@ -3966,29 +4714,41 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		"alt text": "「第３図『雪華図説』図版第十面」のキャプション付きの図",
 		"file": "fig52468_15.png",
 		"height": "507",
+		"unicode raw": "",
 		"width": "360"
 		},
 		{
 		"type": "caption",
 		"raw": "ここからキャプション",
 		"raw closer": "ここでキャプション終わり",
+		"raw unicode closer": "",
 		"scope": "block",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "第３図『雪華図説』図版第十面"
+				"raw": "第３図『雪華図説』図版第十面",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "　本図は加納一郎氏所蔵原本より複写したもので，貴重な原本を貸与された同氏の厚志を謝す．なお文久二年大槻磐渓の重刻本もただ一箇順序のちがったものがあるが，図は原本と同じものである．"
+				"raw": "　本図は加納一郎氏所蔵原本より複写したもので，貴重な原本を貸与された同氏の厚志を謝す．なお文久二年大槻磐渓の重刻本もただ一箇順序のちがったものがあるが，図は原本と同じものである．",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4023,24 +4783,33 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "吹"
+		"raw": "吹",
+		"unicode raw": ""
 		},
 		{
 		"type": "rubylike note",
 		"raw": "注記付き",
 		"raw closer": "「ママ」の注記付き終わり",
 		"position": "right",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "喋"
+			"raw": "喋",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4069,22 +4838,29 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "広場へに"
+		"raw": "広場へに",
+		"unicode raw": ""
 		},
 		{
 		"type": "unknown",
-		"raw": "「広場へに」はママ"
+		"raw": "「広場へに」はママ",
+		"unicode raw": ""
 		},
 		{
 		"type": "text",
-		"raw": "店でもだそう。"
+		"raw": "店でもだそう。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -4111,31 +4887,44 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "霧の"
+		"raw": "霧の",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
 		"raw": "｜",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "ロンドン警視庁"
+			"raw": "ロンドン警視庁",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "スコットランドヤード"
+				"raw": "スコットランドヤード",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4166,26 +4955,38 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "〆切"
+			"raw": "〆切",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "しめきり"
+				"raw": "しめきり",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4193,23 +4994,32 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		},
 		{
 		"type": "text",
-		"raw": "を逃れるために、"
+		"raw": "を逃れるために、",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "市ヶ谷"
+			"raw": "市ヶ谷",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "いちがや"
+				"raw": "いちがや",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4217,23 +5027,32 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		},
 		{
 		"type": "text",
-		"raw": "から"
+		"raw": "から",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "転々"
+			"raw": "転々",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "てんてん"
+				"raw": "てんてん",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4241,7 +5060,8 @@ Which, teaching us, hath this exordium: ［＃斜体］Nothing from nothing ever
 		},
 		{
 		"type": "text",
-		"raw": "と、居を移した。"
+		"raw": "と、居を移した。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -4272,17 +5092,25 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "水鉢を置いた"
+		"raw": "水鉢を置いた",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "gaiji char",
@@ -4291,16 +5119,21 @@ JIS0208互換で生成された注記:
 			},
 			{
 			"type": "text",
-			"raw": "子窓"
+			"raw": "子窓",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "れんじまど"
+				"raw": "れんじまど",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4308,7 +5141,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "の下には"
+		"raw": "の下には",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -4339,17 +5173,25 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "それが彼の "
+		"raw": "それが彼の ",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "accent string",
@@ -4360,10 +5202,14 @@ JIS0208互換で生成された注記:
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "エチュード"
+				"raw": "エチュード",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -4371,7 +5217,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": " だった。"
+		"raw": " だった。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -4398,20 +5245,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左にルビ付き",
 		"raw closer": "左に「あおぞらぶんこ」のルビ付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫"
+			"raw": "青空文庫",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4444,16 +5299,23 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左にルビ付き",
 		"raw closer": "左に「れんじまど」のルビ付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "gaiji char",
@@ -4462,7 +5324,8 @@ JIS0208互換で生成された注記:
 			},
 			{
 			"type": "text",
-			"raw": "子窓"
+			"raw": "子窓",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4491,32 +5354,47 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左にルビ付き",
 		"raw closer": "左に「aozora bunko」のルビ付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "青空文庫"
+				"raw": "青空文庫",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "あおぞらぶんこ"
+					"raw": "あおぞらぶんこ",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -4549,20 +5427,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "注記付き",
 		"raw closer": "「ママ」の注記付き終わり",
 		"position": "right",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "大空文庫"
+			"raw": "大空文庫",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4591,20 +5477,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左に注記付き",
 		"raw closer": "左に「ママ」の注記付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "大空文庫"
+			"raw": "大空文庫",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4637,20 +5531,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "注記付き",
 		"raw closer": "「（銘々）」の注記付き終わり",
 		"position": "right",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "名"
+			"raw": "名",
+			"unicode raw": ""
 			},
 			{
 			"type": "gaiji char",
@@ -4685,10 +5587,14 @@ check
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
@@ -4696,10 +5602,13 @@ check
 		"raw closer": "「本ト麟太郎※［＃コト、1-2-24］」の注記付き終わり",
 		"position": "right",
 		"raw unicode closer": "「本ト麟太郎ヿ」の注記付き終わり",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "勝安房守"
+			"raw": "勝安房守",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4732,20 +5641,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左に注記付き",
 		"raw closer": "左に「（銘々）」の注記付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "名"
+			"raw": "名",
+			"unicode raw": ""
 			},
 			{
 			"type": "gaiji char",
@@ -4780,10 +5697,14 @@ check
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
@@ -4791,10 +5712,13 @@ check
 		"raw closer": "左に「本ト麟太郎※［＃コト、1-2-24］」の注記付き終わり",
 		"position": "left",
 		"raw unicode closer": "左に「本ト麟太郎ヿ」の注記付き終わり",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "勝安房守"
+			"raw": "勝安房守",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4823,32 +5747,47 @@ check
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "rubylike note",
 		"raw": "左に注記付き",
 		"raw closer": "左に「ママ」の注記付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "大空文庫"
+				"raw": "大空文庫",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "あおぞらぶんこ"
+					"raw": "あおぞらぶんこ",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -4885,29 +5824,39 @@ check
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "米機Ｂ"
+		"raw": "米機Ｂ",
+		"unicode raw": ""
 		},
 		{
 		"type": "text direction",
 		"raw": "縦中横",
 		"raw closer": "縦中横終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "29"
+			"raw": "29",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "の編隊は、"
+		"raw": "の編隊は、",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -4938,19 +5887,27 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text direction",
 		"raw": "縦中横",
 		"raw closer": "縦中横終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（"
+			"raw": "（",
+			"unicode raw": ""
 			},
 			{
 			"type": "gaiji char",
@@ -4959,7 +5916,8 @@ JIS0208互換で生成された注記:
 			},
 			{
 			"type": "text",
-			"raw": "）"
+			"raw": "）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -4994,20 +5952,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "text direction",
 	"raw": "ここから横組み",
 	"raw closer": "ここで横組み終わり",
+	"raw unicode closer": "",
 	"scope": "block",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "手持現金旧券＋（新円100円×家族人数）＋500円以内の給料＋300円＋（100×Ｘ）"
+			"raw": "手持現金旧券＋（新円100円×家族人数）＋500円以内の給料＋300円＋（100×Ｘ）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5036,29 +6002,39 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "小さく書かれてある"
+		"raw": "小さく書かれてある",
+		"unicode raw": ""
 		},
 		{
 		"type": "text direction",
 		"raw": "横組み",
 		"raw closer": "横組み終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "スハフ"
+			"raw": "スハフ",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": " 134273 とい"
+		"raw": " 134273 とい",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -5085,29 +6061,39 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "それからいきおいよく書きまくった。"
+		"raw": "それからいきおいよく書きまくった。",
+		"unicode raw": ""
 		},
 		{
 		"type": "text direction",
 		"raw": "横組み",
 		"raw closer": "横組み終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "Zenzo Kasai, one of the most unfortunate Japanese novelists at present, said,“"
+			"raw": "Zenzo Kasai, one of the most unfortunate Japanese novelists at present, said,“",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "――葛西善蔵は"
+		"raw": "――葛西善蔵は",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -5138,29 +6124,39 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "理論家の説と"
+		"raw": "理論家の説と",
+		"unicode raw": ""
 		},
 		{
 		"type": "inline note",
 		"raw": "割り注",
 		"raw closer": "割り注終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "ヒロソヒイ"
+			"raw": "ヒロソヒイ",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "政治家の事"
+		"raw": "政治家の事",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -5188,31 +6184,42 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "飽海郡南平田村大字飛鳥"
+		"raw": "飽海郡南平田村大字飛鳥",
+		"unicode raw": ""
 		},
 		{
 		"type": "inline note",
 		"raw": "割り注",
 		"raw closer": "割り注終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "東は字大林四三七"
+			"raw": "東は字大林四三七",
+			"unicode raw": ""
 			},
 			{
 			"type": "warichu line break",
-			"raw": "改行"
+			"raw": "改行",
+			"unicode raw": ""
 			},
 			{
 			"type": "text",
-			"raw": "西は字神内一一一ノ一"
+			"raw": "西は字神内一一一ノ一",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5245,23 +6252,32 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "それ以上である。"
+		"raw": "それ以上である。",
+		"unicode raw": ""
 		},
 		{
 		"type": "offset",
 		"raw": "行右小書き",
 		"raw closer": "行右小書き終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（５）"
+			"raw": "（５）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5290,23 +6306,32 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "それ以上である。"
+		"raw": "それ以上である。",
+		"unicode raw": ""
 		},
 		{
 		"type": "offset",
 		"raw": "行左小書き",
 		"raw closer": "行左小書き終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "（５）"
+			"raw": "（５）",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5339,15 +6364,22 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "offset",
 		"raw": "行右小書き",
 		"raw closer": "行右小書き終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "gaiji char",
@@ -5381,23 +6413,32 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "2"
+		"raw": "2",
+		"unicode raw": ""
 		},
 		{
 		"type": "offset",
 		"raw": "上付き小文字",
 		"raw closer": "上付き小文字終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "2"
+			"raw": "2",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5426,29 +6467,39 @@ H［＃下付き小文字］2［＃下付き小文字終わり］O
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "H"
+		"raw": "H",
+		"unicode raw": ""
 		},
 		{
 		"type": "offset",
 		"raw": "下付き小文字",
 		"raw closer": "下付き小文字終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "2"
+			"raw": "2",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "O"
+		"raw": "O",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -5479,15 +6530,22 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "offset",
 		"raw": "上付き小文字",
 		"raw closer": "上付き小文字終わり",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "gaiji char",
@@ -5531,21 +6589,29 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "narrow paragraph",
 	"raw": "ここから１０字詰め",
 	"raw closer": "ここで字詰め終わり",
+	"raw unicode closer": "",
 	"scope": "block",
-	"width": "10",
+	"unicode raw": "",
+	"width": "10"
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "昭和十五年五月二十九日京都義方会に於ける講演速記で同年八月若干追補した。"
+			"raw": "昭和十五年五月二十九日京都義方会に於ける講演速記で同年八月若干追補した。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5586,29 +6652,40 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから１６字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "16",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "narrow paragraph",
 		"raw": "ここから２０字詰め",
 		"raw closer": "ここで字詰め終わり",
+		"raw unicode closer": "",
 		"scope": "block",
-		"width": "20",
+		"unicode raw": "",
+		"width": "20"
+,
 		"children": [
 			{
 			"type": "paragraph",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "昭和十五年五月二十九日京都義方会に於ける講演速記で同年八月若干追補した。"
+				"raw": "昭和十五年五月二十九日京都義方会に於ける講演速記で同年八月若干追補した。",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -5670,79 +6747,107 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから４字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "4",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "narrow paragraph",
 		"raw": "ここから２８字詰め",
 		"raw closer": "ここで字詰め終わり",
+		"raw unicode closer": "",
 		"scope": "block",
-		"width": "28",
+		"unicode raw": "",
+		"width": "28"
+,
 		"children": [
 			{
 			"type": "line decoration",
 			"raw": "ここから罫囲み",
 			"raw closer": "ここで罫囲み終わり",
+			"raw unicode closer": "",
 			"scope": "block",
 			"style": "罫囲み",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "paragraph",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "仕事を少しでも怠けたと見るときには"
+					"raw": "仕事を少しでも怠けたと見るときには",
+					"unicode raw": ""
 					},
 					{
 					"type": "emphasis",
 					"raw": "傍点",
 					"raw closer": "傍点終わり",
 					"position": "right",
+					"raw unicode closer": "",
 					"style": "傍点",
+					"unicode raw": ""
+,
 					"children": [
 						{
 						"type": "text",
-						"raw": "大焼き"
+						"raw": "大焼き",
+						"unicode raw": ""
 						}
 						]
 					},
 					{
 					"type": "text",
-					"raw": "を入れる。"
+					"raw": "を入れる。",
+					"unicode raw": ""
 					}
 					]
 				},
 				{
 				"type": "paragraph",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "組をなして怠けたものには"
+					"raw": "組をなして怠けたものには",
+					"unicode raw": ""
 					},
 					{
 					"type": "emphasis",
 					"raw": "傍点",
 					"raw closer": "傍点終わり",
 					"position": "right",
+					"raw unicode closer": "",
 					"style": "傍点",
+					"unicode raw": ""
+,
 					"children": [
 						{
 						"type": "text",
-						"raw": "カムサツカ"
+						"raw": "カムサツカ",
+						"unicode raw": ""
 						}
 						]
 					},
 					{
 					"type": "text",
-					"raw": "体操をさせる。"
+					"raw": "体操をさせる。",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -5775,30 +6880,40 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "そして"
+		"raw": "そして",
+		"unicode raw": ""
 		},
 		{
 		"type": "line decoration",
 		"raw": "罫囲み",
 		"raw closer": "罫囲み終わり",
+		"raw unicode closer": "",
 		"style": "罫囲み",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "キ劇の"
+			"raw": "キ劇の",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "犠牲になるようなことは"
+		"raw": "犠牲になるようなことは",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -5825,20 +6940,28 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "line decoration",
 		"raw": "罫囲み",
 		"raw closer": "罫囲み終わり",
+		"raw unicode closer": "",
 		"style": "罫囲み",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "この探偵小説には私が懸賞をだします。犯人を推定した最も優秀な答案に、この小説の解決篇の原稿料を呈上します。"
+			"raw": "この探偵小説には私が懸賞をだします。犯人を推定した最も優秀な答案に、この小説の解決篇の原稿料を呈上します。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5871,21 +6994,29 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "font size",
 		"raw": "２段階大きな文字",
 		"raw closer": "大きな文字終わり",
+		"raw unicode closer": "",
 		"size": "大きな文字",
 		"step": "2",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "県立高女の怪事"
+			"raw": "県立高女の怪事",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5914,21 +7045,29 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "font size",
 		"raw": "１段階小さな文字",
 		"raw closer": "小さな文字終わり",
+		"raw unicode closer": "",
 		"size": "小さな文字",
 		"step": "1",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "本日記事解禁"
+			"raw": "本日記事解禁",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -5982,29 +7121,40 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "indentation",
 	"raw": "ここから３字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "3",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "font size",
 			"raw": "２段階大きな文字",
 			"raw closer": "大きな文字終わり",
+			"raw unicode closer": "",
 			"size": "大きな文字",
 			"step": "2",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "県立高女の怪事"
+				"raw": "県立高女の怪事",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6017,15 +7167,22 @@ JIS0208互換で生成された注記:
 	"raw": "ここから６字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "6",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "ミス黒焦事件"
+			"raw": "ミス黒焦事件",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6036,15 +7193,22 @@ JIS0208互換で生成された注記:
 	"raw": "ここから８字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "8",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "噂は噂を生んで迷宮へ"
+			"raw": "噂は噂を生んで迷宮へ",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6055,28 +7219,41 @@ JIS0208互換で生成された注記:
 	"raw": "ここから５字下げ",
 	"raw closer": "ここで字下げ終わり",
 	"indent": "0",
+	"raw unicode closer": "",
 	"scope": "block",
 	"top margin": "5",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "line decoration",
 			"raw": "罫囲み",
 			"raw closer": "罫囲み終わり",
+			"raw unicode closer": "",
 			"style": "罫囲み",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "font size",
 				"raw": "１段階小さな文字",
 				"raw closer": "小さな文字終わり",
+				"raw unicode closer": "",
 				"size": "小さな文字",
 				"step": "1",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "本日記事解禁"
+					"raw": "本日記事解禁",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -6088,26 +7265,38 @@ JIS0208互換で生成された注記:
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "　去る三月二十六日午前二時ごろ、市内大通六丁目、県立高等女学校内、運動場の一隅に在る物置の"
+		"raw": "　去る三月二十六日午前二時ごろ、市内大通六丁目、県立高等女学校内、運動場の一隅に在る物置の",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "廃屋"
+			"raw": "廃屋",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "あばらや"
+				"raw": "あばらや",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6115,7 +7304,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "より発火し"
+		"raw": "より発火し",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -6142,21 +7332,29 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "font size",
 		"raw": "１段階大きな文字",
 		"raw closer": "大きな文字終わり",
+		"raw unicode closer": "",
 		"size": "大きな文字",
 		"step": "1",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "青空文庫であって責空文庫ではない。"
+			"raw": "青空文庫であって責空文庫ではない。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6191,22 +7389,30 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "font size",
 	"raw": "ここから２段階大きな文字",
 	"raw closer": "ここで大きな文字終わり",
+	"raw unicode closer": "",
 	"scope": "block",
 	"size": "大きな文字",
 	"step": "2",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。"
+			"raw": "★東北大学の大泉充郎らがどのような経緯で電子計算機の開発を目指し、渡部和らがいかに悪戦苦闘を続けたかは、東北大学側を情報源とした、八甫谷邦明「ＳＥＮＡＣ開発余話」（『コンピュートピア』一九七五年八月号）に詳しい。",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6239,44 +7445,58 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "このプロジェクトを、"
+		"raw": "このプロジェクトを、",
+		"unicode raw": ""
 		},
 		{
 		"type": "line decoration",
 		"raw": "傍線",
 		"raw closer": "傍線終わり",
 		"position": "right",
+		"raw unicode closer": "",
 		"style": "傍線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "emphasis",
 			"raw": "傍点",
 			"raw closer": "傍点終わり",
 			"position": "right",
+			"raw unicode closer": "",
 			"style": "傍点",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "青空"
+				"raw": "青空",
+				"unicode raw": ""
 				}
 				]
 			},
 			{
 			"type": "text",
-			"raw": "文庫"
+			"raw": "文庫",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "text",
-		"raw": "と呼んでいます。"
+		"raw": "と呼んでいます。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -6303,37 +7523,53 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "このプロジェクトを、"
+		"raw": "このプロジェクトを、",
+		"unicode raw": ""
 		},
 		{
 		"type": "line decoration",
 		"raw": "左に傍線",
 		"raw closer": "左に傍線終わり",
 		"position": "left",
+		"raw unicode closer": "",
 		"style": "傍線",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "青空文庫"
+				"raw": "青空文庫",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "あおぞらぶんこ"
+					"raw": "あおぞらぶんこ",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -6343,7 +7579,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "と呼んでいます。"
+		"raw": "と呼んでいます。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -6370,26 +7607,38 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "東"
+			"raw": "東",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "ひがし"
+				"raw": "ひがし",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6397,23 +7646,32 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "を"
+		"raw": "を",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "差"
+			"raw": "差",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "さ"
+				"raw": "さ",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6421,36 +7679,51 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "して"
+		"raw": "して",
+		"unicode raw": ""
 		},
 		{
 		"type": "rubylike note",
 		"raw": "左に注記付き",
 		"raw closer": "左に「北」の注記付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "emphasis",
 			"raw": "白丸傍点",
 			"raw closer": "白丸傍点終わり",
 			"position": "right",
+			"raw unicode closer": "",
 			"style": "白丸傍点",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "ruby parent",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "来"
+					"raw": "来",
+					"unicode raw": ""
 					},
 					{
 					"type": "ruby",
 					"raw": "《",
 					"raw closer": "》",
+					"raw unicode closer": "",
+					"unicode raw": ""
+,
 					"children": [
 						{
 						"type": "text",
-						"raw": "き"
+						"raw": "き",
+						"unicode raw": ""
 						}
 						]
 					}
@@ -6458,7 +7731,8 @@ JIS0208互換で生成された注記:
 				},
 				{
 				"type": "text",
-				"raw": "た"
+				"raw": "た",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6466,19 +7740,27 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "小僧"
+			"raw": "小僧",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "こぞう"
+				"raw": "こぞう",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6489,29 +7771,43 @@ JIS0208互換で生成された注記:
 		"raw": "左に注記付き",
 		"raw closer": "左に「南」の注記付き終わり",
 		"position": "left",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "emphasis",
 			"raw": "白丸傍点",
 			"raw closer": "白丸傍点終わり",
 			"position": "right",
+			"raw unicode closer": "",
 			"style": "白丸傍点",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "ruby parent",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "皆身"
+					"raw": "皆身",
+					"unicode raw": ""
 					},
 					{
 					"type": "ruby",
 					"raw": "《",
 					"raw closer": "》",
+					"raw unicode closer": "",
+					"unicode raw": ""
+,
 					"children": [
 						{
 						"type": "text",
-						"raw": "みなみ"
+						"raw": "みなみ",
+						"unicode raw": ""
 						}
 						]
 					}
@@ -6523,23 +7819,32 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "の"
+		"raw": "の",
+		"unicode raw": ""
 		},
 		{
 		"type": "ruby parent",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "為"
+			"raw": "為",
+			"unicode raw": ""
 			},
 			{
 			"type": "ruby",
 			"raw": "《",
 			"raw closer": "》",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "ため"
+				"raw": "ため",
+				"unicode raw": ""
 				}
 				]
 			}
@@ -6547,7 +7852,8 @@ JIS0208互換で生成された注記:
 		},
 		{
 		"type": "text",
-		"raw": "に…"
+		"raw": "に…",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -6580,33 +7886,48 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "section",
 	"level": "sectionToken",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "section title",
 		"raw": "大見出し",
 		"raw closer": "大見出し終わり",
 		"id": "sec1",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "ruby parent",
+			"raw unicode closer": "",
+			"unicode raw": ""
+,
 			"children": [
 				{
 				"type": "text",
-				"raw": "清水詣"
+				"raw": "清水詣",
+				"unicode raw": ""
 				},
 				{
 				"type": "ruby",
 				"raw": "《",
 				"raw closer": "》",
+				"raw unicode closer": "",
+				"unicode raw": ""
+,
 				"children": [
 					{
 					"type": "text",
-					"raw": "きよみずもう"
+					"raw": "きよみずもう",
+					"unicode raw": ""
 					}
 					]
 				}
@@ -6614,7 +7935,8 @@ JIS0208互換で生成された注記:
 			},
 			{
 			"type": "text",
-			"raw": "で"
+			"raw": "で",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6667,86 +7989,123 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "底本：「日本の名随筆　別巻31　留学」作品社"
+		"raw": "底本：「日本の名随筆　別巻31　留学」作品社",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "　　　1993（平成5）年9月25日第1刷発行"
+		"raw": "　　　1993（平成5）年9月25日第1刷発行",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "底本の親本：「斎藤茂吉全集　第八巻」岩波書店"
+		"raw": "底本の親本：「斎藤茂吉全集　第八巻」岩波書店",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "　　　1952（昭和27）年6月発行"
+		"raw": "　　　1952（昭和27）年6月発行",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "入力：門田裕志"
+		"raw": "入力：門田裕志",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "校正：仙酔ゑびす"
+		"raw": "校正：仙酔ゑびす",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "2010年5月30日作成"
+		"raw": "2010年5月30日作成",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "青空文庫作成ファイル："
+		"raw": "青空文庫作成ファイル：",
+		"unicode raw": ""
 		}
 		]
 	},
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "text",
-		"raw": "このファイルは、インターネットの図書館、青空文庫（https://www.aozora.gr.jp/）で作られました。入力、校正、制作にあたったのは、ボランティアの皆さんです。"
+		"raw": "このファイルは、インターネットの図書館、青空文庫（https://www.aozora.gr.jp/）で作られました。入力、校正、制作にあたったのは、ボランティアの皆さんです。",
+		"unicode raw": ""
 		}
 		]
 	}
@@ -6788,45 +8147,65 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "bibliographical info",
 	"raw": "［＃本文終わり］",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "入力：富田倫生"
+			"raw": "入力：富田倫生",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "校正：富田倫生"
+			"raw": "校正：富田倫生",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "1997年12月6日公開"
+			"raw": "1997年12月6日公開",
+			"unicode raw": ""
 			}
 			]
 		},
 		{
 		"type": "paragraph",
+		"raw unicode closer": "",
+		"unicode raw": ""
+,
 		"children": [
 			{
 			"type": "text",
-			"raw": "2010年3月26日修正"
+			"raw": "2010年3月26日修正",
+			"unicode raw": ""
 			}
 			]
 		}
@@ -6863,10 +8242,14 @@ JIS0208互換で生成された注記:
 抽出されたAST:
 
 {
-"type": "document",
+"type": "document"
+,
 "children": [
 	{
 	"type": "paragraph",
+	"raw unicode closer": "",
+	"unicode raw": ""
+,
 	"children": [
 		{
 		"type": "special char",

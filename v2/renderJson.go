@@ -6,15 +6,13 @@ import (
 
 var o_prettyStrings bool
 
-func renderJson(n *Node) string {
+func renderJson(n *Node, w *strings.Builder) {
 
-	egressFunc := func(n *Node) string {
+	egressFunc := func(n *Node, w *strings.Builder) {
 
 		output := new(strings.Builder)
 
-		o_prettyStrings = true
-
-		for i := 0; i < n.nestingLevel(); i++ {
+		for i := 0; i < n.NestingLevel(); i++ {
 
 			output.WriteString("\t")
 
@@ -22,60 +20,61 @@ func renderJson(n *Node) string {
 
 		lead := output.String()
 
-		output.Reset()
+		w.WriteString(lead)
+		w.WriteString("}")
 
-		output.WriteString(lead + "}")
+		switch {
+		case n.next != nil:
 
-		if n.next != nil {
+			w.WriteString(",\n")
 
-			output.WriteString(",\n")
+		case n.Parent() != nil:
 
-		} else {
+			addToStringsBuilder(w, "\n", lead, `]`, "\n")
 
-			if n.Parent() != nil {
+		default:
 
-				output.WriteString("\n" + lead + `]` + "\n")
+			w.WriteString("\n")
 
-			} else {
+		}
 
-				output.WriteString("\n")
+		return
 
+	}
+
+	ingressFunc := func(n *Node, w *strings.Builder) {
+
+		output := new(strings.Builder)
+
+		for i := 0; i < n.NestingLevel(); i++ {
+
+			output.WriteString("\t")
+
+		}
+
+		lead := output.String()
+
+		w.WriteString(lead)
+
+		w.WriteString("{\n")
+
+		for k, line := range strings.Split(n.String(), "\n") {
+
+			addToStringsBuilder(w, lead, line)
+
+			if k < len(strings.Split(n.String(), "\n"))-1 {
+				w.WriteString("\n")
 			}
 		}
 
-		return output.String()
+		if n.HasChild() {
 
-	}
-
-	ingressFunc := func(n *Node) string {
-
-		output := new(strings.Builder)
-
-		o_prettyStrings = true
-
-		for i := 0; i < n.nestingLevel(); i++ {
-
-			output.WriteString("\t")
+			addToStringsBuilder(w, ",\n", lead, `"children": [`)
 
 		}
 
-		lead := output.String()
-
-		output.Reset()
-
-		output.WriteString(lead + "{\n" + n.String())
-
-		if n.firstChild != nil {
-
-			output.WriteString(",\n")
-
-			output.WriteString(lead + `"children": [`)
-
-		}
-
-		return output.String() + "\n"
-
+		w.WriteString("\n")
 	}
 
-	return Serialize(n, ingressFunc, egressFunc)
+	Serialize(n, w, ingressFunc, egressFunc)
 }

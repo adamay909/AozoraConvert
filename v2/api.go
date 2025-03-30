@@ -57,34 +57,34 @@ func AST(data string) (*Node, error) {
 
 // RenderAozoraText renders ast as a string formatted
 // in the style of Aozorabunko.
-func RenderAozoraText(ast *Node) string {
+func RenderAozoraText(ast *Node, w *strings.Builder) {
 
-	return renderAozoraText(ast)
+	renderAozoraText(ast, w)
 
 }
 
 // RenderHTML renders ast as an html fragment.
-func RenderHTML(ast *Node) string {
+func RenderHTML(ast *Node, w *strings.Builder) {
 
 	if ast == nil {
-		return ""
+		return
 	}
 
-	return renderHtml(ast)
+	renderHtml(ast, w)
 
 }
 
 // RenderNavHTML returns the table of contents for
 // the text given by ast. TOC is formatted as
 // an html ordered list.
-func RenderNavHTML(ast *Node) string {
+func RenderNavHTML(ast *Node, w *strings.Builder) {
 
-	return renderNavHtml(ast)
+	renderNavHtml(ast, w)
 
 }
 
-func RenderJSON(ast *Node) string {
+func RenderJSON(ast *Node, w *strings.Builder) {
 
-	return renderJson(ast)
+	renderJson(ast, w)
 
 }

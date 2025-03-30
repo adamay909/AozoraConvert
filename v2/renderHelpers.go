@@ -27,19 +27,6 @@ func (n *Node) isJisage() bool {
 
 }
 
-func (n *Node) isJiage() bool {
-
-	if n == nil {
-		return false
-	}
-
-	if n.isBlockFormat() {
-		return false
-	}
-
-	return n.Attr["type"] == "bottom align"
-}
-
 func emphString(s string) string {
 
 	for i, e := range decoMarker {
@@ -61,52 +48,13 @@ func (n *Node) decoOnLeft() bool {
 	return position == "left"
 }
 
-func (n *Node) isChuki() bool {
-
-	for _, m := range rubylikeNoteSimpleMarker {
-
-		if n.Attr["style"] == m {
-			return true
-		}
-
-	}
-
-	return false
-}
-
-func (n *Node) isDeco() bool {
-
-	for _, m := range decoMarker {
-
-		if n.Attr["style"] == m {
-			return true
-		}
-
-	}
-
-	return false
-}
-
-func (n *Node) formatOfType(markerType []string) bool {
-
-	for _, m := range markerType {
-
-		if n.Attr["style"] == m {
-			return true
-		}
-
-	}
-
-	return false
-}
-
 func (n *Node) okuriganaString() string {
 
-	return strings.TrimSuffix(strings.TrimPrefix(n.Attr["raw"], "（"), "）")
+	return strings.TrimSuffix(strings.TrimPrefix(n.RawString(), "（"), "）")
 
 }
 
-func (n *Node) headerLevel() int {
+func (n *Node) sectionLevel() int {
 
 	level := 0
 
@@ -137,25 +85,6 @@ func (n *Node) withinNoteExclScope() bool {
 
 }
 
-func (n *Node) hasChildGaijiNotes() bool {
-
-	nodes := linearizeBranch(n)
-
-	for _, e := range nodes {
-
-		if e.Attr["type"] == "gaiji note" {
-
-			e.hasGaijiWithin = true
-
-			return true
-		}
-
-	}
-
-	return false
-
-}
-
 func (n *Node) isOfNodeType(t []string) bool {
 
 	for _, c := range t {
@@ -170,11 +99,9 @@ func (n *Node) isOfNodeType(t []string) bool {
 
 func (n *Node) descendantsOfType(t string) []*Node {
 
-	l := linearizeBranch(n)
-
 	out := []*Node{}
 
-	for _, e := range l {
+	for _, e := range linearizeDescendants(n) {
 
 		if e.Attr["type"] == t {
 
@@ -199,18 +126,6 @@ func (n *Node) firstDescendantOfType(t string) *Node {
 
 }
 
-func (n *Node) innerText() string {
-
-	return renderSimpleTxt(n.firstChild)
-
-}
-
-func (n *Node) innerTextLength() int {
-
-	return len([]rune(renderSimpleTxt(n)))
-
-}
-
 func (n *Node) innerParagraphCount() int {
 
 	count := 0
@@ -219,7 +134,7 @@ func (n *Node) innerParagraphCount() int {
 		return count
 	}
 
-	for _, e := range linearize(n.firstChild) {
+	for _, e := range linearizeDescendants(n) {
 
 		if e.Attr["type"] == "paragraph" {
 
