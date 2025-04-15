@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"fmt"
@@ -12,7 +12,8 @@ type token struct {
 	prev            *token
 	ref             string
 	content         string
-	altContent      string
+	jis0213Content  string
+	unicodeContent  string
 	originalContent string
 	id              int
 	lineNo          int
@@ -28,15 +29,18 @@ const (
 	emptyToken tokenType = iota
 	textToken
 	gaijiToken
+	rubyGroupStartToken
+	rubyGroupEndToken
 	rubyParentStartToken
 	rubyParentEndToken
 	rubyStartToken
 	rubyEndToken
 	noteToken
 	bibInfoToken
+	bibInfoEndToken
 	emptyLineToken
 	endOfLineToken
-	lineBreakToken
+	paragraphEndToken
 	paragraphToken
 	sectionTitleStartToken
 	sectionTitleEndToken
@@ -54,11 +58,18 @@ const (
 	gaijiCharToken
 	kunojiToken
 	alignBottomCloserToken
+	centeringEndToken
+	markupNoteToken
+	mainTextStartToken
+	mainTextEndToken
+	eofToken
+	gaijiImgToken
 )
 
 type tokenSubType int
 
 func (t tokenType) String() string {
+
 	switch t {
 
 	case emptyToken:
@@ -69,6 +80,12 @@ func (t tokenType) String() string {
 
 	case gaijiToken:
 		return "gaijiToken"
+
+	case rubyGroupStartToken:
+		return "rubyGroupStartToken"
+
+	case rubyGroupEndToken:
+		return "rubyGroupEndToken"
 
 	case rubyParentStartToken:
 		return "rubyParentStartToken"
@@ -88,23 +105,26 @@ func (t tokenType) String() string {
 	case bibInfoToken:
 		return "bibInfoToken"
 
+	case bibInfoEndToken:
+		return "bibInfoEndToken"
+
 	case emptyLineToken:
 		return "emptyLineToken"
 
 	case endOfLineToken:
 		return "endOfLineToken"
 
-	case lineBreakToken:
-		return "lineBreakToken"
+	case paragraphEndToken:
+		return "paragraphEndToken"
 
 	case paragraphToken:
 		return "paragraphToken"
 
 	case sectionTitleStartToken:
-		return "sectionTitleStart"
+		return "sectionTitleStartToken"
 
 	case sectionTitleEndToken:
-		return "sectionTitleEnd"
+		return "sectionTitleEndToken"
 
 	case sectionToken:
 		return "sectionToken"
@@ -122,7 +142,7 @@ func (t tokenType) String() string {
 		return "subsectionEndToken"
 
 	case subsubsectionEndToken:
-		return "subsubsectionEndtoken"
+		return "subsubsectionEndToken"
 
 	case figureStartToken:
 		return "figureStartToken"
@@ -148,6 +168,24 @@ func (t tokenType) String() string {
 	case alignBottomCloserToken:
 		return "alignBottomCloserToken"
 
+	case centeringEndToken:
+		return "centeringEndToken"
+
+	case markupNoteToken:
+		return "markupNoteToken"
+
+	case mainTextStartToken:
+		return "mainTextStartToken"
+
+	case mainTextEndToken:
+		return "mainTextEndToken"
+
+	case eofToken:
+		return "eofToken"
+
+	case gaijiImgToken:
+		return "gaijiImageToken"
+
 	default:
 
 		return strconv.Itoa(int(t))
@@ -166,6 +204,10 @@ func newToken() *token {
 
 func (t *token) addTokenRight(t2 *token) {
 
+	if t2 == nil {
+		return
+	}
+
 	t2.next = t.next
 
 	if t2.next != nil {
@@ -177,6 +219,7 @@ func (t *token) addTokenRight(t2 *token) {
 	t.next = t2
 
 }
+
 func (t *token) insertTokenRight(t2 *token) {
 
 	t2.next = t.next
@@ -195,21 +238,23 @@ func (t *token) insertTokenRight(t2 *token) {
 
 func (t *token) insertTokenLeft(t2 *token) {
 
-	if t.prev == nil {
+	e := t.prev
 
-		t2.next = t
+	t.prev = t2
 
-		t.prev = t2
+	t2.next = t
 
-		t2.inserted = true
+	t2.prev = e
 
-		return
+	if e != nil {
 
+		e.next = t2
 	}
 
-	t.prev.insertTokenRight(t2)
-
 	t2.inserted = true
+
+	return
+
 }
 
 func (t *token) joinTokens(t2 *token) {
@@ -232,15 +277,18 @@ func (t *token) joinTokens(t2 *token) {
 
 func (t *token) remove() {
 
-	if t.prev != nil {
-		t.prev.next = t.next
+	e1 := t.prev
+
+	e2 := t.next
+
+	if e1 != nil {
+		e1.next = e2
 	}
 
-	if t.next != nil {
-		t.next.prev = t.prev
-	}
+	e2.prev = e1
 
-	t = nil
+	t.prev = nil
+	t.next = nil
 
 	return
 
@@ -288,7 +336,7 @@ func (t *token) String() string {
 	case endOfLineToken:
 		return ""
 
-	case lineBreakToken:
+	case paragraphEndToken:
 		return ""
 
 		//	case rubyParentStartToken:
@@ -325,7 +373,7 @@ func (t *token) innerString() string {
 
 	switch t.tokType {
 
-	case noteToken:
+	case noteToken, gaijiImgToken:
 
 		return strings.TrimSuffix(strings.TrimPrefix(t.String(), noteStartStr), noteEndStr)
 
@@ -455,7 +503,7 @@ func newLineBreakToken() *token {
 
 	t := newToken()
 
-	t.tokType = lineBreakToken
+	t.tokType = paragraphEndToken
 
 	return t
 }
@@ -467,19 +515,6 @@ func newParagraphToken() *token {
 	t.tokType = paragraphToken
 
 	return t
-
-}
-
-func (t *token) listAllTokens() string {
-
-	output := new(strings.Builder)
-
-	for e := t.firstToken(); e != nil; e = e.next {
-
-		addToStringsBuilder(output, e.info(), "\n")
-
-	}
-	return output.String()
 
 }
 
@@ -500,6 +535,10 @@ func (t *token) info() string {
 		}
 	}
 
+	if t.unicodeContent != "" {
+		addToStringsBuilder(output, "unicode: ", t.unicodeContent)
+	}
+
 	return strings.ReplaceAll(output.String(), "\n", "\\n")
 
 }
@@ -511,6 +550,8 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	c := 0
 
 	cr := 0
+
+	nesting := 0
 
 	for e = t.prev; e != nil; e = e.prev {
 
@@ -524,6 +565,11 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 			}
 
 			e = e.prev
+		}
+
+		if e.isFormatCloseToken() {
+			nesting++
+			continue
 		}
 
 		if e.tokType != textToken {
@@ -546,8 +592,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
 
-		//e.insertTokenLeft(nt)
-
 		return
 
 	}
@@ -555,9 +599,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	if e.tokType == endOfLineToken {
 
 		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
-		//tokenizerLog.Println("Can't find place to insert implied opener note. Defaulting to start of line.")
-
-		//		e.insertTokenLeft(nt)
 
 		return
 
@@ -567,10 +608,15 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		if e.prev != nil && e.prev.tokType == rubyParentStartToken {
 
-			e = e.prev
+			e = e.prev.prev
 
 		}
 
+		for range nesting {
+
+			e = e.prev
+
+		}
 		e.insertTokenLeft(nt)
 
 		return
@@ -705,21 +751,29 @@ func (t *token) lineNumber() int {
 
 	}
 
-	return 0
+	return 1
 
 }
 
 func (t *token) lastTokenInLine() *token {
 
-	if t.next == nil {
+	if t == nil {
 		return t
 	}
 
 	e := new(token)
 
-	for e = t; e.next.tokType != endOfLineToken; e = e.next {
+	for e = t; e != nil; e = e.next {
 
 		if e.next == nil {
+			return e
+		}
+
+		if e.next.tokType == endOfLineToken {
+			return e
+		}
+
+		if e.next.tokType == paragraphEndToken {
 			return e
 		}
 	}
@@ -768,13 +822,13 @@ func (t *token) unicodeString() string {
 	switch t.tokType {
 
 	case gaijiCharToken:
-		return t.altContent
+		return t.unicodeContent
 
 	case specialCharToken:
-		return t.altContent
+		return t.unicodeContent
 
 	case kunojiToken:
-		return t.altContent
+		return t.unicodeContent
 
 	default:
 		return t.String()
@@ -782,6 +836,24 @@ func (t *token) unicodeString() string {
 	}
 }
 
+func (t *token) jis0213String() string {
+
+	switch t.tokType {
+
+	case gaijiCharToken:
+		return t.jis0213Content
+
+	case specialCharToken:
+		return t.jis0213Content
+
+	case kunojiToken:
+		return t.jis0213Content
+
+	default:
+		return t.String()
+
+	}
+}
 func (t *token) nextLine() *token {
 
 	e := t.lastTokenInLine()
@@ -789,7 +861,6 @@ func (t *token) nextLine() *token {
 	if e.next == nil {
 		return nil
 	}
-
 	if e.next.next == nil {
 		return nil
 	}
@@ -831,10 +902,517 @@ func (t *token) isFirstTokenInLine() bool {
 		return true
 	}
 
-	if t.prev.tokType == lineBreakToken {
+	if t.prev.tokType == paragraphEndToken {
 		return true
 	}
 
 	return false
 
+}
+
+func (t *token) textContext() string {
+
+	var s1 []rune
+
+	maxlen := 10 + len(t.content)
+
+	for e := t; len(s1) < maxlen/2+1; e = e.prev {
+
+		if e == nil {
+			break
+		}
+
+		s1 = append([]rune(e.content), s1...)
+
+	}
+
+	if len(s1) > maxlen/2+1 {
+
+		s1 = s1[len(s1)-maxlen/2+1:]
+
+	}
+
+	for e := t.next; len(s1) < maxlen; e = e.next {
+
+		if e == nil {
+			break
+		}
+
+		s1 = append(s1, []rune(e.content)...)
+
+	}
+
+	var r []rune
+
+	if len(s1) > maxlen {
+		r = append(r, s1[:maxlen]...)
+	} else {
+		r = append(r, s1...)
+	}
+
+	return string(r)
+
+}
+
+func (t *token) mainTextStart() *token {
+
+	if o_fragment {
+		return t.firstToken()
+	}
+
+	for e := t.firstToken(); e != nil; e = e.next {
+		if e.tokType == mainTextStartToken {
+			return e
+		}
+	}
+
+	return t.firstToken()
+
+}
+
+func (t *token) isFormatCloseToken() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+		return false
+	}
+
+	for _, m := range pairMarker {
+
+		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), formatEndStr), m) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t *token) isPairMarkerOpen() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	for _, m := range pairMarker {
+
+		if strings.HasSuffix(t.innerString(), m) {
+			return true
+		}
+
+	}
+
+	return false
+}
+
+func (t *token) isPairMarkerClose() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+		return false
+	}
+
+	for _, m := range pairMarker {
+
+		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), formatEndStr), m) {
+			return true
+		}
+	}
+	return false
+
+}
+
+func (t *token) isSectionTitleStart() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	for _, m := range sectionMarker {
+
+		if strings.TrimPrefix(t.innerString(), blockStartStr) == m {
+			return true
+		}
+	}
+	return false
+}
+
+func (t *token) isSectionTitleEnd() bool {
+
+	if t.tokType != noteToken {
+
+		return false
+
+	}
+
+	if !strings.HasSuffix(strings.TrimPrefix(t.innerString(), blockEndStr), formatEndStr) {
+		return false
+	}
+
+	for _, m := range sectionMarker {
+
+		if strings.TrimSuffix(t.innerString(), formatEndStr) == m {
+			return true
+		}
+	}
+
+	return false
+
+}
+
+func (t *token) isIndentationStart() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.HasPrefix(t.innerString(), blockStartStr) {
+		return false
+	}
+
+	return strings.HasSuffix(t.innerString(), "字下げ")
+}
+
+func (t *token) matchingIndentationCloser() *token {
+
+	pos := new(token)
+
+	for pos = t.next; pos != nil; pos = pos.next {
+
+		if pos.tokType != noteToken {
+			continue
+		}
+
+		if pos.isIndentationStart() {
+			return pos
+		}
+
+		if strings.HasSuffix(pos.innerString(), "字下げ終わり") {
+			return pos
+		}
+	}
+
+	panic(t.info() + " No matching closer.")
+
+	return pos
+}
+
+func (t *token) isImage() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.Contains(t.innerString(), "入る") {
+		return false
+	}
+
+	return strings.Contains(t.innerString(), ".png")
+
+}
+
+func (t *token) isCaption() bool {
+
+	if t == nil {
+		return false
+	}
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	return strings.HasSuffix(t.innerString(), "キャプション")
+
+}
+
+func (t *token) isPagination() bool {
+
+	c := t.innerString()
+
+	for _, m := range paginationMarker {
+
+		if c == m {
+			return true
+		}
+	}
+
+	return false
+
+}
+
+func (t *token) isKunten() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	s := []rune(t.innerString())
+
+	if len(s) > 2 {
+		return false
+	}
+
+	ok := false
+
+	//only allow kuntenchars as first character
+	for _, c := range kuntenchars {
+
+		if s[0] == c {
+			ok = true
+			break
+		}
+	}
+
+	if !ok {
+		return false
+	}
+
+	if len(s) == 1 {
+		return true
+	}
+
+	//need to check for combined kunten
+
+	//first char cannot be re-ten
+	if s[0] == kuntenchars[0] {
+		return false
+	}
+
+	//second char must be re-ten
+	if s[1] != kuntenchars[0] {
+		return false
+	}
+
+	return true
+}
+
+func (t *token) isOkurigana() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	s := t.innerString()
+
+	if !strings.HasPrefix(s, "（") {
+		return false
+	}
+
+	if !strings.HasSuffix(s, "）") {
+		return false
+	}
+
+	return true
+}
+
+func (t *token) matchingCloserToken() *token {
+
+	return matchingCloserToken(t)
+}
+
+func matchingCloserToken(t *token) *token {
+
+	if t.next == nil {
+		panic(t.info() + " missing matching closer")
+	}
+
+	pos := new(token)
+
+	count := 1
+
+	for pos = t.next; ; pos = pos.next {
+
+		if pos.isPairMarkerOpen() {
+			count++
+		}
+
+		if pos.isPairMarkerClose() {
+			count--
+		}
+
+		if count == 0 {
+
+			return pos
+
+		}
+
+		if pos.next == nil {
+			panic(t.info() + " missing matching closer")
+		}
+	}
+
+	return pos
+
+}
+
+func (t *token) isBlockStartNote() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if strings.HasPrefix(t.innerString(), blockStartStr) {
+		return true
+	}
+
+	if t.isSectionTitleStart() {
+		return true
+	}
+
+	if t.isFormatOfType(centeringMarker) {
+		return true
+	}
+
+	return false
+}
+
+func (t *token) isBlockClosingNote() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if t.isSectionTitleEnd() {
+		return true
+	}
+
+	if t.isFormatEndOfType(centeringMarker) {
+		return true
+	}
+
+	if !strings.HasPrefix(t.innerString(), blockEndStr) {
+		return false
+	}
+
+	return strings.HasSuffix(t.innerString(), formatEndStr)
+}
+
+func (t *token) isFormatOfType(m []string) bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	s := strings.TrimPrefix(t.innerString(), blockStartStr)
+
+	for _, e := range m {
+
+		if strings.HasSuffix(s, e) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t *token) isFormatEndOfType(m []string) bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	s := strings.TrimPrefix(t.innerString(), blockEndStr)
+
+	for _, e := range m {
+
+		if strings.HasSuffix(s, e) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t *token) isSectionStart() bool {
+
+	switch t.tokType {
+
+	case sectionToken:
+		return true
+
+	case subsectionToken:
+		return true
+
+	case subsubsectionToken:
+		return true
+
+	default:
+		return false
+
+	}
+}
+
+func (t *token) isSectionEnd() bool {
+
+	switch t.tokType {
+
+	case sectionEndToken:
+		return true
+
+	case subsectionEndToken:
+		return true
+
+	case subsubsectionEndToken:
+		return true
+
+	default:
+		return false
+
+	}
+}
+
+func (t *token) isBlock() bool {
+
+	return strings.HasPrefix(t.innerString(), blockStartStr)
+
+}
+
+func (t *token) isBlockEnd() bool {
+
+	if !strings.HasSuffix(t.innerString(), formatEndStr) {
+		return false
+	}
+
+	return strings.HasPrefix(t.innerString(), blockEndStr)
+
+}
+
+// t is assumed to be next of t2
+func (t *token) switchWith(t2 *token) {
+
+	e1 := t2.prev
+
+	e2 := t.next
+
+	e1.next = t
+
+	t.prev = e1
+
+	t.next = t2
+
+	t2.next = e2
+
+	t2.prev = t
+}
+
+func copyOf(t *token) *token {
+
+	nt := new(token)
+
+	nt.tokType = t.tokType
+
+	nt.content = t.content
+
+	nt.unicodeContent = t.unicodeContent
+
+	nt.originalContent = t.originalContent
+
+	nt.lineNo = t.lineNo
+
+	return nt
 }

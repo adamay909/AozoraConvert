@@ -1,9 +1,7 @@
-package aozoratext
+package aozoraConvert
 
 import (
-	"log"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -15,7 +13,8 @@ type Node struct {
 	level          int
 	Attr           map[string]string
 	hasGaijiWithin bool
-	lineNo         int
+	tok            *token
+	closed         bool
 }
 
 type nodeType int
@@ -37,30 +36,19 @@ const (
 // String returns the attributes of n.
 func (n *Node) String() string {
 
-	lead := new(strings.Builder)
-
-	if o_prettyStrings {
-
-		for i := 0; i < n.level; i++ {
-
-			lead.WriteString("\t")
-
-		}
-	}
-
 	output.Reset()
 
-	addToStringsBuilder(output, lead.String(), `"type": `, `"`, n.Attr["type"], `"`, ",\n")
+	addToStringsBuilder(output, `"type": `, `"`, n.Attr["type"], `"`, ",\n")
 
 	if n.Attr["raw"] != "" {
 
-		addToStringsBuilder(output, lead.String(), `"raw": `, `"`, n.Attr["raw"], `"`, ",\n")
+		addToStringsBuilder(output, `"raw": `, `"`, n.Attr["raw"], `"`, ",\n")
 
 	}
 
 	if n.Attr["raw closer"] != "" {
 
-		addToStringsBuilder(output, lead.String(), `"raw closer": `, `"`, n.Attr["raw closer"], `"`, ",\n")
+		addToStringsBuilder(output, `"raw closer": `, `"`, n.Attr["raw closer"], `"`, ",\n")
 
 	}
 
@@ -82,7 +70,7 @@ func (n *Node) String() string {
 			continue
 
 		default:
-			addToStringsBuilder(output, lead.String(), `"`, k, `": `, `"`, n.Attr[k], `"`, ",\n")
+			addToStringsBuilder(output, `"`, k, `": `, `"`, n.Attr[k], `"`, ",\n")
 
 		}
 	}
@@ -92,8 +80,10 @@ func (n *Node) String() string {
 // Parent returns the parent node of n. nil if n is top node.
 func (n *Node) Parent() *Node {
 
-	return n.firstSibling().up
-
+	if n.up == nil {
+		return n.firstSibling().up
+	}
+	return n.up
 }
 
 // Siblings returns a slice of all siblings including and after n.
@@ -210,7 +200,7 @@ func (n *Node) addSibling(n2 *Node) {
 
 	if n == nil {
 
-		log.Fatal("FATAL: attempting to add sibling to NIL " + n2.Attr["raw"] + " line: " + strconv.Itoa(n2.lineNo))
+		return
 
 	}
 
@@ -221,6 +211,8 @@ func (n *Node) addSibling(n2 *Node) {
 	n2.prev = e
 
 	n2.level = n.level
+
+	n2.up = n.up
 
 	return
 
@@ -282,7 +274,7 @@ func (n *Node) SetAttr(key string, val string) {
 
 }
 
-func (n *Node) nestingLevel() int {
+func (n *Node) NestingLevel() int {
 
 	l := -1
 
@@ -292,4 +284,32 @@ func (n *Node) nestingLevel() int {
 	}
 
 	return l
+}
+
+func (n *Node) HasChild() bool {
+
+	return n.firstChild != nil
+
+}
+
+func (n *Node) remove() {
+
+	c1 := n.prev
+
+	c2 := n.next
+
+	if c2 != nil {
+		c2.prev = c1
+	}
+
+	if c1 != nil {
+		c1.next = c2
+	}
+
+	n.next = nil
+
+	n.prev = nil
+
+	return
+
 }

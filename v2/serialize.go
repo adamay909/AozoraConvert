@@ -1,18 +1,14 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"strings"
 )
 
-// linearizes AST into a slice of *node.
-// isolate will isolate the tree rooted at n. I.e., siblings
-// of n are not included.
+// linearizes AST branch rooted at n into a slice of *node.
 
-func linearizeNode(n *Node, isolate bool) []*Node {
+func linearizeNode(n *Node) []*Node {
 
 	var l []*Node
-
-	var prev *Node
 
 	var flatten func(*Node)
 
@@ -20,31 +16,11 @@ func linearizeNode(n *Node, isolate bool) []*Node {
 
 		l = append(l, m)
 
-		if prev != m.lastChild() {
+		for _, childNode := range m.Children() {
 
-			if m.firstChild != nil {
+			flatten(childNode)
 
-				prev = m.firstChild
-
-				flatten(m.firstChild)
-
-			}
 		}
-
-		if isolate {
-
-			if m == n {
-				return
-			}
-		}
-
-		if m.next == nil {
-			return
-		}
-
-		prev = m.next
-
-		flatten(m.next)
 
 		return
 
@@ -56,33 +32,81 @@ func linearizeNode(n *Node, isolate bool) []*Node {
 
 }
 
-func linearize(n *Node) []*Node {
+func linearizeDescendants(n *Node) []*Node {
 
-	return linearizeNode(n, false)
+	return linearizeNode(n)[1:]
 
-}
-
-func linearizeIsolate(n *Node) []*Node {
-
-	return linearizeNode(n, true)
 }
 
 // Serialize AST given by n as a string. ingressFunc controls output when entering a node, egressFunc controls the output when exiting a node.
-func Serialize(n *Node, ingressFunc, egressFunc func(*Node) string) string {
+func Serialize(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, *strings.Builder)) {
 
-	var output = new(strings.Builder)
+	var linearize func(*Node)
 
-	var flatten func(*Node)
+	linearize = func(m *Node) {
 
-	flatten = func(m *Node) {
-
-		output.WriteString(ingressFunc(m))
+		ingressFunc(m, w)
 
 		for _, childNode := range m.Children() {
 
-			flatten(childNode)
+			linearize(childNode)
 
-			output.WriteString(egressFunc(childNode))
+			egressFunc(childNode, w)
+		}
+
+		return
+
+	}
+
+	linearize(n)
+
+	egressFunc(n, w)
+
+	return
+}
+
+// SerializeDescendants leaves out the top node n in serializing.
+func SerializeDescendants(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, *strings.Builder)) {
+
+	var linearize func(*Node)
+
+	linearize = func(m *Node) {
+
+		if m != n {
+			ingressFunc(m, w)
+		}
+
+		for _, childNode := range m.Children() {
+
+			linearize(childNode)
+
+			egressFunc(childNode, w)
+		}
+
+		return
+
+	}
+
+	linearize(n)
+
+	//	egressFunc(n, w)
+
+	return
+}
+
+/*
+
+var linearize func(*Node)
+
+	linearize = func(m *Node) {
+
+		for _, childNode := range m.Children() {
+
+			ingressFunc(childNode, w)
+
+			linearize(childNode)
+
+			egressFunc(childNode, w)
 
 		}
 
@@ -90,37 +114,8 @@ func Serialize(n *Node, ingressFunc, egressFunc func(*Node) string) string {
 
 	}
 
-	flatten(n)
+	linearize(n)
 
-	return output.String()
+	return
 }
-
-func listSections(n *Node) string {
-
-	egressFunc := func(n *Node) string {
-
-		return ""
-
-	}
-
-	ingressFunc := func(n *Node) string {
-		if n.Attr["type"] != "section" {
-			return ""
-		}
-
-		output := new(strings.Builder)
-
-		for i := 0; i < n.level; i++ {
-
-			output.WriteString("\t")
-
-		}
-
-		output.WriteString(n.String())
-
-		return output.String()
-
-	}
-
-	return Serialize(n, ingressFunc, egressFunc)
-}
+*/

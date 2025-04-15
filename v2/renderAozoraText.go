@@ -1,408 +1,450 @@
-package aozoratext
+package aozoraConvert
 
 import (
+	"log"
 	"strings"
 )
 
-func renderAozoraText(n *Node) string {
+func renderAozoraText(n *Node, w *strings.Builder) {
 
-	return Serialize(n, azrTxtFormatterOpen, azrTxtFormatterClose)
+	Serialize(n, w, azrTxtFormatterOpen, azrTxtFormatterClose)
 
 }
 
-func azrTxtFormatterOpen(n *Node) string {
+func renderInnerAozoraText(n *Node, w *strings.Builder) {
+
+	SerializeDescendants(n, w, azrTxtFormatterOpen, azrTxtFormatterClose)
+
+}
+
+func renderInnerTextOnly(n *Node, w *strings.Builder) {
+
+	SerializeDescendants(n, w, plaintextWriterOpen, plaintextWriterClose)
+
+}
+
+func plaintextWriterOpen(n *Node, w *strings.Builder) {
+
+	switch n.Attr["type"] {
+
+	case "text", "special char", "kunoji", "accent string", "gaiji char":
+		azrTxtFormatterOpen(n, w)
+
+	default:
+		return
+	}
+}
+
+func plaintextWriterClose(n *Node, w *strings.Builder) {
+
+	switch n.Attr["type"] {
+
+	case "text", "special char", "kunoji", "accent string", "gaiji char":
+		azrTxtFormatterClose(n, w)
+
+	default:
+		return
+	}
+}
+
+func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
 	case "text":
-		return n.Attr["raw"]
+		w.WriteString(n.RawString())
 
 	case "paragraph":
-		return ""
+		return
+
+	case "kanbun":
+		return
+
+	case "ruby group":
+		return
 
 	case "ruby parent":
-		return rubyBaseOpenTxt(n)
+		w.WriteString(rubyParentStartStr)
 
 	case "ruby":
-		return rubyStartStr
+		w.WriteString(rubyStartStr)
 
 	case "empty line":
-		return lineBreakStr
+		w.WriteString(lineBreakStr)
 
 	case "section":
-		return ""
+		return
 
 	case "indentation":
-		return indentationOpenTxt(n)
+		indentationOpenTxt(n, w)
 
 	case "bottom align":
-		return bottomAlignOpenTxt(n)
+		bottomAlignOpenTxt(n, w)
 
 	case "emphasis":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "line decoration":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "narrow paragraph":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "inline section":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "window section":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "inline note":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "rubylike note":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "caption":
-		return captionOpenTxt(n)
+		captionOpenTxt(n, w)
 
 	case "font shape":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "font size":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "offset":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "text direction":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "section title":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "figure":
-		return ""
+		return
 
 	case "image":
-		return noteStringOpenTxt(n) + "\n"
+		noteStringOpenTxt(n, w)
 
 	case "pagination":
-		return noteStringOpenTxt(n) + "\n"
+		noteStringOpenTxt(n, w)
+		w.WriteString("\n")
 
 	case "kunten":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "okurigana":
-
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "centering":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "bibliographical info":
-		return bibInfoOpenTxt(n)
+		bibInfoOpenTxt(n, w)
 
 	case "gaiji char":
-		return gaijiCharOpenTxt(n)
+		gaijiCharOpenTxt(n, w)
 
 	case "kunoji":
-		return kunojiOpenTxt(n)
+		kunojiOpenTxt(n, w)
 
 	case "gaiji note":
-		return gaijiNoteOpenTxt(n)
+		gaijiNoteOpenTxt(n, w)
 
 	case "warichu line break":
-		return noteStringOpenTxt(n)
+		noteStringOpenTxt(n, w)
 
 	case "metadata":
-		return ""
+		return
 
 	case "meta title":
-		return ""
+		return
 
 	case "meta subtitle":
-		return ""
+		return
 
 	case "meta contributor":
-		return ""
+		return
 
 	case "special char":
-		return specialCharOpenTxt(n)
+		specialCharOpenTxt(n, w)
 
 	case "accent string":
-		return accentOpenTxt(n)
+		accentOpenTxt(n, w)
+
+	case "main text":
+		return
 
 	case "document":
-		return ""
+		return
+
+	case "unknown":
+		if o_jis0208 {
+			addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
+			return
+		}
+		addToStringsBuilder(w, noteStartStr, n.Attr["unicode raw"], noteEndStr)
+		return
 
 	default:
-		return noteStartStr + n.Attr["raw"] + noteEndStr
+		log.Println("Renderer: unknown node type: " + n.String())
 
+		if o_jis0208 {
+			addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
+			return
+		}
+		addToStringsBuilder(w, noteStartStr, n.Attr["unicode raw"], noteEndStr)
+		return
 	}
 
 }
 
-func azrTxtFormatterClose(n *Node) string {
+func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
 	case "text":
-		return ""
+		return
 
 	case "paragraph":
-		return "\n"
+		w.WriteString("\n")
+
+	case "kanbun":
+		w.WriteString("\n")
+
+	case "ruby group":
+		return
 
 	case "ruby parent":
-		return ""
+		return
 
 	case "ruby":
-		return rubyEndStr
+		w.WriteString(rubyEndStr)
 
 	case "empty line":
-		return ""
+		return
 
 	case "section":
-		return ""
+		return
 
 	case "indentation":
-		return indentationCloseTxt(n)
+		indentationCloseTxt(n, w)
 
 	case "bottom align":
-		return bottomAlignCloseTxt(n)
+		bottomAlignCloseTxt(n, w)
 
 	case "emphasis":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "line decoration":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "narrow paragraph":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "inline section":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "window section":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "inline note":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "rubylike note":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "caption":
-		return captionCloseTxt(n)
+		captionCloseTxt(n, w)
 
 	case "font shape":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "font size":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "offset":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "text direction":
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 
 	case "section title":
-		return sectionTitleCloseTxt(n)
+		sectionTitleCloseTxt(n, w)
 
 	case "figure":
-		return ""
+		return
 
 	case "image":
-		return ""
+		if n.Attr["style"] == "inline" {
+			return
+		}
+		w.WriteString("\n")
 
 	case "pagination":
-		return ""
+		return
 
 	case "kunten":
-		return ""
+		return
 
 	case "okurigana":
-		return ""
+		return
 
 	case "centering":
-		return ""
+		return
 	case "bibliographical info":
-		return ""
+		return
 
 	case "gaiji note":
-
-		return ""
+		return
 
 	case "metadata":
-		return metadataCloseTxt(n)
+		metadataCloseTxt(n, w)
 
 	case "meta title":
-		return "\n"
+		w.WriteString("\n")
 
 	case "meta subtitle":
-		return "\n"
+		w.WriteString("\n")
 
 	case "meta contributor":
-		return "\n"
+		w.WriteString("\n")
 
 	case "document":
-		return ""
+		return
 
 	default:
-		return ""
+		return
 	}
 
 }
 
-func noteStringOpenTxt(n *Node) string {
+func noteStringOpenTxt(n *Node, w *strings.Builder) {
 
-	output.Reset()
-
-	addToStringsBuilder(output, noteStartStr, n.Attr["raw"], noteEndStr)
+	addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
 
 	if n.isBlockFormat() {
 
-		output.WriteString("\n")
+		w.WriteString("\n")
 
 	}
 
-	return output.String()
-
 }
 
-func noteStringCloseTxt(n *Node) string {
+func noteStringCloseTxt(n *Node, w *strings.Builder) {
 
-	output.Reset()
+	if o_jis0208 {
 
-	addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr)
+		addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr)
+
+	} else {
+		if n.Attr["raw unicode closer"] != "" {
+
+			addToStringsBuilder(w, noteStartStr, n.Attr["raw unicode closer"], noteEndStr)
+
+		} else {
+
+			addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr)
+		}
+	}
 
 	if n.isBlockFormat() {
 
-		output.WriteString("\n")
+		w.WriteString("\n")
 
 	}
 
-	return output.String()
-
-	/*
-		if n.isJiage() {
-
-			return ""
-
-		}
-
-		if n.isJisage() {
-
-			if n.next != nil {
-
-				if n.next.isJisage() {
-
-					return ""
-				}
-			}
-
-		}
-
-
-	*/
 }
 
-func indentationOpenTxt(n *Node) string {
-
-	output.Reset()
+func indentationOpenTxt(n *Node, w *strings.Builder) {
 
 	if n.firstChild.Attr["type"] == "section title" {
 
-		addToStringsBuilder(output, noteStartStr, strings.TrimPrefix(n.Attr["raw"], blockStartStr), noteEndStr)
+		addToStringsBuilder(w, noteStartStr, strings.TrimPrefix(n.RawString(), blockStartStr), noteEndStr)
 
-		return output.String()
+		return
 
 	}
 
-	return noteStringOpenTxt(n)
+	noteStringOpenTxt(n, w)
 }
 
-func indentationCloseTxt(n *Node) string {
+func indentationCloseTxt(n *Node, w *strings.Builder) {
 
 	if n.firstChild.Attr["type"] == "section title" {
 
-		return ""
+		return
 
 	}
 
 	if n.next.isJisage() {
 
-		return ""
+		return
 
 	}
 
-	return noteStringCloseTxt(n)
+	noteStringCloseTxt(n, w)
 
 }
 
-func bottomAlignOpenTxt(n *Node) string {
+func bottomAlignOpenTxt(n *Node, w *strings.Builder) {
 
-	return noteStringOpenTxt(n)
+	noteStringOpenTxt(n, w)
 
 }
 
-func bottomAlignCloseTxt(n *Node) string {
+func bottomAlignCloseTxt(n *Node, w *strings.Builder) {
 
 	if n.Attr["scope"] == "block" {
-		return noteStringCloseTxt(n)
+		noteStringCloseTxt(n, w)
 	}
 
-	return ""
+	return
 
 }
 
-func sectionTitleCloseTxt(n *Node) string {
+func sectionTitleCloseTxt(n *Node, w *strings.Builder) {
 
-	output := new(strings.Builder)
-
-	addToStringsBuilder(output, noteStartStr, n.Attr["raw closer"], noteEndStr, "\n")
-
-	return output.String()
+	addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr, "\n")
 
 }
 
 func bibinfostringTxt(n *Node) string {
 
-	if n.Attr["raw"] == "底本：" {
-		return n.Attr["raw"]
+	if n.RawString() == "底本：" {
+		return n.RawString()
 	}
 
-	return noteStartStr + n.Attr["raw"] + noteEndStr + lineBreakStr
+	return noteStartStr + n.RawString() + noteEndStr + lineBreakStr
 
 }
 
-func captionOpenTxt(n *Node) string {
-
-	//	return "［＃ここからキャプション］\n"
+func captionOpenTxt(n *Node, w *strings.Builder) {
 
 	if n.innerParagraphCount() > 1 {
 
-		return "［＃ここからキャプション］\n"
+		w.WriteString("［＃ここからキャプション］\n")
 
 	}
 
-	return "［＃キャプション］"
+	w.WriteString("［＃キャプション］")
 
 }
 
-func captionCloseTxt(n *Node) string {
-
-	//	return "［＃ここでキャプション終わり］\n"
+func captionCloseTxt(n *Node, w *strings.Builder) {
 
 	if n.innerParagraphCount() > 1 {
 
-		return "［＃ここでキャプション終わり］\n"
+		w.WriteString("［＃ここでキャプション終わり］\n")
 
 	}
 
-	return "［＃キャプション終わり］\n"
+	w.WriteString("［＃キャプション終わり］\n")
 }
 
-func gaijiNoteOpenTxt(n *Node) string {
+func gaijiNoteOpenTxt(n *Node, w *strings.Builder) {
 
-	return noteStartStr + strings.TrimPrefix(n.Attr["raw"], referenceMarkStr+"は") + noteEndStr
+	addToStringsBuilder(w, noteStartStr, strings.TrimPrefix(n.RawString(), referenceMarkStr+"は"), noteEndStr)
 
 }
 
@@ -412,59 +454,77 @@ func rubyBaseOpenTxt(n *Node) string {
 
 }
 
-func metadataCloseTxt(n *Node) string {
+func metadataCloseTxt(n *Node, w *strings.Builder) {
 
-	return "\n"
-
-}
-
-func specialCharOpenTxt(n *Node) string {
-
-	return n.Attr["raw"]
+	w.WriteString("\n")
 
 }
 
-func gaijiCharOpenTxt(n *Node) string {
+func specialCharOpenTxt(n *Node, w *strings.Builder) {
+
+	w.WriteString(n.Attr["raw"])
+
+}
+
+func gaijiCharOpenTxt(n *Node, w *strings.Builder) {
+
+	w.WriteString(n.RawString())
+
+}
+
+func accentOpenTxt(n *Node, w *strings.Builder) {
 
 	if o_jis0208 {
 
-		return n.Attr["raw"]
+		addToStringsBuilder(w, accentStartStr, n.Attr["raw"], accentEndStr)
 
+		return
 	}
 
-	return n.Attr["alt raw"]
+	w.WriteString(n.Attr["unicode raw"])
 
 }
 
-func accentOpenTxt(n *Node) string {
+func kunojiOpenTxt(n *Node, w *strings.Builder) {
 
-	if o_jis0208 {
-
-		return accentStartStr + n.Attr["raw"] + accentEndStr
-	}
-
-	return n.Attr["alt raw"]
+	w.WriteString(n.RawString())
 
 }
 
-func kunojiOpenTxt(n *Node) string {
+func bibInfoOpenTxt(n *Node, w *strings.Builder) {
 
-	if o_jis0208 {
+	if n.RawString() != "" {
 
-		return n.Attr["raw"]
+		addToStringsBuilder(w, noteStartStr, "本文終わり", noteEndStr, "\n")
 	}
 
-	return n.Attr["alt raw"]
+	return
 
 }
 
-func bibInfoOpenTxt(n *Node) string {
+func rubyGroupOpenTxt(n *Node, w *strings.Builder) {
 
-	if n.Attr["raw"] != "" {
+	n.splitRuby()
 
-		return noteStartStr + "本文終わり" + noteEndStr + "\n"
+	w.WriteString(rubyParentStartStr)
+
+	w.WriteString(strings.Join(strings.Split(n.Attr["ruby base"], "\t"), ""))
+
+	w.WriteString(rubyStartStr)
+
+	w.WriteString(strings.Join(strings.Split(n.Attr["ruby string"], "\t"), ""))
+
+	w.WriteString(rubyEndStr)
+
+	for _, e := range linearizeDescendants(n) {
+		e.Attr["ignore"] = "true"
 	}
 
-	return ""
+}
 
+func rubyGroupCloseTxt(n *Node, w *strings.Builder) {
+
+	for _, e := range linearizeDescendants(n) {
+		delete(e.Attr, "ignore")
+	}
 }

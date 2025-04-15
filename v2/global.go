@@ -1,10 +1,10 @@
-package aozoratext
+package aozoraConvert
 
 const (
-	markupNoteStartStr = `-------------------------------------------------------
-【テキスト中に現れる記号について】`
+	markupNoteStartStr = "\n" + `-------------------------------------------------------
+【テキスト中に現れる記号について】` + "\n"
 
-	markupNoteEndStr = `-------------------------------------------------------`
+	markupNoteEndStr = "\n" + `-------------------------------------------------------` + "\n"
 
 	markupNoteDelimiterStr = `-------------------------------------------------------`
 
@@ -53,6 +53,18 @@ const (
 	accentEndStr = "〕"
 
 	mainTextEndStr = "本文終わり"
+
+	fwqSpaceStr = "？　"
+
+	fwqRegStr = "？ "
+
+	fwexSpaceStr = "！　"
+
+	fwexRegStr = "！ "
+
+	dashStr = "―"
+
+	dashStrLatex = "---"
 )
 
 var kuntenchars = []rune("レ一二三四五六七八九十上中下甲乙丙丁天地人元亨利貞乾坤")
@@ -88,7 +100,7 @@ var inlineSectionMarker = []string{
 var windowSectionMarker = []string{
 	"窓中見出し",
 	"窓大見出し",
-	"窓中見出し",
+	"窓小見出し",
 }
 
 //emphasis

@@ -1,15 +1,15 @@
-package aozoratext
+package aozoraConvert
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type opt int
 
-var o_full, o_raw, o_jis0208 bool
+var o_full, o_fragment, o_jis0208, o_jis0213, o_raw, o_strict bool
 
 type tokenizer struct {
 	data        string
@@ -31,6 +31,10 @@ func init() {
 
 	o_jis0208 = false
 
+	o_jis0213 = false
+
+	o_strict = false
+
 	tokenizerLog = log.New(os.Stdout, "", 0)
 
 	log.SetFlags(0)
@@ -45,6 +49,11 @@ func setOutputOption(o string) {
 		o_jis0208 = true
 		o_raw = false
 
+	case "jis0213":
+		o_full = false
+		o_jis0208 = false
+		o_jis0213 = true
+
 	case "raw":
 		o_full = false
 		o_jis0208 = true
@@ -53,19 +62,21 @@ func setOutputOption(o string) {
 	default:
 		o_full = true
 		o_jis0208 = false
+		o_jis0213 = true
 		o_raw = false
 	}
 	return
 }
 
 // offset is setting line number in case s isn't the whole document being processed.
-func tokenize(s string, offset int) *token {
+func tokenize(s string) *token {
 
-	tknz := newTokenizer(s, offset)
+	tknz := newTokenizer(s)
 
 	t0 := tknz.nextToken()
 
-	for t1 := t0; !tknz.empty(); t1 = t1.next {
+	//for t1 := t0; !tknz.empty(); t1 = t1.next {
+	for t1 := t0; t1 != nil; t1 = t1.next {
 
 		t1.addTokenRight(tknz.nextToken())
 
@@ -75,9 +86,21 @@ func tokenize(s string, offset int) *token {
 
 }
 
-func tokenizeAndFix(text string, offset int) *token {
+func tokenizeAndFix(text string) (tk *token, err error) {
+	/*
+		defer func() {
 
-	tokenString := tokenize(strings.Join(strings.Split(text, "\n")[offset:], "\n"), offset)
+			if r := recover(); r != nil {
+
+				log.Println(r)
+
+				err = errors.New("error")
+				return
+
+			}
+		}()
+	*/
+	tokenString := tokenize(text)
 
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
@@ -91,13 +114,17 @@ func tokenizeAndFix(text string, offset int) *token {
 
 		tokenString.insertSectionEnds()
 
+		if !o_fragment {
+			tokenString.insertAozoraBookMarker()
+		}
+
 	}
 
-	return tokenString
+	return tokenString, err
 
 }
 
-func newTokenizer(d string, offset int) *tokenizer {
+func newTokenizer(d string) *tokenizer {
 
 	r := new(tokenizer)
 
@@ -105,27 +132,9 @@ func newTokenizer(d string, offset int) *tokenizer {
 
 	r.position = 0
 
-	r.lineCounter = offset
-
-	if !strings.HasPrefix(d, "\n") {
-
-		r.lineCounter++
-
-	}
+	r.lineCounter = 1
 
 	return r
-}
-
-func (tknz *tokenizer) empty() bool {
-
-	return tknz.position == len(tknz.data)
-
-}
-
-func (tknz *tokenizer) remainder() string {
-
-	return tknz.data[tknz.position:]
-
 }
 
 // read next i bytes
@@ -139,29 +148,15 @@ func (tknz *tokenizer) readNext(i int) string {
 
 func (tknz *tokenizer) nextToken() (e *token) {
 
-	defer func() {
-
-		r := recover()
-
-		if r != nil {
-
-			fmt.Println("The document has errors.")
-
-			fmt.Println("line ", tknz.lineCounter, ": ", r)
-
-			os.Exit(1)
-
-		}
-
-		return
-
-	}()
-
 	e = newToken()
 
 	end := 0
 
 	e.tokType = typeOf(tknz)
+
+	if e.tokType == eofToken {
+		return nil
+	}
 
 	switch e.tokType {
 
@@ -199,6 +194,9 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	case kunojiToken:
 		end = findMatchingCloser(kunojiToken, tknz)
 
+	case markupNoteToken:
+		end = findMatchingCloser(markupNoteToken, tknz)
+
 	}
 	e.content = tknz.readNext(end)
 
@@ -211,12 +209,24 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		}
 	}
 
+	if e.tokType == markupNoteToken {
+
+		tknz.lineCounter = tknz.lineCounter + len(strings.Split(e.content, "\n")) - 1
+
+		//we discard explanation of aozorabunko-style markup!!
+		return tknz.nextToken()
+
+	}
+
 	return e
 }
 
 func typeOf(s *tokenizer) tokenType {
 
 	switch {
+
+	case strings.HasPrefix(s.data[s.position:], markupNoteStartStr):
+		return markupNoteToken
 
 	case strings.HasPrefix(s.data[s.position:], bibInfoStartStr):
 		//must come before detection of linebreak
@@ -250,7 +260,7 @@ func typeOf(s *tokenizer) tokenType {
 		return kunojiToken
 
 	case len(s.data[s.position:]) == 0:
-		return emptyLineToken
+		return eofToken
 
 	default:
 		return textToken
@@ -283,14 +293,14 @@ func findContiguousText(s *tokenizer) (i int) {
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], noteEndStr):
-			panic("found unexpected: " + noteEndStr)
+			panic("Tokenizer: found unexpected: " + noteEndStr)
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], accentStartStr):
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], accentEndStr):
-			panic("found unexpected: " + accentEndStr)
+			panic("Tokenizer: found unexpected: " + accentEndStr)
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], kunojiStr):
@@ -311,6 +321,20 @@ func findContiguousText(s *tokenizer) (i int) {
 
 func findMatchingCloser(o tokenType, s *tokenizer) int {
 
+	if o == markupNoteToken {
+
+		i := strings.Index(s.data[s.position+len(openingStrOf(o)):], markupNoteEndStr)
+
+		if i == -1 {
+
+			panic("Tokenizer: markup notes do not end")
+
+		}
+
+		return i + len(openingStrOf(o)) + len(closingStrOf(o))
+
+	}
+
 	end := strings.Index(s.data[s.position:], lineBreakStr)
 
 	if o != noteToken && o != gaijiToken {
@@ -319,13 +343,12 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("1 unmatched opening tag: " + o.String())
+			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
 		if i > end {
-
-			panic("2 unmatched opening tag: " + o.String())
+			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
@@ -355,7 +378,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 	}
 
-	panic("unmatched opening tag: " + o.String())
+	panic("Tokenizer: note not terminated. " + "\n surrounding text: " + s.textContext())
 
 	return -1
 
@@ -385,10 +408,81 @@ func closingStrOf(o tokenType) string {
 
 		return kunojiEndStr
 
+	case markupNoteToken:
+
+		return markupNoteEndStr
+
 	default:
 
 		return emptyStr
 
 	}
+
+}
+
+func openingStrOf(o tokenType) string {
+
+	switch o {
+
+	case rubyStartToken:
+
+		return rubyStartStr
+
+	case gaijiToken:
+
+		return gaijiMarkerStr
+
+	case noteToken:
+
+		return noteStartStr
+
+	case accentToken:
+
+		return accentStartStr
+
+	case kunojiToken:
+
+		return kunojiStr
+
+	case markupNoteToken:
+
+		return markupNoteStartStr
+
+	default:
+
+		return emptyStr
+
+	}
+
+}
+
+func (t *tokenizer) textContext() (tctx string) {
+
+	maxlen := 20
+
+	r1 := []rune(t.data[:t.position])
+
+	r2 := []rune(t.data[t.position:])
+
+	if len(r1) > maxlen/2+1 {
+
+		tctx = string(r1[len(r1)-maxlen/2+1:])
+
+	} else {
+		tctx = string(r1)
+
+	}
+
+	if len(r2) > maxlen/2+1 {
+
+		tctx = tctx + string(r2[:maxlen/2+1])
+
+	} else {
+
+		tctx = tctx + string(r2)
+
+	}
+
+	return
 
 }

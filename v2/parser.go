@@ -1,48 +1,45 @@
-package aozoratext
+package aozoraConvert
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
 )
 
-func ast(text string, offset int) *Node {
+func parse(text string) (*Node, error) {
 
-	return getAST(tokenizeAndFix(text, offset))
+	tok, err := tokenizeAndFix(text)
 
-}
+	if err != nil {
 
-func getAozoraAST(text string) *Node {
-
-	offset := aztextMainStart(text)
-
-	fmt.Println("offset", offset)
-
-	document := ast(text, offset)
-
-	if offset == 0 {
-
-		return document
+		return new(Node), err
 
 	}
 
-	metadata := getMetadata(text)
-
-	if metadata != nil {
-
-		document.addFirstChild(metadata)
-	}
-
-	return document
+	return getAST(tok)
 
 }
 
-func getAST(t *token) *Node {
+func getAST(t *token) (nd *Node, err error) {
+
+	if t == nil {
+
+		return new(Node), errors.New("No tokens to process.")
+
+	}
 
 	document := newNode("document")
 
 	document.level = 0
+
+	if t.mainTextStart() != t.firstToken() {
+
+		metadataNode := getMetadata(t)
+
+		document.addChild(metadataNode)
+	}
 
 	prevNode := new(Node)
 
@@ -56,13 +53,13 @@ func getAST(t *token) *Node {
 
 	figCounter := 0
 
+	imgCounter := 0
+
 	n := new(Node)
 
 	addNewNodeAsChild := nextIsChild
 
-	for e := t.firstToken(); e != nil; e = e.next {
-
-		//	fmt.Print(e)
+	for e := t.mainTextStart(); e != nil; e = e.next {
 
 		n = newNode("")
 
@@ -89,7 +86,21 @@ func getAST(t *token) *Node {
 
 			closeNode = false
 
-		case e.tokType == lineBreakToken:
+		case e.tokType == paragraphEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
+		case e.tokType == rubyGroupStartToken:
+
+			n.setType("ruby group")
+
+			nextIsChild = true
+
+			closeNode = false
+
+		case e.tokType == rubyGroupEndToken:
 
 			nextIsChild = false
 
@@ -104,12 +115,6 @@ func getAST(t *token) *Node {
 			closeNode = false
 
 		case e.tokType == rubyParentEndToken:
-
-			nextIsChild = false
-
-			closeNode = true
-
-		case e.tokType == alignBottomCloserToken:
 
 			nextIsChild = false
 
@@ -169,8 +174,6 @@ func getAST(t *token) *Node {
 
 			n.setType("gaiji char")
 
-			n.SetAttr("alt raw", e.altContent)
-
 			nextIsChild = false
 
 			closeNode = false
@@ -178,8 +181,6 @@ func getAST(t *token) *Node {
 		case e.tokType == kunojiToken:
 
 			n.setType("kunoji")
-
-			n.SetAttr("alt raw", e.altContent)
 
 			nextIsChild = false
 
@@ -331,7 +332,11 @@ func getAST(t *token) *Node {
 
 			n.setType("image")
 
+			imgCounter++
+
 			n.setImageData(e)
+
+			n.SetAttr("id", "img"+strconv.Itoa(imgCounter))
 
 			nextIsChild = false
 
@@ -389,6 +394,12 @@ func getAST(t *token) *Node {
 
 			closeNode = false
 
+		case e.tokType == centeringEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
 		case e.tokType == bibInfoToken:
 
 			n.setType("bibliographical info")
@@ -397,6 +408,12 @@ func getAST(t *token) *Node {
 
 			closeNode = false
 
+		case e.tokType == bibInfoEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
 		case e.tokType == gaijiNoteToken:
 
 			n.setType("gaiji note")
@@ -404,6 +421,12 @@ func getAST(t *token) *Node {
 			nextIsChild = false
 
 			closeNode = false
+
+		case e.tokType == alignBottomCloserToken:
+
+			nextIsChild = false
+
+			closeNode = true
 
 		case e.isFormatOfType(warichuLineBreakMarker):
 
@@ -417,8 +440,6 @@ func getAST(t *token) *Node {
 
 			n.setType("special char")
 
-			n.SetAttr("alt raw", e.altContent)
-
 			nextIsChild = false
 
 			closeNode = false
@@ -427,11 +448,35 @@ func getAST(t *token) *Node {
 
 			n.setType("accent string")
 
-			n.SetAttr("alt raw", e.altContent)
+			nextIsChild = false
+
+			closeNode = false
+
+		case e.tokType == gaijiImgToken:
+
+			n.setType("image")
+
+			n.setImageData(e)
+
+			n.SetAttr("style", "inline")
 
 			nextIsChild = false
 
 			closeNode = false
+
+		case e.tokType == mainTextStartToken:
+
+			n.setType("main text")
+
+			nextIsChild = true
+
+			closeNode = false
+
+		case e.tokType == mainTextEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
 
 		case e.tokType == emptyToken:
 
@@ -441,7 +486,7 @@ func getAST(t *token) *Node {
 
 			n.setType("unknown")
 
-			log.Println("Warning: unknown annotation type: " + e.String())
+			log.Println("Parser: unknown annotation type: " + e.info())
 
 			nextIsChild = false
 
@@ -455,23 +500,45 @@ func getAST(t *token) *Node {
 
 			nextIsChild = false
 
-			if prevNode.Parent() == nil {
+			prevNode = prevNode.Parent()
 
-				log.Fatal("Structure is invalid. Immediate place of  error is around line ", strconv.Itoa(e.lineNumber())+" "+prevNode.String(), n.String())
+			err := isValidStructure(prevNode, e)
+
+			if err != nil {
+				panic(err.Error())
+			}
+
+			prevNode.SetAttr("raw closer", e.innerString())
+
+			prevNode.SetAttr("raw unicode closer", e.unicodeContent)
+
+			prevNode.SetAttr("raw jis0213 closer", e.jis0213Content)
+
+			if prevNode.Attr["maybe kanbun"] != "" {
+
+				prevNode.fixKanbun()
 
 			}
 
-			prevNode = prevNode.Parent()
-
-			prevNode.SetAttr("raw closer", e.innerString())
+			prevNode.closed = true
 
 		default:
 
 			n.setRaw(e.innerString())
 
+			n.SetAttr("unicode raw", e.unicodeContent)
+
+			n.SetAttr("jis0213 raw", e.jis0213Content)
+
 			n.setBlock(e)
 
-			n.lineNo = e.lineNo
+			n.tok = e
+
+			if !nextIsChild {
+
+				n.closed = true
+
+			}
 
 			if e.isSectionStart() {
 
@@ -491,27 +558,84 @@ func getAST(t *token) *Node {
 
 			}
 
+			if n.Attr["type"] == "image" {
+				n.fixImage()
+			}
+
+			if n.Attr["type"] == "kunten" || n.Attr["type"] == "okurigana" {
+				if n.Parent().Attr["type"] == "paragraph" {
+					n.Parent().SetAttr("maybe kanbun", "true")
+				}
+			}
+
 			prevNode = n
 
 		}
 
 	}
 
-	return document
+	if prevNode.Parent().Attr["type"] != "document" {
+
+		fmt.Println("last node is ", prevNode.Attr["type"])
+		fmt.Println("Parent is ", prevNode.Parent().Attr["type"])
+
+		for _, e := range linearizeNode(document) {
+
+			if !e.closed {
+				log.Print("unclosed node: ")
+				log.Print(e.Attr["type"])
+				if e.tok != nil {
+					log.Print(e.tok.info())
+				}
+				log.Print("\n")
+
+			}
+		}
+	}
+
+	return document, err
 
 }
 
-func getMetadata(text string) (metadataNode *Node) {
+func getMetadata(t *token) (metadataNode *Node) {
+
+	text := ""
+
+	for e := t.firstToken(); e.tokType != emptyLineToken; e = e.next {
+
+		if e.tokType == paragraphEndToken {
+			text = text + "\n"
+		} else {
+			text = text + e.String()
+		}
+
+	}
 
 	metadataNode = newNode("metadata")
 
-	lines := strings.Split(strings.Split(text, "\n\n")[0], "\n")
+	lines := strings.Split(text, "\n")
+
+	if len(lines[len(lines)-1]) == 0 {
+		lines = lines[:len(lines)-1]
+	}
 
 	titleNode := newNode("meta title")
 
-	titleNode.addChild(ast(lines[0], 0).firstChild.firstChild)
+	titleText, err := parse(lines[0])
+
+	if err != nil {
+
+		log.Fatal(err)
+
+		panic(err.Error())
+
+	}
+
+	titleNode.addChild(titleText.firstChild.firstChild)
 
 	metadataNode.addChild(titleNode)
+
+	titleNode.closed = true
 
 	contributorIdx := 1
 
@@ -526,14 +650,23 @@ func getMetadata(text string) (metadataNode *Node) {
 		}
 
 	}
-
 	if len(lines) > minLen {
 
 		subtitleNode := newNode("meta subtitle")
 
-		subtitleNode.addChild(ast(lines[1], 0).firstChild.firstChild)
+		subtitleText, err := parse(lines[1])
+
+		if err != nil {
+
+			log.Fatal(err)
+			panic(err.Error())
+
+		}
+		subtitleNode.addChild(subtitleText.firstChild.firstChild)
 
 		metadataNode.addChild(subtitleNode)
+
+		subtitleNode.closed = true
 
 		contributorIdx = 2
 
@@ -543,12 +676,75 @@ func getMetadata(text string) (metadataNode *Node) {
 
 		contributorNode := newNode("meta contributor")
 
-		contributorNode.addChild(ast(lines[contributorIdx], 0).firstChild.firstChild)
+		contributorName, err := parse(lines[contributorIdx])
+
+		if err != nil {
+
+			panic(err.Error())
+
+		}
+
+		contributorNode.addChild(contributorName.firstChild.firstChild)
 
 		metadataNode.addChild(contributorNode)
 
+		contributorNode.closed = true
+
 	}
+
+	metadataNode.closed = true
 
 	return metadataNode
 
+}
+
+func (n *Node) fixImage() {
+
+	if n.Parent() == nil {
+		return
+	}
+
+	if n.Parent().Attr["type"] == "figure" {
+		return
+	}
+
+	if ok, _ := n.withinScopeOfType("paragraph"); ok {
+
+		n.SetAttr("style", "inline")
+
+	}
+
+}
+
+func (n *Node) fixKanbun() {
+
+	defer delete(n.Attr, "maybe kanbun")
+
+	for _, e := range linearizeDescendants(n) {
+		switch e.Attr["type"] {
+		case "text", "gaiji char", "kunten", "okurigana":
+			continue
+
+		default:
+			return
+		}
+	}
+
+	wt := new(strings.Builder)
+
+	renderInnerTextOnly(n, wt)
+
+	for _, c := range wt.String() {
+
+		switch {
+		case charType(c) == kanji, c == '、', c == '。':
+
+		default:
+			return
+		}
+	}
+
+	log.Println("WARNING: line ", strconv.Itoa(n.tok.lineNumber()), " kanbun detected.")
+
+	n.SetAttr("type", "kanbun")
 }

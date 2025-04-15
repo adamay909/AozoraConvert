@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"sort"
@@ -13,6 +13,7 @@ type htmlTagSpec struct {
 	extra         []string
 	extraKeyVal   map[string][]string
 	open          bool
+	selfclose     bool
 }
 
 func newHtag(elem string) *htmlTagSpec {
@@ -38,6 +39,57 @@ func newCloseHtag(elem string) *htmlTagSpec {
 	h.setClose()
 
 	return h
+
+}
+
+func (data *htmlTagSpec) AddStringTo(w *strings.Builder) {
+
+	w.WriteString(data.before)
+
+	w.WriteString("<")
+
+	if data.open {
+
+		w.WriteString(data.element)
+		if len(data.class) > 0 {
+			addToStringsBuilder(w, ` class="`, strings.Join(data.class, " "), `"`)
+		}
+
+		if len(data.extraKeyVal) > 0 {
+
+			keys := []string{}
+
+			for k := range data.extraKeyVal {
+				keys = append(keys, k)
+			}
+
+			sort.Strings(keys)
+
+			for _, k := range keys {
+				addToStringsBuilder(w, " ", k, `="`, strings.Join(data.extraKeyVal[k], " "), `"`)
+			}
+		}
+
+		if len(data.extra) > 0 {
+			addToStringsBuilder(w, " ", strings.Join(data.extra, " "))
+		}
+
+		if data.id != "" {
+			addToStringsBuilder(w, ` id="`, data.id, `"`)
+		}
+
+		if data.selfclose {
+			w.WriteString(`/`)
+		}
+
+	} else {
+		w.WriteString(`/`)
+		w.WriteString(data.element)
+	}
+
+	w.WriteString(">")
+
+	w.WriteString(data.after)
 
 }
 
@@ -77,6 +129,11 @@ func (data *htmlTagSpec) String() string {
 
 		if data.id != "" {
 			addToStringsBuilder(output, ` id="`, data.id, `"`)
+		}
+
+		if data.selfclose {
+
+			output.WriteString(`/`)
 		}
 
 	} else {
@@ -130,6 +187,14 @@ func (h *htmlTagSpec) setOpen() {
 func (h *htmlTagSpec) setClose() {
 
 	h.open = false
+
+	return
+
+}
+
+func (h *htmlTagSpec) setSelfClose() {
+
+	h.selfclose = true
 
 	return
 

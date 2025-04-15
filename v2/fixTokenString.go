@@ -1,6 +1,8 @@
-package aozoratext
+package aozoraConvert
 
 import (
+	"log"
+	"strconv"
 	"strings"
 )
 
@@ -17,6 +19,7 @@ func (t *token) fixLines() {
 		e.fixBibInfo()
 
 		e.fixAbbreviatedBlockFormat()
+		e.fixBlockFormat()
 		e.fixInlineAlignBottom()
 		e.fixImpliedOpener()
 	}
@@ -145,14 +148,18 @@ func (t *token) fixkunoji() {
 
 	if t.content == kunojiStr {
 
-		t.altContent = kunojiStrU
+		t.unicodeContent = kunojiStrU
+
+		t.jis0213Content = kunojiStrU
 
 		t.modified = true
 
 		return
 	}
 
-	t.altContent = kunojiDakuStrU
+	t.unicodeContent = kunojiDakuStrU
+
+	t.jis0213Content = kunojiDakuStrU
 
 	t.modified = true
 }
@@ -164,22 +171,66 @@ func (t *token) fixruby() {
 		return
 	}
 
+	t.insertTokenLeft(newTokenOfType(rubyParentEndToken))
+
 	e := new(token)
+
+	found := false
 
 	for e = t.next; e != nil; e = e.next {
 
 		if e.tokType == rubyEndToken {
 
-			e.insertTokenRight(newTokenOfType(rubyParentEndToken))
+			e.insertTokenRight(newTokenOfType(rubyGroupEndToken))
+
+			found = true
 
 			break
 		}
+
+		if e.tokType == endOfLineToken {
+			break
+		}
+
+		if e.tokType == rubyStartToken {
+			break
+		}
+
+		if e.tokType == rubyParentStartToken {
+			break
+		}
+
+	}
+	if !found {
+
+		panic("unclosed ruby tag: " + t.info() + "\n surrounding text: " + t.textContext())
+
 	}
 
-	if e == nil {
+	if e2 := t.prev; e2 != nil && e2.tokType == noteToken {
 
-		t.lastToken().insertTokenRight(newTokenOfType(rubyParentEndToken))
+		if e2.isImage() {
 
+			msg := "line " + strconv.Itoa(e2.lineNumber()) + " grphics used as characer? Attempting fix."
+
+			e2.tokType = gaijiImgToken
+
+			log.Println("WARNING: " + msg)
+
+		} else {
+
+			msg := "line " + strconv.Itoa(e2.lineNumber()) + " wrong order of ruby and annotation:" + e2.prev.String() + e2.String() + e2.next.String() + e2.next.next.String()
+
+			if o_strict {
+				panic("ERROR: " + msg)
+			}
+
+			log.Println("WARNING: " + msg)
+
+			e2.remove()
+
+			e.next.insertTokenRight(e2)
+		}
 	}
 
 	if !t.rubyParentExplicit() {
@@ -196,11 +247,15 @@ func (t *token) rubyParentExplicit() bool {
 
 	for e := t.prev; e != nil; e = e.prev {
 
+		if e.tokType == rubyParentEndToken {
+			continue
+		}
 		if e.tokType == textToken {
 			continue
 		}
 
 		if e.tokType == rubyParentStartToken {
+			e.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 			return true
 		}
 
@@ -228,6 +283,14 @@ func (t *token) rubyParentExplicit() bool {
 			continue
 		}
 
+		if e.isImage() {
+			continue
+		}
+
+		if e.tokType == emptyToken {
+			continue
+		}
+
 		break
 	}
 
@@ -238,21 +301,34 @@ func (t *token) insertRubyParentStart() {
 
 	e := new(token)
 
-	if t.prev.tokType == accentToken {
+	e = t.prev
 
-		t.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+	if e.prev.tokType == accentToken {
+
+		e.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+
+		e.prev.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 
 		return
 
 	}
 
+	if e.prev.isImage() {
+
+		e.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+
+		e.prev.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+		return
+
+	}
 	var ref charTypeID
 
 	var r []rune
 
 	for e = t.prev; e != nil; e = e.prev {
 
-		if e.tokType == rubyEndToken {
+		/*if e.tokType == rubyEndToken {
 
 			for ; e.tokType != rubyStartToken; e = e.prev {
 			}
@@ -260,7 +336,7 @@ func (t *token) insertRubyParentStart() {
 			e = e.prev
 
 		}
-
+		*/
 		if e.tokType == textToken {
 			break
 		}
@@ -280,6 +356,10 @@ func (t *token) insertRubyParentStart() {
 	for e = t.prev; e != nil; e = e.prev {
 
 		if e.tokType == rubyParentEndToken {
+			continue
+		}
+
+		if e.tokType == rubyGroupEndToken {
 			break
 		}
 
@@ -296,7 +376,7 @@ func (t *token) insertRubyParentStart() {
 			break
 		}
 
-		if e.tokType != textToken {
+		if e.tokType != textToken && e.tokType != gaijiCharToken {
 			continue
 		}
 
@@ -322,7 +402,9 @@ func (t *token) insertRubyParentStart() {
 
 			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
-			e.prev.insertTokenLeft(t2)
+			e.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+			e.prev.prev.insertTokenLeft(t2)
 
 			e.modified = true
 
@@ -334,19 +416,23 @@ func (t *token) insertRubyParentStart() {
 
 			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
-			return
-
-		}
-
-		if e.prev.tokType == rubyParentStartToken {
+			e.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 
 			return
 
 		}
 
+		/*		if e.prev.tokType == rubyParentStartToken {
+
+					return
+
+				}
+		*/
 	}
 
 	e.insertTokenRight(newTokenOfType(rubyParentStartToken))
+
+	e.insertTokenRight(newTokenOfType(rubyGroupStartToken))
 
 	return
 }
@@ -383,15 +469,25 @@ func (tok *token) fixgaiji() {
 
 	case tok.tokType == noteToken:
 
-		tk2 := tokenize(tok.innerString(), 0)
+		tk2 := tokenize(tok.innerString())
+
+		hasgaiji := false
 
 		for tk3 := tk2; tk3 != nil; tk3 = tk3.next {
 
-			tk3.fixgaiji()
+			if tk3.tokType == gaijiToken {
+				tk3.fixgaiji()
+				hasgaiji = true
 
+			}
 		}
 
-		tok.setInnerString(tk2.StringAll())
+		if hasgaiji {
+			for e := tk2; e != nil; e = e.next {
+				tok.unicodeContent = tok.unicodeContent + e.unicodeString()
+				tok.jis0213Content = tok.jis0213Content + e.jis0213String()
+			}
+		}
 
 	default:
 
@@ -400,7 +496,7 @@ func (tok *token) fixgaiji() {
 
 	if tok.tokType == gaijiToken {
 
-		tokenizerLog.Println("gaiji conversion failed:", tok.String())
+		tokenizerLog.Println("gaiji conversion failed:", tok.info())
 
 		tok.reformgaiji()
 
@@ -418,6 +514,10 @@ func (tok *token) replaceGaiji() {
 	if j != "" {
 		uni, _ = convert(j)
 
+		tok.jis0213Content = uni
+
+		tok.unicodeContent = uni
+
 	} else {
 
 		u := ucode(originalNote)
@@ -428,11 +528,9 @@ func (tok *token) replaceGaiji() {
 
 		uni = unicodeOf(u)
 
+		tok.unicodeContent = uni
+
 	}
-
-	tok.content = tok.content
-
-	tok.altContent = uni
 
 	switch uni {
 
@@ -494,10 +592,31 @@ func (note *token) fixImpliedOpener() {
 
 	}
 
-	switch m {
-
-	case "":
+	if m == "" {
 		return
+	}
+
+	if note.next.tokType == rubyStartToken {
+
+		msg := "line " + strconv.Itoa(note.lineNumber()) + " wrong order of ruby and annotation:" + note.prev.String() + note.String() + note.next.String() + note.next.next.String()
+
+		log.Println("WARNING: " + msg)
+
+		e := new(token)
+
+		for e := note.next; e.tokType != rubyEndToken; e = e.next {
+		}
+
+		n2 := copyOf(note)
+
+		e.insertTokenRight(n2)
+
+		note.tokType = emptyToken
+
+		return
+	}
+
+	switch m {
 
 	case "ルビ":
 		fixLeftRuby(note)
@@ -571,10 +690,7 @@ func fixFontSize(note *token) {
 		return
 	}
 
-	//	sb := strings.TrimPrefix(note.innerString(), refStartStr+rs[0]+refEndStr+"は")
-
 	sb := strings.Split(note.innerString(), refEndStr+"は")[1]
-	//	sb := note.innerString()
 
 	note.originalContent = note.content
 
@@ -710,11 +826,11 @@ func fixParagraph(start, end *token) {
 
 	switch start.tokType {
 
-	case textToken, rubyParentStartToken, gaijiCharToken, specialCharToken:
+	case textToken, rubyGroupStartToken, gaijiCharToken, specialCharToken, accentToken, gaijiImgToken:
 
 		start.insertTokenLeft(newParagraphToken())
 
-		end.tokType = lineBreakToken
+		end.tokType = paragraphEndToken
 
 		end.modified = true
 
@@ -728,7 +844,7 @@ func fixParagraph(start, end *token) {
 
 		start.insertTokenRight(newParagraphToken())
 
-		end.tokType = lineBreakToken
+		end.tokType = paragraphEndToken
 
 		end.modified = true
 
@@ -765,7 +881,7 @@ func fixParagraph(start, end *token) {
 
 				pos.insertTokenLeft(newParagraphToken())
 
-				end.tokType = lineBreakToken
+				end.tokType = paragraphEndToken
 
 				end.modified = true
 
@@ -788,7 +904,7 @@ func fixParagraph(start, end *token) {
 
 				pos.insertTokenLeft(newParagraphToken())
 
-				end.tokType = lineBreakToken
+				end.tokType = paragraphEndToken
 
 				end.modified = true
 
@@ -821,7 +937,7 @@ func (t *token) fixCentering() {
 	for ; !pos.next.isPagination(); pos = pos.next {
 	}
 
-	pos.next.insertTokenLeft(newNote("ページの左右中央終わり"))
+	pos.next.insertTokenLeft(newTokenOfType(centeringEndToken))
 
 	return
 }
@@ -832,7 +948,7 @@ func (t *token) fixSectionFormatting() {
 
 	e1 := sectionTitleFormattingStart(pos)
 
-	switch pos.innerString() {
+	switch strings.TrimPrefix(pos.innerString(), blockStartStr) {
 	case "大見出し":
 		e1.insertTokenLeft(newTokenOfType(sectionToken))
 
@@ -868,7 +984,7 @@ func (t *token) insertSectionEnds() {
 		if pos.isBlockClosingNote() {
 			open--
 			if open < 0 {
-				panic("Closing tag without matching opener! " + pos.info())
+				panic(pos.info() + " closing tag without matching opener! ")
 			}
 
 			openers = openers[:len(openers)-1]
@@ -1022,7 +1138,16 @@ func sectionTitleFormattingStart(t *token) (s *token) {
 
 	}
 
-	return r
+	for s = r; s.tokType == emptyLineToken; s = s.next {
+	}
+
+	if s == nil {
+
+		s = t.firstToken()
+
+	}
+
+	return s
 
 }
 
@@ -1032,11 +1157,13 @@ func (t *token) fixaccent() {
 		return
 	}
 
-	t.altContent = convertAccent(t.innerString())
+	t.unicodeContent = convertAccent(t.innerString())
+
+	t.jis0213Content = t.unicodeContent
 
 	t.modified = true
 
-	if len([]rune(t.altContent)) == len([]rune(t.innerString())) {
+	if len([]rune(t.unicodeContent)) == len([]rune(t.innerString())) {
 		t.tokType = textToken
 		return
 
@@ -1058,21 +1185,17 @@ func (t *token) fixFigures() {
 
 	e := t
 
-	e.insertTokenLeft(newTokenOfType(figureStartToken))
+	if e.nextSignificantToken().isCaption() {
 
-	n := newTokenOfType(figureEndToken)
+		e.insertTokenLeft(newTokenOfType(figureStartToken))
 
-	if !e.nextSignificantToken().isCaption() {
+		n := newTokenOfType(figureEndToken)
 
-		e.insertTokenRight(n)
-		if n.next.tokType == lineBreakToken {
-			n.next.remove()
-		}
+		e.nextSignificantToken().matchingCloserToken().insertTokenRight(n)
 
 		return
-	}
 
-	e.nextSignificantToken().matchingCloserToken().insertTokenRight(n)
+	}
 
 }
 
@@ -1082,7 +1205,9 @@ func (t *token) fixBibInfo() {
 		return
 	}
 
-	for pos := t.next; pos != nil; pos = pos.next {
+	pos := new(token)
+
+	for pos = t.next; pos != nil; pos = pos.next {
 
 		if pos.tokType == bibInfoToken {
 
@@ -1098,6 +1223,11 @@ func (t *token) fixBibInfo() {
 
 		}
 	}
+
+	for pos = t.lastToken(); pos.tokType != endOfLineToken; pos = pos.prev {
+	}
+
+	pos.insertTokenLeft(newTokenOfType(bibInfoEndToken))
 
 	if t.innerString() == noteStartStr+mainTextEndStr+noteEndStr {
 		return
@@ -1179,5 +1309,76 @@ func (t *token) fixEmptyText() {
 		}
 	}
 
+	return
+}
+
+func (t *token) insertAozoraBookMarker() {
+
+	e := new(token)
+
+	for e = t.firstToken(); e.tokType != emptyLineToken; e = e.nextLine() {
+		if e.nextLine() == nil {
+			return
+		}
+	}
+
+	if e.lineNumber() < 3 {
+		return
+	}
+
+	e.insertTokenRight(newTokenOfType(mainTextStartToken))
+
+	for ; e.tokType != bibInfoToken; e = e.next {
+
+		if e.next == nil {
+			t.lastToken().insertTokenRight(newTokenOfType(mainTextEndToken))
+			return
+		}
+	}
+
+	e.insertTokenLeft(newTokenOfType(mainTextEndToken))
+
+	return
+
+}
+
+func (t *token) fixBlockFormat() {
+
+	if t.tokType != noteToken {
+		return
+	}
+
+	if strings.HasPrefix(t.innerString(), blockStartStr) {
+
+		if t.next.tokType == endOfLineToken {
+			return
+		}
+
+		if o_strict {
+			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
+			return
+		}
+
+		log.Println("WARNING: line", t.lineNumber(), "block start annotation should be on own line. Fixed.")
+
+		t.insertTokenRight(newTokenOfType(endOfLineToken))
+		return
+	}
+
+	if strings.HasPrefix(t.innerString(), blockEndStr) {
+
+		if t.prev.tokType == endOfLineToken {
+			return
+		}
+
+		if o_strict {
+			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
+			return
+		}
+
+		log.Println("WARNING: line", t.lineNumber(), "block end annotation should be on own line. Fixed.")
+
+		t.insertTokenLeft(newTokenOfType(endOfLineToken))
+	}
 	return
 }

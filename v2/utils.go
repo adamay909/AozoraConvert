@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"strconv"
@@ -56,13 +56,16 @@ func ucode(txt string) string {
 
 	}
 
-	_, err := hextoi(txt[i+2 : i+6])
+	k := 0
+	for k = i + 2; strings.Contains(`0123456789ABCDEF`, string(txt[k])); k++ {
+	}
+	_, err := hextoi(txt[i+2 : k])
 
 	if err != nil {
 		return emptyStr
 	}
 
-	return txt[i+2 : i+6]
+	return txt[i+2 : k]
 
 }
 
