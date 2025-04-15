@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"errors"
@@ -20,6 +20,7 @@ const (
 	kanji
 	whitespace
 	punctuation
+	roman
 )
 
 type jisuni struct {
@@ -314,6 +315,9 @@ func charType(r rune) charTypeID {
 
 	case strings.ContainsAny("、。「」！？・", string(r)):
 		return punctuation
+
+	case unicode.IsOneOf([]*unicode.RangeTable{unicode.Latin}, r):
+		return roman
 
 	default:
 		return symbol

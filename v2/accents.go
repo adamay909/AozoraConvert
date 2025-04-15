@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import "strings"
 

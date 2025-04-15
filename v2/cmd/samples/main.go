@@ -15,6 +15,10 @@ var data string
 
 func main() {
 
+	latexSample()
+
+	return
+
 	lines := strings.Split(data, "::::\n")
 
 	ac.SetFragment(true)
@@ -97,19 +101,112 @@ func main() {
 
 		fmt.Println()
 
-		fmt.Println("抽出されたAST:")
-
-		fmt.Println()
+		fmt.Println("生成されたLaTeX:")
 
 		w.Reset()
 
-		ac.RenderJSON(n, w)
+		fmt.Println()
+
+		ac.RenderLaTeX(n, w)
 
 		fmt.Println(w)
 
 		fmt.Println()
 
+		/*
+			fmt.Println("抽出されたAST:")
+
+			fmt.Println()
+
+			w.Reset()
+
+			ac.RenderJSON(n, w)
+
+			fmt.Println(w)
+
+			fmt.Println()
+		*/
 		fmt.Println("---------------------------------------------")
 
 	}
+}
+
+func latexSample() {
+
+	w := new(strings.Builder)
+
+	sections := strings.Split(data, "####")
+
+	ac.SetFragment(true)
+
+	fmt.Println()
+
+	fmt.Println(`\documentclass[a4paper,tate]{jlreq}`)
+
+	fmt.Println(`\input{azcommands}`)
+
+	fmt.Println(`\setlength{\parindent}{0em}`)
+
+	fmt.Println(`\geometry{landscape}`)
+
+	fmt.Println(`\renewcommand{\baselinestretch}{1.5}`)
+	fmt.Println(`\begin{document}`)
+
+	for _, s := range sections {
+
+		if len(s) == 0 {
+			continue
+		}
+
+		idx := strings.Index(s, "\n")
+
+		fmt.Println(`\subsubsection*{` + s[:idx] + `}`)
+
+		lines := strings.Split(s[idx:], "::::")
+
+		for _, l := range lines {
+
+			if len(l) == 0 {
+				continue
+			}
+
+			if strings.HasPrefix(l, "%%%") {
+				continue
+			}
+
+			n, _ := ac.AST(l)
+
+			fmt.Println(`\footnotesize`)
+
+			fmt.Println(`\linespread{1.0}`)
+
+			fmt.Println(`\begin{verbatim}`)
+
+			fmt.Println(l)
+
+			fmt.Println(`\end{verbatim}`)
+
+			fmt.Println(`\linespread{1.4}`)
+			fmt.Println(`\normalsize`)
+
+			w.Reset()
+
+			fmt.Println(`LATEX OUTPUT:`)
+
+			fmt.Println(`\vskip 2\zw`)
+
+			fmt.Println()
+
+			ac.RenderLaTeX(n, w)
+
+			fmt.Println(w)
+
+			fmt.Println()
+
+			fmt.Println(`\newpage`)
+		}
+	}
+
+	fmt.Println(`\end{document}`)
+
 }

@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"sort"
@@ -289,5 +289,27 @@ func (n *Node) NestingLevel() int {
 func (n *Node) HasChild() bool {
 
 	return n.firstChild != nil
+
+}
+
+func (n *Node) remove() {
+
+	c1 := n.prev
+
+	c2 := n.next
+
+	if c2 != nil {
+		c2.prev = c1
+	}
+
+	if c1 != nil {
+		c1.next = c2
+	}
+
+	n.next = nil
+
+	n.prev = nil
+
+	return
 
 }

@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 const (
 	markupNoteStartStr = "\n" + `-------------------------------------------------------
@@ -53,6 +53,18 @@ const (
 	accentEndStr = "〕"
 
 	mainTextEndStr = "本文終わり"
+
+	fwqSpaceStr = "？　"
+
+	fwqRegStr = "？ "
+
+	fwexSpaceStr = "！　"
+
+	fwexRegStr = "！ "
+
+	dashStr = "―"
+
+	dashStrLatex = "---"
 )
 
 var kuntenchars = []rune("レ一二三四五六七八九十上中下甲乙丙丁天地人元亨利貞乾坤")

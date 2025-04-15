@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"log"
@@ -31,6 +31,10 @@ func renderHtml(n *Node, w *strings.Builder) {
 
 func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 
+	if _, ok := n.Attr["ignore"]; ok {
+		return
+	}
+
 	switch n.Attr["type"] {
 
 	case "text":
@@ -39,6 +43,12 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 	case "paragraph":
 		w.WriteString("<p>")
 
+	case "kanbun":
+		w.WriteString("<p>")
+
+	case "ruby group":
+		rubyGroupOpenHtml(n, w)
+
 	case "ruby parent":
 		newHtag("ruby").AddStringTo(w)
 
@@ -46,7 +56,9 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 		rubyOpenHtml(n, w)
 
 	case "empty line":
-		newHtag("br").AddStringTo(w)
+		h := newHtag("br")
+		h.setSelfClose()
+		h.AddStringTo(w)
 		w.WriteString("\n")
 
 	case "section":
@@ -153,16 +165,27 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 	case "meta contributor":
 		metaContributorOpenHtml(n, w)
 
+	case "main text":
+		return
+
 	case "document":
 		return
 
+	case "unknown":
+		unknownOpenHtml(n, w)
+
 	default:
+		log.Println("Renderer: unknown node type: " + n.String())
 		unknownOpenHtml(n, w)
 	}
 
 }
 
 func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
+
+	if _, ok := n.Attr["ignore"]; ok {
+		return
+	}
 
 	switch n.Attr["type"] {
 
@@ -171,6 +194,12 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 
 	case "paragraph":
 		w.WriteString("</p>\n")
+
+	case "kanbun":
+		w.WriteString("</p>\n")
+
+	case "ruby group":
+		rubyGroupCloseHtml(n, w)
 
 	case "ruby parent":
 		rubyParentCloseHtml(n, w)
@@ -193,6 +222,7 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 	case "emphasis":
 		if o_compatible {
 			rubyLikeCloseHtml(n, w)
+			return
 		}
 		emphCloseHtml(n, w)
 
@@ -245,7 +275,6 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "okurigana":
-
 		return
 
 	case "centering":
@@ -266,10 +295,29 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 	case "meta contributor":
 		metaContributorCloseHtml(n, w)
 
+	case "special char":
+		return
+
+	case "gaiji char":
+		return
+
+	case "accent string":
+		return
+
+	case "main text":
+		return
+
+	case "kunoji":
+		return
+
+	case "unknown":
+		return
+
 	case "document":
 		return
 
 	default:
+		log.Println("unknown node type", n.tok.info())
 		return
 	}
 
@@ -277,6 +325,13 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 }
 
 func standardCloserHtml(n *Node, w *strings.Builder) {
+
+	if n.Attr["type"] == "metadata" {
+
+		newCloseHtag("div").AddStringTo(w)
+		w.WriteString("\n")
+		return
+	}
 
 	if n.isBlockFormat() {
 
@@ -551,6 +606,8 @@ func imageHtml(n *Node, w *strings.Builder) {
 	h.addExtraKeyVal("src", n.Attr["file"])
 
 	h.addExtraKeyVal("alt", n.Attr["alt text"])
+
+	h.setSelfClose()
 
 	h.setAfter("\n")
 
@@ -834,7 +891,7 @@ func paginationHtml(n *Node, w *strings.Builder) {
 
 	h.addClass("pageBreak")
 
-	h.addExtraKeyVal("data-AmznPageBreak", "always")
+	//h.addExtraKeyVal("data-AmznPageBreak", "always")
 
 	h.AddStringTo(w)
 	newCloseHtag("div").AddStringTo(w)
@@ -895,6 +952,7 @@ func figureCloseHtml(n *Node, w *strings.Builder) {
 func bibInfoOpenHtml(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("hr")
+	h1.setSelfClose()
 	h1.setAfter("\n")
 
 	h2 := newHtag("footer")
@@ -915,19 +973,7 @@ func bibInfoCloseHtml(n *Node, w *strings.Builder) {
 
 func renderNavHtml(n *Node, w *strings.Builder) {
 
-	h1 := newHtag("ol")
-
-	h1.addClass("toc")
-
-	h1.setAfter("\n")
-
-	h2 := newCloseHtag("ol")
-
-	h1.AddStringTo(w)
-
-	Serialize(n, w, navOpenHtml, navCloseHtml)
-
-	h2.AddStringTo(w)
+	Serialize(n.sectionStructure(), w, navOpenHtml, navCloseHtml)
 
 }
 
@@ -937,42 +983,27 @@ func navOpenHtml(n *Node, w *strings.Builder) {
 
 	case "section":
 
-		t := newHtag("ol")
-
-		t.setAfter("\n")
-
-		switch n.Attr["sectionLevel"] {
-		case "1":
-			t.addClass("section")
-		case "2":
-			t.addClass("subsection")
-		case "3":
-			t.addClass("subsubsection")
-		}
-
-		t0 := newHtag("li")
-
-		t0.setAfter("\n")
-
 		if n.prev == nil {
-			t0.AddStringTo(w)
+			t := newHtag("ol")
+			t.setBefore("\n")
+			t.setAfter("\n")
 			t.AddStringTo(w)
-			return
+
 		}
 
-		if n.prev.Attr["type"] != "section" {
-			t0.AddStringTo(w)
-			t.AddStringTo(w)
-			return
-		}
+		w.WriteString(n.tocEntryHtml())
 
-		return
+	case "top":
+		t := newHtag("ol")
+		t.setBefore("\n")
+		t.setAfter("\n")
+		t.AddStringTo(w)
 
-	case "section title":
 		w.WriteString(n.tocEntryHtml())
 
 	default:
 		return
+
 	}
 }
 
@@ -982,35 +1013,30 @@ func navCloseHtml(n *Node, w *strings.Builder) {
 
 	case "section":
 
+		if n.next == nil {
+
+			w.WriteString(newCloseHtag(`li`).String())
+			w.WriteString("\n")
+
+			t := newCloseHtag("ol")
+			t.setAfter("\n")
+			t.AddStringTo(w)
+			return
+
+		}
+
+		w.WriteString(newCloseHtag(`li`).String())
+		w.WriteString("\n")
+
+	case "top":
+		w.WriteString(newCloseHtag(`li`).String())
+		w.WriteString("\n")
 		t := newCloseHtag("ol")
 		t.setAfter("\n")
-
-		t2 := newCloseHtag("li")
-		t2.setAfter("\n")
-
-		if n.next == nil {
-			t.AddStringTo(w)
-			t2.AddStringTo(w)
-			return
-		}
-
-		if n.next.Attr["type"] != "section" {
-			t.AddStringTo(w)
-			t2.AddStringTo(w)
-			return
-		}
-
-		return
-
-	case "section title":
-		newCloseHtag("a").AddStringTo(w)
-		newCloseHtag("li").AddStringTo(w)
-		w.WriteString("\n")
-		return
+		t.AddStringTo(w)
 
 	default:
 		return
-
 	}
 }
 
@@ -1018,19 +1044,13 @@ func (n *Node) tocEntryHtml() string {
 
 	h := newHtag("li")
 
-	//	h.addClass("toc")
-
 	h2 := newHtag("a")
 
 	h2.addExtraKeyVal("href", "#"+n.Attr["id"])
 
-	wt := new(strings.Builder)
+	h2.setAfter(n.Attr["title"])
 
-	renderHtml(n.firstChild, wt)
-
-	h2.setAfter(wt.String())
-
-	return h.String() + h2.String()
+	return h.String() + h2.String() + newCloseHtag(`a`).String()
 
 }
 
@@ -1088,13 +1108,15 @@ func kunojiOpenHtml(n *Node, w *strings.Builder) {
 
 func metadataOpenHtml(n *Node, w *strings.Builder) {
 
+	centeringOpenHtml(n, w)
+
 	return
 
 }
 
 func metadataCloseHtml(n *Node, w *strings.Builder) {
 
-	w.WriteString("\n\n")
+	standardCloserHtml(n, w)
 
 }
 
@@ -1224,6 +1246,68 @@ func accentOpenHtml(n *Node, w *strings.Builder) {
 
 func unknownOpenHtml(n *Node, w *strings.Builder) {
 
-	addToStringsBuilder(w, noteStartStr, n.Attr["raw"], noteEndStr)
+	h1 := newHtag("span")
+
+	h1.addClass("annotation")
+
+	addToStringsBuilder(w, h1.String(), noteStartStr, n.Attr["raw"], noteEndStr, newCloseHtag("span").String())
+
+}
+
+func rubyGroupOpenHtml(n *Node, w *strings.Builder) {
+
+	defer func() {
+		for _, e := range linearizeDescendants(n) {
+
+			e.Attr["ignore"] = "true"
+
+		}
+	}()
+
+	n.splitRuby()
+
+	rps := strings.Split(n.Attr["ruby base"], "\t")
+
+	if len(rps) > 1 {
+
+		log.Println("WARNING: line " + strconv.Itoa(n.tok.lineNumber()) + " ruby parent or ruby too long. Splitting.")
+	}
+
+	rs := strings.Split(n.Attr["ruby string"], "\t")
+
+	h1 := newHtag("ruby")
+
+	h1.addClass("right")
+
+	w.WriteString(h1.String())
+
+	for c := range len(rps) {
+
+		w.WriteString(rps[c])
+
+		w.WriteString(newHtag("rt").String())
+
+		w.WriteString(rs[c])
+
+		w.WriteString(newCloseHtag("rt").String())
+
+	}
+
+}
+
+func rubyGroupCloseHtml(n *Node, w *strings.Builder) {
+
+	w.WriteString(newCloseHtag("ruby").String())
+
+	for _, e := range linearizeDescendants(n) {
+
+		delete(e.Attr, "ignore")
+
+		if e.Attr["type"] == "gaiji note" {
+
+			addToStringsBuilder(w, `{`, latexCmd(`small`), " ", e.gaijiNoteString(), `}`)
+
+		}
+	}
 
 }

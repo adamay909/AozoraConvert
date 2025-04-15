@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uuid_id">
+
+  <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+   <dc:title>{{.Title}}</dc:title>
+
+   <dc:creator>{{.Creator}}</dc:creator>
+
+   <dc:publisher>{{.Publisher}}</dc:publisher>
+ 
+   <dc:language>jpn</dc:language>
+
+   <dc:identifier id="uuid_id">{{.UUID}}</dc:identifier>
+
+   <dc:identifier>{{.UUID}}</dc:identifier>
+
+   <meta property="dcterms:modified">{{.DateMod}}</meta>
+   
+   </metadata>
+ 
+   <manifest>
+   
+	<item id="html" href="1.html" media-type="application/xhtml+xml" />
+   
+	<item id="nav" href="toc.html" media-type="application/xhtml+xml" properties="nav" />
+	
+	<item id="title" href="title.html" media-type="application/xhtml+xml" />
+	
+
+	{{.FileList}}
+
+  </manifest>
+  
+  <spine page-progression-direction="rtl">
+
+   <itemref idref="title"/>
+ 
+   <itemref idref="html"/>
+  
+  </spine>
+ 
+ </package>
+

@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"errors"
@@ -24,18 +24,6 @@ func parse(text string) (*Node, error) {
 
 func getAST(t *token) (nd *Node, err error) {
 
-	/*	defer func() {
-
-			if r := recover(); r != nil {
-
-				log.Println(r)
-
-				err = errors.New("errors")
-
-				return
-			}
-		}()
-	*/
 	if t == nil {
 
 		return new(Node), errors.New("No tokens to process.")
@@ -64,6 +52,8 @@ func getAST(t *token) (nd *Node, err error) {
 	secCounter := 0
 
 	figCounter := 0
+
+	imgCounter := 0
 
 	n := new(Node)
 
@@ -97,6 +87,20 @@ func getAST(t *token) (nd *Node, err error) {
 			closeNode = false
 
 		case e.tokType == paragraphEndToken:
+
+			nextIsChild = false
+
+			closeNode = true
+
+		case e.tokType == rubyGroupStartToken:
+
+			n.setType("ruby group")
+
+			nextIsChild = true
+
+			closeNode = false
+
+		case e.tokType == rubyGroupEndToken:
 
 			nextIsChild = false
 
@@ -328,7 +332,11 @@ func getAST(t *token) (nd *Node, err error) {
 
 			n.setType("image")
 
+			imgCounter++
+
 			n.setImageData(e)
+
+			n.SetAttr("id", "img"+strconv.Itoa(imgCounter))
 
 			nextIsChild = false
 
@@ -444,6 +452,18 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
+		case e.tokType == gaijiImgToken:
+
+			n.setType("image")
+
+			n.setImageData(e)
+
+			n.SetAttr("style", "inline")
+
+			nextIsChild = false
+
+			closeNode = false
+
 		case e.tokType == mainTextStartToken:
 
 			n.setType("main text")
@@ -466,7 +486,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 			n.setType("unknown")
 
-			log.Println("Warning: unknown annotation type: " + e.info())
+			log.Println("Parser: unknown annotation type: " + e.info())
 
 			nextIsChild = false
 
@@ -492,6 +512,14 @@ func getAST(t *token) (nd *Node, err error) {
 
 			prevNode.SetAttr("raw unicode closer", e.unicodeContent)
 
+			prevNode.SetAttr("raw jis0213 closer", e.jis0213Content)
+
+			if prevNode.Attr["maybe kanbun"] != "" {
+
+				prevNode.fixKanbun()
+
+			}
+
 			prevNode.closed = true
 
 		default:
@@ -499,6 +527,8 @@ func getAST(t *token) (nd *Node, err error) {
 			n.setRaw(e.innerString())
 
 			n.SetAttr("unicode raw", e.unicodeContent)
+
+			n.SetAttr("jis0213 raw", e.jis0213Content)
 
 			n.setBlock(e)
 
@@ -526,6 +556,16 @@ func getAST(t *token) (nd *Node, err error) {
 
 				prevNode.addSibling(n)
 
+			}
+
+			if n.Attr["type"] == "image" {
+				n.fixImage()
+			}
+
+			if n.Attr["type"] == "kunten" || n.Attr["type"] == "okurigana" {
+				if n.Parent().Attr["type"] == "paragraph" {
+					n.Parent().SetAttr("maybe kanbun", "true")
+				}
 			}
 
 			prevNode = n
@@ -658,136 +698,53 @@ func getMetadata(t *token) (metadataNode *Node) {
 
 }
 
-/*
-func (n *Node) getMarkupExplanation() *Node {
+func (n *Node) fixImage() {
 
-	var hasruby,
-		haskunten,
-		hasokurigana,
-		hasgaiji,
-		hasnote,
-		hasaccent,
-		haskunoji bool
+	if n.Parent() == nil {
+		return
+	}
 
-	var rubyexample,
-		kuntenexample,
-		okuriganaexample,
-		gaijiexample,
-		noteexample,
-		accentexample,
-		kunojiexample *Node
+	if n.Parent().Attr["type"] == "figure" {
+		return
+	}
 
-	rubyexample = new(Node)
+	if ok, _ := n.withinScopeOfType("paragraph"); ok {
 
-	nodes := linearize(n.topNode())
-
-	for _, e := range nodes {
-
-		if !hasruby {
-			if e.Attr["type"] == "ruby parent" {
-
-				hasruby = true
-
-				rubyexample = e
-
-				continue
-			}
-		}
-		if !haskunten {
-
-			if e.Attr["type"] == "kunten" {
-
-				haskunten = true
-
-				kuntenexample = e
-
-				continue
-			}
-		}
-
-		if !hasokurigana {
-
-			if e.Attr["type"] == "okurigana" {
-
-				hasokurigana = true
-
-				okuriganaexample = e
-
-				continue
-			}
-		}
-
-		if !haskunoji {
-
-			if e.Attr["type"] == "kunoji" {
-
-				haskunoji = true
-
-				kunojiexample = e
-
-				continue
-			}
-		}
-
-		if !hasaccent {
-
-			if e.Attr["type"] == "accent" {
-
-				hasaccent = true
-
-				accentexample = e
-
-				continue
-
-			}
-		}
-
-		if !hasgaiji {
-
-			if e.Attr["type"] == "gaiji char" || e.attr["type"] == "gaiji note" {
-
-				hasgaiji = true
-
-				gaijiexample = e
-
-				continue
-			}
-		}
-
-		if !hasnote {
-
-			if e.isNote() {
-
-				hasnote = true
-
-				noteexample = e
-
-				continue
-
-			}
-		}
+		n.SetAttr("style", "inline")
 
 	}
-	return rubyexample
+
 }
 
-func (n *node) isNote() bool {
+func (n *Node) fixKanbun() {
 
-	if n.tok.tokType != noteToken {
-		return false
+	defer delete(n.Attr, "maybe kanbun")
+
+	for _, e := range linearizeDescendants(n) {
+		switch e.Attr["type"] {
+		case "text", "gaiji char", "kunten", "okurigana":
+			continue
+
+		default:
+			return
+		}
 	}
 
-	switch {
+	wt := new(strings.Builder)
 
-	case n.tok.isKunten():
-		return false
+	renderInnerTextOnly(n, wt)
 
-	case n.tok.isOkurigana():
-		return false
+	for _, c := range wt.String() {
 
-	default:
-		return true
+		switch {
+		case charType(c) == kanji, c == '、', c == '。':
 
+		default:
+			return
+		}
 	}
+
+	log.Println("WARNING: line ", strconv.Itoa(n.tok.lineNumber()), " kanbun detected.")
+
+	n.SetAttr("type", "kanbun")
 }
-*/

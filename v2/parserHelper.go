@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"errors"
@@ -29,7 +29,7 @@ func isValidStructure(prevNode *Node, tok *token) (err error) {
 
 		addToStringsBuilder(msgBuilder, "\nERROR: mismatched annotation start and end:\n")
 
-		addToStringsBuilder(msgBuilder, prevNode.tok.info(), "\n closed by: \n")
+		addToStringsBuilder(msgBuilder, prevNode.tok.info(), prevNode.tok.prev.String(), "\n closed by: \n")
 
 		addToStringsBuilder(msgBuilder, tok.info())
 
@@ -52,6 +52,9 @@ func matched(closer, opener *token) bool {
 
 	case paragraphEndToken:
 		return opener.tokType == paragraphToken
+
+	case rubyGroupEndToken:
+		return opener.tokType == rubyGroupStartToken
 
 	case rubyEndToken:
 		return opener.tokType == rubyStartToken

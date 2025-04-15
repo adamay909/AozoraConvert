@@ -1,6 +1,7 @@
-package aozoratext
+package aozoraConvert
 
 import (
+	"log"
 	"strings"
 )
 
@@ -16,6 +17,36 @@ func renderInnerAozoraText(n *Node, w *strings.Builder) {
 
 }
 
+func renderInnerTextOnly(n *Node, w *strings.Builder) {
+
+	SerializeDescendants(n, w, plaintextWriterOpen, plaintextWriterClose)
+
+}
+
+func plaintextWriterOpen(n *Node, w *strings.Builder) {
+
+	switch n.Attr["type"] {
+
+	case "text", "special char", "kunoji", "accent string", "gaiji char":
+		azrTxtFormatterOpen(n, w)
+
+	default:
+		return
+	}
+}
+
+func plaintextWriterClose(n *Node, w *strings.Builder) {
+
+	switch n.Attr["type"] {
+
+	case "text", "special char", "kunoji", "accent string", "gaiji char":
+		azrTxtFormatterClose(n, w)
+
+	default:
+		return
+	}
+}
+
 func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
@@ -26,8 +57,14 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 	case "paragraph":
 		return
 
+	case "kanbun":
+		return
+
+	case "ruby group":
+		return
+
 	case "ruby parent":
-		w.WriteString(rubyBaseOpenTxt(n))
+		w.WriteString(rubyParentStartStr)
 
 	case "ruby":
 		w.WriteString(rubyStartStr)
@@ -88,7 +125,6 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 
 	case "image":
 		noteStringOpenTxt(n, w)
-		w.WriteString("\n")
 
 	case "pagination":
 		noteStringOpenTxt(n, w)
@@ -142,7 +178,17 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 	case "document":
 		return
 
+	case "unknown":
+		if o_jis0208 {
+			addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
+			return
+		}
+		addToStringsBuilder(w, noteStartStr, n.Attr["unicode raw"], noteEndStr)
+		return
+
 	default:
+		log.Println("Renderer: unknown node type: " + n.String())
+
 		if o_jis0208 {
 			addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
 			return
@@ -162,6 +208,12 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 
 	case "paragraph":
 		w.WriteString("\n")
+
+	case "kanbun":
+		w.WriteString("\n")
+
+	case "ruby group":
+		return
 
 	case "ruby parent":
 		return
@@ -224,7 +276,10 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "image":
-		return
+		if n.Attr["style"] == "inline" {
+			return
+		}
+		w.WriteString("\n")
 
 	case "pagination":
 		return
@@ -445,4 +500,31 @@ func bibInfoOpenTxt(n *Node, w *strings.Builder) {
 
 	return
 
+}
+
+func rubyGroupOpenTxt(n *Node, w *strings.Builder) {
+
+	n.splitRuby()
+
+	w.WriteString(rubyParentStartStr)
+
+	w.WriteString(strings.Join(strings.Split(n.Attr["ruby base"], "\t"), ""))
+
+	w.WriteString(rubyStartStr)
+
+	w.WriteString(strings.Join(strings.Split(n.Attr["ruby string"], "\t"), ""))
+
+	w.WriteString(rubyEndStr)
+
+	for _, e := range linearizeDescendants(n) {
+		e.Attr["ignore"] = "true"
+	}
+
+}
+
+func rubyGroupCloseTxt(n *Node, w *strings.Builder) {
+
+	for _, e := range linearizeDescendants(n) {
+		delete(e.Attr, "ignore")
+	}
 }

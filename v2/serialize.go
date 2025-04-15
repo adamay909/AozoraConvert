@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"strings"
@@ -41,21 +41,15 @@ func linearizeDescendants(n *Node) []*Node {
 // Serialize AST given by n as a string. ingressFunc controls output when entering a node, egressFunc controls the output when exiting a node.
 func Serialize(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, *strings.Builder)) {
 
-	//	var output = new(strings.Builder)
-
 	var linearize func(*Node)
 
 	linearize = func(m *Node) {
-
-		//	output.WriteString(ingressFunc(m))
 
 		ingressFunc(m, w)
 
 		for _, childNode := range m.Children() {
 
 			linearize(childNode)
-
-			//			output.WriteString(egressFunc(childNode))
 
 			egressFunc(childNode, w)
 		}
@@ -66,8 +60,6 @@ func Serialize(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, 
 
 	linearize(n)
 
-	//	output.WriteString(egressFunc(n))
-
 	egressFunc(n, w)
 
 	return
@@ -77,6 +69,34 @@ func Serialize(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, 
 func SerializeDescendants(n *Node, w *strings.Builder, ingressFunc, egressFunc func(*Node, *strings.Builder)) {
 
 	var linearize func(*Node)
+
+	linearize = func(m *Node) {
+
+		if m != n {
+			ingressFunc(m, w)
+		}
+
+		for _, childNode := range m.Children() {
+
+			linearize(childNode)
+
+			egressFunc(childNode, w)
+		}
+
+		return
+
+	}
+
+	linearize(n)
+
+	//	egressFunc(n, w)
+
+	return
+}
+
+/*
+
+var linearize func(*Node)
 
 	linearize = func(m *Node) {
 
@@ -98,3 +118,4 @@ func SerializeDescendants(n *Node, w *strings.Builder, ingressFunc, egressFunc f
 
 	return
 }
+*/

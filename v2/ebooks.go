@@ -1,0 +1,228 @@
+package aozoraConvert
+
+import (
+	"archive/zip"
+	"bytes"
+	"io"
+	"log"
+	"mime"
+	"path/filepath"
+	"strings"
+	"unicode/utf8"
+
+	"github.com/adamay909/AozoraConvert/mobi/records"
+	"github.com/google/uuid"
+)
+
+// Book represents a book from Aozora Bunko
+type Book struct {
+	Title, Creator, Publisher string
+	Files                     []fileData
+	UUID                      string
+	Body                      *Node
+	URI                       string
+	//	CoverImage                image.Image
+	Images  []records.ImageRecord
+	CSS     string
+	Hash    string
+	DateMod string
+	// Log                       string
+}
+
+// NewBook returns a new Book.
+func NewBook() *Book {
+	b := new(Book)
+	b.UUID = uuid.NewString()
+	return b
+}
+
+// NewBookFrom returns a Book based on d. d is assumed to be
+// xhtml formatted book from Aozora Bunko.
+func NewBookFrom(d []byte) *Book {
+
+	var err error
+
+	bk := NewBook()
+
+	bk.Body, err = AST(string(d))
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	return bk
+}
+
+func NewEbookFromZip(dz []byte) (bk *Book) {
+
+	var err error
+
+	arch, err := zip.NewReader(bytes.NewReader(dz), int64(len(dz)))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	bk = NewBook()
+
+	for _, f := range arch.File {
+
+		if filepath.Ext(f.Name) == ".txt" {
+
+			r, _ := f.Open()
+
+			bk.Body, err = AST(readStringFromFile(r))
+
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			continue
+		}
+
+		var fi fileData
+
+		fi.Name = filepath.Base(f.Name)
+
+		fi.Mtype = mime.TypeByExtension(filepath.Ext(fi.Name))
+
+		fi.ID = "file" + strings.TrimSuffix(fi.Name, filepath.Ext(fi.Name))
+
+		r, err := f.Open()
+
+		defer r.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		fi.Data, err = io.ReadAll(r)
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		bk.Files = append(bk.Files, fi)
+
+		if fi.Mtype == "image/png" || fi.Mtype == "image/jpeg" {
+			bk.Images = append(bk.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
+		}
+	}
+
+	var fi fileData
+
+	fi.ID = "css"
+
+	fi.Name = "aozora.css"
+
+	fi.Data = []byte(AozoraCSS)
+
+	fi.Mtype = "text/css"
+
+	bk.Files = append(bk.Files, fi)
+
+	bk.UUID = uuid.NewString()
+
+	bk.SetMetadataFromText()
+
+	return bk
+}
+
+func readStringFromFile(f io.Reader) string {
+
+	d, err := io.ReadAll(f)
+
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	if !utf8.Valid(d) {
+		return ToUTF8(d)
+	}
+
+	return string(d)
+}
+
+// SetURI sets the path of book within
+// Aozora Bunko's file structure.
+func (b *Book) SetURI(l string) {
+	b.URI = l
+	return
+}
+
+// GetURI returns the the path of the
+// book within Aozora Bunko's file structure.
+func (b *Book) GetURI() string {
+	return b.URI
+
+}
+
+// SetTitle sets the title to t.
+func (b *Book) SetTitle(t string) {
+	b.Title = t
+	return
+}
+
+// SetCreator sets the creator to c.
+func (b *Book) SetCreator(c string) {
+	b.Creator = c
+	return
+}
+
+// SetPublisher sets the publisher to p.
+func (b *Book) SetPublisher(p string) {
+	b.Publisher = p
+	return
+}
+
+func (b *Book) SetMetadataFromText() {
+
+	w := new(strings.Builder)
+
+	b.Publisher = "青空文庫"
+
+	for _, e := range linearizeNode(b.Body) {
+
+		if e.Attr["type"] == "metadata" {
+
+			for _, n := range linearizeNode(e) {
+
+				if n.Attr["type"] == "meta title" {
+
+					w.Reset()
+
+					renderInnerTextOnly(n, w)
+
+					b.Title = w.String()
+
+					continue
+
+				}
+
+				if n.Attr["type"] == "meta contributor" {
+
+					w.Reset()
+
+					renderInnerTextOnly(n, w)
+
+					b.Creator = b.Creator + "、" + w.String()
+
+				}
+			}
+
+			b.Creator = strings.TrimPrefix(b.Creator, "、")
+
+			return
+		}
+	}
+
+	b.Title = "不明"
+
+	b.Creator = "不明"
+
+	return
+}

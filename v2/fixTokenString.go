@@ -1,7 +1,8 @@
-package aozoratext
+package aozoraConvert
 
 import (
-	"fmt"
+	"log"
+	"strconv"
 	"strings"
 )
 
@@ -18,6 +19,7 @@ func (t *token) fixLines() {
 		e.fixBibInfo()
 
 		e.fixAbbreviatedBlockFormat()
+		e.fixBlockFormat()
 		e.fixInlineAlignBottom()
 		e.fixImpliedOpener()
 	}
@@ -148,12 +150,16 @@ func (t *token) fixkunoji() {
 
 		t.unicodeContent = kunojiStrU
 
+		t.jis0213Content = kunojiStrU
+
 		t.modified = true
 
 		return
 	}
 
 	t.unicodeContent = kunojiDakuStrU
+
+	t.jis0213Content = kunojiDakuStrU
 
 	t.modified = true
 }
@@ -165,6 +171,8 @@ func (t *token) fixruby() {
 		return
 	}
 
+	t.insertTokenLeft(newTokenOfType(rubyParentEndToken))
+
 	e := new(token)
 
 	found := false
@@ -173,7 +181,7 @@ func (t *token) fixruby() {
 
 		if e.tokType == rubyEndToken {
 
-			e.insertTokenRight(newTokenOfType(rubyParentEndToken))
+			e.insertTokenRight(newTokenOfType(rubyGroupEndToken))
 
 			found = true
 
@@ -199,6 +207,32 @@ func (t *token) fixruby() {
 
 	}
 
+	if e2 := t.prev; e2 != nil && e2.tokType == noteToken {
+
+		if e2.isImage() {
+
+			msg := "line " + strconv.Itoa(e2.lineNumber()) + " grphics used as characer? Attempting fix."
+
+			e2.tokType = gaijiImgToken
+
+			log.Println("WARNING: " + msg)
+
+		} else {
+
+			msg := "line " + strconv.Itoa(e2.lineNumber()) + " wrong order of ruby and annotation:" + e2.prev.String() + e2.String() + e2.next.String() + e2.next.next.String()
+
+			if o_strict {
+				panic("ERROR: " + msg)
+			}
+
+			log.Println("WARNING: " + msg)
+
+			e2.remove()
+
+			e.next.insertTokenRight(e2)
+		}
+	}
+
 	if !t.rubyParentExplicit() {
 
 		t.insertRubyParentStart()
@@ -213,11 +247,15 @@ func (t *token) rubyParentExplicit() bool {
 
 	for e := t.prev; e != nil; e = e.prev {
 
+		if e.tokType == rubyParentEndToken {
+			continue
+		}
 		if e.tokType == textToken {
 			continue
 		}
 
 		if e.tokType == rubyParentStartToken {
+			e.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 			return true
 		}
 
@@ -245,6 +283,14 @@ func (t *token) rubyParentExplicit() bool {
 			continue
 		}
 
+		if e.isImage() {
+			continue
+		}
+
+		if e.tokType == emptyToken {
+			continue
+		}
+
 		break
 	}
 
@@ -255,21 +301,34 @@ func (t *token) insertRubyParentStart() {
 
 	e := new(token)
 
-	if t.prev.tokType == accentToken {
+	e = t.prev
 
-		t.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+	if e.prev.tokType == accentToken {
+
+		e.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+
+		e.prev.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 
 		return
 
 	}
 
+	if e.prev.isImage() {
+
+		e.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+
+		e.prev.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+		return
+
+	}
 	var ref charTypeID
 
 	var r []rune
 
 	for e = t.prev; e != nil; e = e.prev {
 
-		if e.tokType == rubyEndToken {
+		/*if e.tokType == rubyEndToken {
 
 			for ; e.tokType != rubyStartToken; e = e.prev {
 			}
@@ -277,7 +336,7 @@ func (t *token) insertRubyParentStart() {
 			e = e.prev
 
 		}
-
+		*/
 		if e.tokType == textToken {
 			break
 		}
@@ -297,6 +356,10 @@ func (t *token) insertRubyParentStart() {
 	for e = t.prev; e != nil; e = e.prev {
 
 		if e.tokType == rubyParentEndToken {
+			continue
+		}
+
+		if e.tokType == rubyGroupEndToken {
 			break
 		}
 
@@ -313,7 +376,7 @@ func (t *token) insertRubyParentStart() {
 			break
 		}
 
-		if e.tokType != textToken {
+		if e.tokType != textToken && e.tokType != gaijiCharToken {
 			continue
 		}
 
@@ -339,7 +402,9 @@ func (t *token) insertRubyParentStart() {
 
 			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
-			e.prev.insertTokenLeft(t2)
+			e.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+			e.prev.prev.insertTokenLeft(t2)
 
 			e.modified = true
 
@@ -351,19 +416,23 @@ func (t *token) insertRubyParentStart() {
 
 			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
-			return
-
-		}
-
-		if e.prev.tokType == rubyParentStartToken {
+			e.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
 
 			return
 
 		}
 
+		/*		if e.prev.tokType == rubyParentStartToken {
+
+					return
+
+				}
+		*/
 	}
 
 	e.insertTokenRight(newTokenOfType(rubyParentStartToken))
+
+	e.insertTokenRight(newTokenOfType(rubyGroupStartToken))
 
 	return
 }
@@ -407,7 +476,6 @@ func (tok *token) fixgaiji() {
 		for tk3 := tk2; tk3 != nil; tk3 = tk3.next {
 
 			if tk3.tokType == gaijiToken {
-				fmt.Println("check")
 				tk3.fixgaiji()
 				hasgaiji = true
 
@@ -417,6 +485,7 @@ func (tok *token) fixgaiji() {
 		if hasgaiji {
 			for e := tk2; e != nil; e = e.next {
 				tok.unicodeContent = tok.unicodeContent + e.unicodeString()
+				tok.jis0213Content = tok.jis0213Content + e.jis0213String()
 			}
 		}
 
@@ -445,6 +514,10 @@ func (tok *token) replaceGaiji() {
 	if j != "" {
 		uni, _ = convert(j)
 
+		tok.jis0213Content = uni
+
+		tok.unicodeContent = uni
+
 	} else {
 
 		u := ucode(originalNote)
@@ -455,11 +528,9 @@ func (tok *token) replaceGaiji() {
 
 		uni = unicodeOf(u)
 
+		tok.unicodeContent = uni
+
 	}
-
-	tok.content = tok.content
-
-	tok.unicodeContent = uni
 
 	switch uni {
 
@@ -521,10 +592,31 @@ func (note *token) fixImpliedOpener() {
 
 	}
 
-	switch m {
-
-	case "":
+	if m == "" {
 		return
+	}
+
+	if note.next.tokType == rubyStartToken {
+
+		msg := "line " + strconv.Itoa(note.lineNumber()) + " wrong order of ruby and annotation:" + note.prev.String() + note.String() + note.next.String() + note.next.next.String()
+
+		log.Println("WARNING: " + msg)
+
+		e := new(token)
+
+		for e := note.next; e.tokType != rubyEndToken; e = e.next {
+		}
+
+		n2 := copyOf(note)
+
+		e.insertTokenRight(n2)
+
+		note.tokType = emptyToken
+
+		return
+	}
+
+	switch m {
 
 	case "ルビ":
 		fixLeftRuby(note)
@@ -734,7 +826,7 @@ func fixParagraph(start, end *token) {
 
 	switch start.tokType {
 
-	case textToken, rubyParentStartToken, gaijiCharToken, specialCharToken, accentToken:
+	case textToken, rubyGroupStartToken, gaijiCharToken, specialCharToken, accentToken, gaijiImgToken:
 
 		start.insertTokenLeft(newParagraphToken())
 
@@ -1067,6 +1159,8 @@ func (t *token) fixaccent() {
 
 	t.unicodeContent = convertAccent(t.innerString())
 
+	t.jis0213Content = t.unicodeContent
+
 	t.modified = true
 
 	if len([]rune(t.unicodeContent)) == len([]rune(t.innerString())) {
@@ -1091,21 +1185,17 @@ func (t *token) fixFigures() {
 
 	e := t
 
-	e.insertTokenLeft(newTokenOfType(figureStartToken))
+	if e.nextSignificantToken().isCaption() {
 
-	n := newTokenOfType(figureEndToken)
+		e.insertTokenLeft(newTokenOfType(figureStartToken))
 
-	if !e.nextSignificantToken().isCaption() {
+		n := newTokenOfType(figureEndToken)
 
-		e.insertTokenRight(n)
-		if n.next.tokType == paragraphEndToken {
-			n.next.remove()
-		}
+		e.nextSignificantToken().matchingCloserToken().insertTokenRight(n)
 
 		return
-	}
 
-	e.nextSignificantToken().matchingCloserToken().insertTokenRight(n)
+	}
 
 }
 
@@ -1250,4 +1340,45 @@ func (t *token) insertAozoraBookMarker() {
 
 	return
 
+}
+
+func (t *token) fixBlockFormat() {
+
+	if t.tokType != noteToken {
+		return
+	}
+
+	if strings.HasPrefix(t.innerString(), blockStartStr) {
+
+		if t.next.tokType == endOfLineToken {
+			return
+		}
+
+		if o_strict {
+			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
+			return
+		}
+
+		log.Println("WARNING: line", t.lineNumber(), "block start annotation should be on own line. Fixed.")
+
+		t.insertTokenRight(newTokenOfType(endOfLineToken))
+		return
+	}
+
+	if strings.HasPrefix(t.innerString(), blockEndStr) {
+
+		if t.prev.tokType == endOfLineToken {
+			return
+		}
+
+		if o_strict {
+			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
+			return
+		}
+
+		log.Println("WARNING: line", t.lineNumber(), "block end annotation should be on own line. Fixed.")
+
+		t.insertTokenLeft(newTokenOfType(endOfLineToken))
+	}
+	return
 }

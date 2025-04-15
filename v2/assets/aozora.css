@@ -1,6 +1,13 @@
 body {
- line-height: 2;
- font-family: serif, sans-serif;
+ line-break: normal;
+ writing-mode: vertical-rl;
+ -epub-writing-mode: vertical-rl;
+ -webkit-writing-mode: vertical-rl;
+ -epub-line-break: normal;
+ -webkit-line-break: normal;
+ line-height: 180%;
+ padding: 1em 1em;
+ font-family: serif, sans-serif
 }
 
 p {
@@ -10,6 +17,10 @@ padding: 0em;
 
 ruby {
  ruby-align: space-around;
+}
+
+ruby.right {
+ ruby-position: over;
 }
 
 ruby.left {
@@ -292,6 +303,10 @@ text-orientation: sideways;
 .subscript {
 }
 
+.centering {
+ margin-right: 35%;
+}
+
 .pageBreak {
  page-break-before: always;
 }
@@ -368,4 +383,22 @@ text-orientation: sideways;
  list-style-type: none;
 }
 
+.annotation {
+ font-size: small;
+}
+
+.title {
+ font-size: xx-large;
+ margin-top: 1em;
+}
+
+.subtitle {
+ font-size: x-large;
+ margin-top: 2em;
+}
+
+.contributor {
+ font-size: x-large;
+ text-align:  end;
+}
 

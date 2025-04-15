@@ -2,4 +2,11 @@ TODO
 *.log
 *_test.*
 testdata/
-
+*.aux
+*.log
+*.tex
+*.pdf
+*.png
+*.sty
+*.txt
+*.dvi

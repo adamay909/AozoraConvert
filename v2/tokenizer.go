@@ -1,14 +1,15 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type opt int
 
-var o_full, o_fragment, o_jis0208, o_raw bool
+var o_full, o_fragment, o_jis0208, o_jis0213, o_raw, o_strict bool
 
 type tokenizer struct {
 	data        string
@@ -30,6 +31,10 @@ func init() {
 
 	o_jis0208 = false
 
+	o_jis0213 = false
+
+	o_strict = false
+
 	tokenizerLog = log.New(os.Stdout, "", 0)
 
 	log.SetFlags(0)
@@ -44,6 +49,11 @@ func setOutputOption(o string) {
 		o_jis0208 = true
 		o_raw = false
 
+	case "jis0213":
+		o_full = false
+		o_jis0208 = false
+		o_jis0213 = true
+
 	case "raw":
 		o_full = false
 		o_jis0208 = true
@@ -52,6 +62,7 @@ func setOutputOption(o string) {
 	default:
 		o_full = true
 		o_jis0208 = false
+		o_jis0213 = true
 		o_raw = false
 	}
 	return
@@ -282,14 +293,14 @@ func findContiguousText(s *tokenizer) (i int) {
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], noteEndStr):
-			panic("found unexpected: " + noteEndStr)
+			panic("Tokenizer: found unexpected: " + noteEndStr)
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], accentStartStr):
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], accentEndStr):
-			panic("found unexpected: " + accentEndStr)
+			panic("Tokenizer: found unexpected: " + accentEndStr)
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], kunojiStr):
@@ -316,7 +327,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("markup notes do not end")
+			panic("Tokenizer: markup notes do not end")
 
 		}
 
@@ -332,12 +343,12 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
+			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
 		if i > end {
-			panic("unmatched opening tag: " + o.String() + "\n surrounding text: " + s.textContext())
+			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
 
 		}
 
@@ -367,7 +378,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 	}
 
-	panic("note not terminated. " + "\n surrounding text: " + s.textContext())
+	panic("Tokenizer: note not terminated. " + "\n surrounding text: " + s.textContext())
 
 	return -1
 

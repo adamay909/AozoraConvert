@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"sort"
@@ -13,6 +13,7 @@ type htmlTagSpec struct {
 	extra         []string
 	extraKeyVal   map[string][]string
 	open          bool
+	selfclose     bool
 }
 
 func newHtag(elem string) *htmlTagSpec {
@@ -40,6 +41,7 @@ func newCloseHtag(elem string) *htmlTagSpec {
 	return h
 
 }
+
 func (data *htmlTagSpec) AddStringTo(w *strings.Builder) {
 
 	w.WriteString(data.before)
@@ -74,6 +76,10 @@ func (data *htmlTagSpec) AddStringTo(w *strings.Builder) {
 
 		if data.id != "" {
 			addToStringsBuilder(w, ` id="`, data.id, `"`)
+		}
+
+		if data.selfclose {
+			w.WriteString(`/`)
 		}
 
 	} else {
@@ -123,6 +129,11 @@ func (data *htmlTagSpec) String() string {
 
 		if data.id != "" {
 			addToStringsBuilder(output, ` id="`, data.id, `"`)
+		}
+
+		if data.selfclose {
+
+			output.WriteString(`/`)
 		}
 
 	} else {
@@ -176,6 +187,14 @@ func (h *htmlTagSpec) setOpen() {
 func (h *htmlTagSpec) setClose() {
 
 	h.open = false
+
+	return
+
+}
+
+func (h *htmlTagSpec) setSelfClose() {
+
+	h.selfclose = true
 
 	return
 

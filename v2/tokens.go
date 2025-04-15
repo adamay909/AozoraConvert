@@ -1,4 +1,4 @@
-package aozoratext
+package aozoraConvert
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ type token struct {
 	prev            *token
 	ref             string
 	content         string
+	jis0213Content  string
 	unicodeContent  string
 	originalContent string
 	id              int
@@ -28,6 +29,8 @@ const (
 	emptyToken tokenType = iota
 	textToken
 	gaijiToken
+	rubyGroupStartToken
+	rubyGroupEndToken
 	rubyParentStartToken
 	rubyParentEndToken
 	rubyStartToken
@@ -60,6 +63,7 @@ const (
 	mainTextStartToken
 	mainTextEndToken
 	eofToken
+	gaijiImgToken
 )
 
 type tokenSubType int
@@ -76,6 +80,12 @@ func (t tokenType) String() string {
 
 	case gaijiToken:
 		return "gaijiToken"
+
+	case rubyGroupStartToken:
+		return "rubyGroupStartToken"
+
+	case rubyGroupEndToken:
+		return "rubyGroupEndToken"
 
 	case rubyParentStartToken:
 		return "rubyParentStartToken"
@@ -173,6 +183,9 @@ func (t tokenType) String() string {
 	case eofToken:
 		return "eofToken"
 
+	case gaijiImgToken:
+		return "gaijiImageToken"
+
 	default:
 
 		return strconv.Itoa(int(t))
@@ -225,21 +238,23 @@ func (t *token) insertTokenRight(t2 *token) {
 
 func (t *token) insertTokenLeft(t2 *token) {
 
-	if t.prev == nil {
+	e := t.prev
 
-		t2.next = t
+	t.prev = t2
 
-		t.prev = t2
+	t2.next = t
 
-		t2.inserted = true
+	t2.prev = e
 
-		return
+	if e != nil {
 
+		e.next = t2
 	}
 
-	t.prev.insertTokenRight(t2)
-
 	t2.inserted = true
+
+	return
+
 }
 
 func (t *token) joinTokens(t2 *token) {
@@ -262,15 +277,18 @@ func (t *token) joinTokens(t2 *token) {
 
 func (t *token) remove() {
 
-	if t.prev != nil {
-		t.prev.next = t.next
+	e1 := t.prev
+
+	e2 := t.next
+
+	if e1 != nil {
+		e1.next = e2
 	}
 
-	if t.next != nil {
-		t.next.prev = t.prev
-	}
+	e2.prev = e1
 
-	t = nil
+	t.prev = nil
+	t.next = nil
 
 	return
 
@@ -355,7 +373,7 @@ func (t *token) innerString() string {
 
 	switch t.tokType {
 
-	case noteToken:
+	case noteToken, gaijiImgToken:
 
 		return strings.TrimSuffix(strings.TrimPrefix(t.String(), noteStartStr), noteEndStr)
 
@@ -590,7 +608,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		if e.prev != nil && e.prev.tokType == rubyParentStartToken {
 
-			e = e.prev
+			e = e.prev.prev
 
 		}
 
@@ -818,6 +836,24 @@ func (t *token) unicodeString() string {
 	}
 }
 
+func (t *token) jis0213String() string {
+
+	switch t.tokType {
+
+	case gaijiCharToken:
+		return t.jis0213Content
+
+	case specialCharToken:
+		return t.jis0213Content
+
+	case kunojiToken:
+		return t.jis0213Content
+
+	default:
+		return t.String()
+
+	}
+}
 func (t *token) nextLine() *token {
 
 	e := t.lastTokenInLine()
@@ -1344,4 +1380,39 @@ func (t *token) isBlockEnd() bool {
 
 	return strings.HasPrefix(t.innerString(), blockEndStr)
 
+}
+
+// t is assumed to be next of t2
+func (t *token) switchWith(t2 *token) {
+
+	e1 := t2.prev
+
+	e2 := t.next
+
+	e1.next = t
+
+	t.prev = e1
+
+	t.next = t2
+
+	t2.next = e2
+
+	t2.prev = t
+}
+
+func copyOf(t *token) *token {
+
+	nt := new(token)
+
+	nt.tokType = t.tokType
+
+	nt.content = t.content
+
+	nt.unicodeContent = t.unicodeContent
+
+	nt.originalContent = t.originalContent
+
+	nt.lineNo = t.lineNo
+
+	return nt
 }
