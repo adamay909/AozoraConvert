@@ -3,6 +3,7 @@ package aozoraConvert
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/base64"
 	"io"
 	"log"
 	"mime"
@@ -10,7 +11,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/adamay909/AozoraConvert/mobi/records"
+	"github.com/adamay909/AozoraConvert/v2/mobi/records"
 	"github.com/google/uuid"
 )
 
@@ -223,6 +224,41 @@ func (b *Book) SetMetadataFromText() {
 	b.Title = "不明"
 
 	b.Creator = "不明"
+
+	return
+}
+
+func (b *Book) EmbedImages() {
+
+	for _, e := range linearizeNode(b.Body) {
+
+		if e.Attr["type"] != "image" {
+			continue
+		}
+
+		source := e.Attr["file"]
+
+		//find the corresponding file
+
+		for _, fi := range b.Files {
+
+			if fi.Name == source {
+
+				datastr := "data:" + fi.Mtype + ";base64,"
+
+				data := make([]byte, base64.StdEncoding.EncodedLen(len(fi.Data)))
+
+				base64.StdEncoding.Encode(data, fi.Data)
+
+				datastr = datastr + string(data)
+
+				e.SetAttr("data", datastr)
+
+				break
+			}
+		}
+
+	}
 
 	return
 }

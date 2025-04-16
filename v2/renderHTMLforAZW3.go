@@ -20,6 +20,9 @@ func htmlAzw3FormatterOpen(n *Node, w *strings.Builder) {
 
 		imageAzw3(n, w)
 
+	case "metadata":
+		centeringOpenHtml(n, w)
+
 	default:
 		azrHtmlFormatterOpen(n, w)
 
@@ -34,6 +37,9 @@ func htmlAzw3FormatterClose(n *Node, w *strings.Builder) {
 	case "image":
 
 		return
+
+	case "metadata":
+		w.WriteString(newCloseHtag(`div`).String())
 
 	default:
 		azrHtmlFormatterClose(n, w)

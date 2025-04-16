@@ -737,7 +737,7 @@ func (n *Node) fixKanbun() {
 	for _, c := range wt.String() {
 
 		switch {
-		case charType(c) == kanji, c == '、', c == '。':
+		case CharType(c) == Kanji, c == '、', c == '。':
 
 		default:
 			return

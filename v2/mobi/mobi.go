@@ -8,9 +8,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/adamay909/AozoraConvert/mobi/pdb"
-	r "github.com/adamay909/AozoraConvert/mobi/records"
-	t "github.com/adamay909/AozoraConvert/mobi/types"
+	"github.com/adamay909/AozoraConvert/v2/mobi/pdb"
+	r "github.com/adamay909/AozoraConvert/v2/mobi/records"
+	t "github.com/adamay909/AozoraConvert/v2/mobi/types"
 	"golang.org/x/text/language"
 )
 

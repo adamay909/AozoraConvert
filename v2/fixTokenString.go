@@ -349,7 +349,7 @@ func (t *token) insertRubyParentStart() {
 
 	r = []rune(e.unicodeString())
 
-	ref = charType(r[len(r)-1])
+	ref = CharType(r[len(r)-1])
 
 	k := 0
 
@@ -382,7 +382,7 @@ func (t *token) insertRubyParentStart() {
 
 		r = []rune(e.unicodeString())
 
-		for k = len(r) - 1; ref == charType(r[k]); k-- {
+		for k = len(r) - 1; ref == CharType(r[k]); k-- {
 
 			if k == 0 {
 
@@ -390,7 +390,7 @@ func (t *token) insertRubyParentStart() {
 			}
 		}
 
-		if charType(r[k]) != ref {
+		if CharType(r[k]) != ref {
 
 			t2 := newTokenOfType(textToken)
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"text/template"
 
-	r "github.com/adamay909/AozoraConvert/mobi/records"
+	r "github.com/adamay909/AozoraConvert/v2/mobi/records"
 )
 
 const defaultTemplateString = `<?xml version="1.0" encoding="UTF-8"?>

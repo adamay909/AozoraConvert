@@ -14,13 +14,13 @@ type charTypeID int
 
 // Define charater types.
 const (
-	symbol charTypeID = 1 << iota //Symbol captures everything that isn't captured by the other categories.
-	hiragana
-	katakana
-	kanji
-	whitespace
-	punctuation
-	roman
+	Symbol charTypeID = 1 << iota //Symbol captures everything that isn't captured by the other categories.
+	Hiragana
+	Katakana
+	Kanji
+	Whitespace
+	Punctuation
+	Roman
 )
 
 type jisuni struct {
@@ -160,15 +160,15 @@ func initMap() {
 // is katakana.
 func (c charTypeID) String() string {
 	switch c {
-	case symbol:
+	case Symbol:
 		return "Symbol"
-	case kanji:
+	case Kanji:
 		return "Kanji"
-	case hiragana:
+	case Hiragana:
 		return "Hiragana"
-	case katakana:
+	case Katakana:
 		return "Katakana"
-	case whitespace:
+	case Whitespace:
 		return "Whitespace"
 	default:
 		return "other"
@@ -178,26 +178,26 @@ func (c charTypeID) String() string {
 // isKatakana checkes if r is katakana.
 func isKatakana(r rune) bool {
 
-	return charType(r) == katakana
+	return CharType(r) == Katakana
 
 }
 
 // isHiragana checkes if r is hiragana,
 func isHiragana(r rune) bool {
 
-	return charType(r) == hiragana
+	return CharType(r) == Hiragana
 
 }
 
 func isKanji(r rune) bool {
 
-	return charType(r)&kanji != 0
+	return CharType(r)&Kanji != 0
 
 }
 
 func sameCharType(r1, r2 rune) bool {
 
-	return charType(r1)&charType(r2) != 0
+	return CharType(r1)&CharType(r2) != 0
 
 }
 
@@ -213,8 +213,8 @@ func toKatakana(r rune) rune {
 
 }
 
-// toHiragana converts r to hiragana (iff. r is katakana)
-func toHiragana(r rune) rune {
+// ToHiragana converts r to hiragana (iff. r is katakana)
+func ToHiragana(r rune) rune {
 
 	if !isKatakana(r) {
 		return r
@@ -277,104 +277,51 @@ var (
 	katakanaR = []*unicode.RangeTable{unicode.Katakana}
 )
 
-func charType(r rune) charTypeID {
+func CharType(r rune) charTypeID {
 
 	switch {
 	case ' ' == r:
-		return whitespace
+		return Whitespace
 
 	case '　' == r:
-		return whitespace
+		return Whitespace
 
 	case '※' == r:
-		return kanji
+		return Kanji
 
 	case '〇' == r:
-		return kanji
+		return Kanji
 
 	case 'ヶ' == r:
-		return kanji
+		return Kanji
 
 	case '〻' == r:
-		return kanji
+		return Kanji
 
 	case '〆' == r:
-		return kanji
+		return Kanji
 
 	case strings.ContainsAny("〳〴〵／″＼", string(r)):
-		return symbol
+		return Symbol
 
 	case unicode.IsOneOf(kanjiR, r):
-		return kanji
+		return Kanji
 
 	case unicode.IsOneOf(hiraganaR, r):
-		return hiragana
+		return Hiragana
 
 	case unicode.IsOneOf(katakanaR, r):
-		return katakana
+		return Katakana
 
 	case strings.ContainsAny("、。「」！？・", string(r)):
-		return punctuation
+		return Punctuation
 
 	case unicode.IsOneOf([]*unicode.RangeTable{unicode.Latin}, r):
-		return roman
+		return Roman
 
 	default:
-		return symbol
+		return Symbol
 	}
-}
-
-func charType_(r rune) charTypeID {
-
-	switch {
-
-	case ' ' == r:
-		return whitespace
-
-	case '〇' == r:
-		return kanji
-
-	case 'ヶ' == r:
-		return kanji
-
-	case '〻' == r:
-		return kanji
-
-	case 0x203B == r:
-		return kanji
-
-	case 0xFB00 <= r:
-		return symbol
-
-	case 0xF900 <= r:
-		return kanji
-
-	case 0x9FF0 <= r:
-		return symbol
-
-	case 0x4E00 <= r:
-		return kanji
-
-	case 0x30FF <= r:
-		return symbol
-
-	case 0x30A1 <= r:
-		return katakana
-
-	case 0x30A0 <= r:
-		return symbol
-
-	case 0x3041 <= r:
-		return hiragana
-
-	case 0x3007 <= r:
-		return symbol
-
-	case 0x3005 <= r:
-		return kanji
-	}
-
-	return symbol
 }
 
 // convert returns the unicode string corresponding to the

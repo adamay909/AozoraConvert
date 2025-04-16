@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/adamay909/AozoraConvert/mobi/jfif"
+	"github.com/adamay909/AozoraConvert/v2/mobi/jfif"
 )
 
 type ImageRecord struct {

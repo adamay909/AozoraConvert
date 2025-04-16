@@ -304,6 +304,9 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 	case "accent string":
 		return
 
+	case "gaiji note":
+		return
+
 	case "main text":
 		return
 
@@ -1108,9 +1111,13 @@ func kunojiOpenHtml(n *Node, w *strings.Builder) {
 
 func metadataOpenHtml(n *Node, w *strings.Builder) {
 
-	centeringOpenHtml(n, w)
+	h := newHtag("div")
 
-	return
+	h.addClass("metadata")
+
+	h.AddStringTo(w)
+
+	//centeringOpenHtml(n, w)
 
 }
 

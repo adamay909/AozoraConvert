@@ -31,6 +31,10 @@ figure {
  writing-mode: horizontal-tb;
 }
 
+.metadata{
+ margin-left: 6em;
+}
+
 .alignBottom {
  display: block;
  text-align: end;
@@ -358,6 +362,7 @@ text-orientation: sideways;
 }
 
 .framed {
+ padding: 1em;
  border: solid;
 }
 
@@ -387,17 +392,17 @@ text-orientation: sideways;
  font-size: small;
 }
 
-.title {
+h1.title {
  font-size: xx-large;
  margin-top: 1em;
 }
 
-.subtitle {
+h2.subtitle {
  font-size: x-large;
  margin-top: 2em;
 }
 
-.contributor {
+h2.contributor {
  font-size: x-large;
  text-align:  end;
 }

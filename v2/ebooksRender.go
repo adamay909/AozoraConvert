@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adamay909/AozoraConvert/mobi"
-	"github.com/adamay909/AozoraConvert/mobi/records"
+	"github.com/adamay909/AozoraConvert/v2/mobi"
+	"github.com/adamay909/AozoraConvert/v2/mobi/records"
 	"golang.org/x/text/language"
 )
 
@@ -214,6 +214,93 @@ func (b *Book) RenderAZW3() []byte {
 
 }
 
+func (b *Book) RenderPackage(format string) []byte {
+
+	var renderer func(*Node, *strings.Builder) error
+
+	switch format {
+
+	case "tex":
+		renderer = RenderLaTeXFull
+
+	case "txt":
+		renderer = RenderAozoraText
+
+	case "html":
+		renderer = RenderHTMLFull
+
+	default:
+		format = "txt"
+		renderer = RenderAozoraText
+
+	}
+
+	buf := new(bytes.Buffer)
+
+	zw := zip.NewWriter(buf)
+
+	w := new(strings.Builder)
+
+	renderer(b.Body, w)
+
+	f, _ := zw.Create("1." + format)
+
+	f.Write([]byte(w.String()))
+
+	for _, file := range b.Files {
+
+		if filepath.Ext(file.Name) == ".css" {
+			continue
+		}
+
+		f, _ = zw.Create(file.Name)
+
+		f.Write(file.Data)
+
+	}
+
+	if format == "tex" {
+
+		f, _ = zw.Create("azcommands.tex")
+
+		f.Write([]byte(LaTeXdefinitions))
+	}
+
+	if format == "html" {
+
+		f, _ = zw.Create("aozora.css")
+
+		f.Write([]byte(AozoraCSS))
+	}
+
+	zw.Close()
+
+	return buf.Bytes()
+
+}
+
+func (b *Book) RenderJson() []byte {
+
+	w := new(strings.Builder)
+
+	renderJson(b.Body, w)
+
+	return []byte(w.String())
+
+}
+
+func (b *Book) RenderMonolithicHtml() []byte {
+
+	b.EmbedImages()
+
+	w := new(strings.Builder)
+
+	renderHtmlMonolithic(b.Body, w)
+
+	return []byte(w.String())
+
+}
+
 //go:embed resources/oebhtmltemplate.html
 var oebhtmltemplate string
 
@@ -231,12 +318,8 @@ func oebmain(b *Book) []byte {
 
 		if e.Attr["type"] == "main text" {
 
-			err := RenderHTML(e, w)
+			renderEpubHTML(e, w)
 
-			if err != nil {
-				fmt.Println(err)
-				return []byte{}
-			}
 		}
 		if e.Attr["type"] == "bibliographical info" {
 
@@ -270,12 +353,7 @@ func oebtitle(b *Book) []byte {
 
 		if e.Attr["type"] == "metadata" {
 
-			err := RenderHTML(e, w)
-
-			if err != nil {
-				fmt.Println(err)
-				return []byte{}
-			}
+			renderEpubHTML(e, w)
 
 			break
 		}

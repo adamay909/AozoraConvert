@@ -1,7 +1,6 @@
 package aozoraConvert
 
 import (
-	_ "embed" //embed
 	"log"
 	"strconv"
 	"strings"
