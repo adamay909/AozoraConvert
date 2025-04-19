@@ -20,6 +20,9 @@ func htmlAzw3FormatterOpen(n *Node, w *strings.Builder) {
 
 		imageAzw3(n, w)
 
+	case "pagination":
+		paginationHtml(n, w)
+
 	case "metadata":
 		centeringOpenHtml(n, w)
 

@@ -312,7 +312,7 @@ text-orientation: sideways;
 }
 
 .pageBreak {
- page-break-before: always;
+ break-before: always;
 }
 
 .emphRight {
@@ -405,5 +405,9 @@ h2.subtitle {
 h2.contributor {
  font-size: x-large;
  text-align:  end;
+}
+
+footer {
+ page-break-before: always;
 }
 

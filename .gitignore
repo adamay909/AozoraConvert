@@ -2,6 +2,7 @@ TODO
 *.log
 *_test.*
 testdata/
+testing/
 *.aux
 *.log
 *.tex

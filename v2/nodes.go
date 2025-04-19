@@ -294,22 +294,48 @@ func (n *Node) HasChild() bool {
 
 func (n *Node) remove() {
 
-	c1 := n.prev
+	p1 := n.up
 
-	c2 := n.next
+	s1 := n.prev
 
-	if c2 != nil {
-		c2.prev = c1
+	s2 := n.next
+
+	if p1 != nil {
+		if p1.firstChild == n {
+			p1.firstChild = s2
+		}
 	}
 
-	if c1 != nil {
-		c1.next = c2
+	if s2 != nil {
+		s2.prev = s1
+	}
+
+	if s1 != nil {
+		s1.next = s2
 	}
 
 	n.next = nil
 
 	n.prev = nil
 
+	n.up = nil
+
 	return
+
+}
+
+func (n *Node) ClearChildren() {
+
+	c1 := n.firstChild
+
+	if c1 == nil {
+		return
+	}
+
+	for _, e := range c1.Siblings() {
+
+		e.remove()
+
+	}
 
 }

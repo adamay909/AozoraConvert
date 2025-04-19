@@ -19,26 +19,35 @@ import (
 var inputFile string
 
 var (
-	outputFile = flag.String("o", "/dev/stdout", "name of output file; defaults to Stdout")
+	outputFile = flag.String("o", "/dev/stdout", "出力ファイル名. 指定されなければstdout.")
 
-	sjisOut = flag.Bool("sjis", false, "generate SJIS encoded output")
+	sjisOut = flag.Bool("sjis", false, "出力ファイルのエンコーディングをShift_JISにする. デフォルトはutf-8.")
 
-	format = flag.String("format", "", "output file format; overrides format inferred from file extension of output file name; supported types are txt, html, json")
+	format = flag.String("format", "", "出力ファイル形式. 出力ファイル名に拡張子より優先される. 可能な形式はtex, txt, html, json, epub, azw3")
 
-	jis0208 = flag.Bool("jis0208", false, "output is JIS0208 compatible.")
+	jis0208 = flag.Bool("jis0208", false, "外字の置き換えなし.")
 
-	jis0213 = flag.Bool("jis0213", false, "output is JIS0213 compatible.")
+	jis0213 = flag.Bool("jis0213", false, "外字の置き換えをJIS0213範囲内に抑える.")
 
-	frag = flag.Bool("fragment", false, "set to true if input is a fragment of aozorabunko text.")
+	frag = flag.Bool("fragment", false, "入力ファイルを青空文庫形式ファイルの断片とみなす.")
 
-	full = flag.Bool("full", false, "set to true to render a complete and valid output (otherwise, you only get html and latex fragments")
+	full = flag.Bool("full", false, "ヘッダーやプリアンブルを含む完全な形式のファイルを出力する.")
 
-	supFiles = flag.Bool("supportFiles", false, "if set to true, writes supporting files to disk.")
+	supFiles = flag.Bool("supportFiles", false, "サポートファイルも出力する.")
 
-	rubyForEmph = flag.Bool("rubyForEmph", true, "if set, use css text-emphasis for html/epub/azw3  output")
+	rubyForEmph = flag.Bool("rubyForEmph", true, "出力がHTML系の場合、傍点類にCSSのtext-emphasisを利用する.")
 )
 
 func init() {
+
+	flag.Usage = func() {
+
+		fmt.Println("\n", os.Args[0], "[オプション] 入力ファイル名")
+
+		fmt.Println()
+
+		flag.PrintDefaults()
+	}
 
 	flag.Parse()
 
@@ -74,7 +83,7 @@ func init() {
 		switch filepath.Ext(*outputFile) {
 
 		case ".txt":
-			*format = "text"
+			*format = "txt"
 
 		case ".html":
 			*format = "html"
@@ -121,7 +130,7 @@ func init() {
 
 	ac.SetFragment(*frag)
 
-	ac.SetStrict(true)
+	ac.SetStrict(false)
 
 	ac.SetRubyEmph(*rubyForEmph)
 
@@ -133,7 +142,7 @@ func main() {
 
 	switch *format {
 
-	case "text", "json", "latex", "html":
+	case "txt", "json", "latex", "html":
 		resp = parseAndRenderOnly(inputFile)
 
 	case "tokens", "rawtokens":
@@ -176,10 +185,18 @@ func main() {
 		switch *format {
 
 		case "latex":
-			writeFile(filepath.Join(dir, "azcommands.tex"), []byte(ac.LaTeXdefinitions))
+			if *sjisOut {
+				writeFile(filepath.Join(dir, "azcommands.tex"), []byte(ac.ToSJIS(ac.LaTeXdefinitions)))
+			} else {
+				writeFile(filepath.Join(dir, "azcommands.tex"), []byte(ac.LaTeXdefinitions))
+			}
 
 		case "html":
-			writeFile(filepath.Join(dir, "aozora.css"), []byte(ac.AozoraCSS))
+			if *sjisOut {
+				writeFile(filepath.Join(dir, "aozora.css"), []byte(ac.ToSJIS(ac.AozoraCSS)))
+			} else {
+				writeFile(filepath.Join(dir, "aozora.css"), []byte(ac.AozoraCSS))
+			}
 
 		default:
 
@@ -337,7 +354,7 @@ func parseAndRenderOnly(inputFile string) []byte {
 
 	switch *format {
 
-	case "text":
+	case "txt":
 		renderer = ac.RenderAozoraText
 
 	case "json":

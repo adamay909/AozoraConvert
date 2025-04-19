@@ -22,12 +22,11 @@ type Book struct {
 	UUID                      string
 	Body                      *Node
 	URI                       string
-	//	CoverImage                image.Image
-	Images  []records.ImageRecord
-	CSS     string
-	Hash    string
-	DateMod string
-	// Log                       string
+	Images                    []records.ImageRecord
+	CSS                       string
+	Hash                      string
+	DateMod                   string
+	TxtFileName               string
 }
 
 // NewBook returns a new Book.
@@ -35,24 +34,6 @@ func NewBook() *Book {
 	b := new(Book)
 	b.UUID = uuid.NewString()
 	return b
-}
-
-// NewBookFrom returns a Book based on d. d is assumed to be
-// xhtml formatted book from Aozora Bunko.
-func NewBookFrom(d []byte) *Book {
-
-	var err error
-
-	bk := NewBook()
-
-	bk.Body, err = AST(string(d))
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	return bk
 }
 
 func NewEbookFromZip(dz []byte) (bk *Book) {
@@ -70,6 +51,8 @@ func NewEbookFromZip(dz []byte) (bk *Book) {
 	for _, f := range arch.File {
 
 		if filepath.Ext(f.Name) == ".txt" {
+
+			bk.TxtFileName = strings.TrimSuffix(f.Name, ".txt")
 
 			r, _ := f.Open()
 

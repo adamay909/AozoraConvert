@@ -57,7 +57,6 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 
 	case "empty line":
 		h := newHtag("br")
-		h.setSelfClose()
 		h.AddStringTo(w)
 		w.WriteString("\n")
 
@@ -126,7 +125,7 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 		imageHtml(n, w)
 
 	case "pagination":
-		paginationHtml(n, w)
+		return
 
 	case "kunten":
 		kuntenHtml(n, w)
@@ -610,8 +609,6 @@ func imageHtml(n *Node, w *strings.Builder) {
 
 	h.addExtraKeyVal("alt", n.Attr["alt text"])
 
-	h.setSelfClose()
-
 	h.setAfter("\n")
 
 	h.AddStringTo(w)
@@ -894,8 +891,6 @@ func paginationHtml(n *Node, w *strings.Builder) {
 
 	h.addClass("pageBreak")
 
-	//h.addExtraKeyVal("data-AmznPageBreak", "always")
-
 	h.AddStringTo(w)
 	newCloseHtag("div").AddStringTo(w)
 	w.WriteString("\n")
@@ -954,16 +949,15 @@ func figureCloseHtml(n *Node, w *strings.Builder) {
 
 func bibInfoOpenHtml(n *Node, w *strings.Builder) {
 
+	h2 := newHtag("footer")
+	h2.setAfter("\n")
+
 	h1 := newHtag("hr")
 	h1.setSelfClose()
 	h1.setAfter("\n")
 
-	h2 := newHtag("footer")
-	h2.setAfter("\n")
-
-	paginationHtml(n, w)
-	h1.AddStringTo(w)
 	h2.AddStringTo(w)
+	h1.AddStringTo(w)
 
 }
 

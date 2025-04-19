@@ -748,3 +748,94 @@ func (n *Node) fixKanbun() {
 
 	n.SetAttr("type", "kanbun")
 }
+
+func (n *Node) ClearMetadata() {
+
+	for _, e := range n.Children() {
+
+		if e.Attr["type"] != "metadata" {
+			continue
+		}
+
+		e.ClearChildren()
+
+		return
+	}
+}
+
+func (n *Node) SetTitle(title string) {
+
+	if n.Attr["type"] != "document" {
+		return
+	}
+
+	for _, e := range n.Children() {
+
+		if e.Attr["type"] != "metadata" {
+			continue
+		}
+
+		t1 := newNode("meta title")
+
+		e.addChild(t1)
+
+		t2 := newNode("text")
+
+		t2.SetAttr("raw", title)
+
+		t1.addChild(t2)
+
+		return
+	}
+}
+func (n *Node) SetSubtitle(subtitle string) {
+
+	if n.Attr["type"] != "document" {
+		return
+	}
+
+	for _, e := range n.Children() {
+
+		if e.Attr["type"] != "metadata" {
+			continue
+		}
+
+		t1 := newNode("meta subtitle")
+
+		e.addChild(t1)
+
+		t2 := newNode("text")
+
+		t2.SetAttr("raw", subtitle)
+
+		t1.addChild(t2)
+
+		return
+	}
+}
+
+func (n *Node) AddContributor(name string) {
+
+	if n.Attr["type"] != "document" {
+		return
+	}
+
+	for _, e := range n.Children() {
+
+		if e.Attr["type"] != "metadata" {
+			continue
+		}
+
+		t1 := newNode("meta contributor")
+
+		e.addChild(t1)
+
+		t2 := newNode("text")
+
+		t2.SetAttr("raw", name)
+
+		t1.addChild(t2)
+
+		return
+	}
+}

@@ -229,6 +229,9 @@ func (b *Book) RenderPackage(format string) []byte {
 	case "html":
 		renderer = RenderHTMLFull
 
+	case "json":
+		renderer = RenderJSON
+
 	default:
 		format = "txt"
 		renderer = RenderAozoraText
@@ -243,7 +246,13 @@ func (b *Book) RenderPackage(format string) []byte {
 
 	renderer(b.Body, w)
 
-	f, _ := zw.Create("1." + format)
+	fname := b.TxtFileName
+
+	if fname == "" {
+		fname = "1"
+	}
+
+	f, _ := zw.Create(fname + "." + format)
 
 	f.Write([]byte(w.String()))
 
@@ -276,16 +285,6 @@ func (b *Book) RenderPackage(format string) []byte {
 	zw.Close()
 
 	return buf.Bytes()
-
-}
-
-func (b *Book) RenderJson() []byte {
-
-	w := new(strings.Builder)
-
-	renderJson(b.Body, w)
-
-	return []byte(w.String())
 
 }
 
