@@ -148,6 +148,17 @@ func (tknz *tokenizer) readNext(i int) string {
 
 func (tknz *tokenizer) nextToken() (e *token) {
 
+	defer func() {
+
+		if r := recover(); r != nil {
+
+			panic("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string))
+
+			return
+
+		}
+	}()
+
 	e = newToken()
 
 	end := 0
@@ -327,7 +338,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("Tokenizer: markup notes do not end")
+			panic("Tokenizer: markup has no end")
 
 		}
 
@@ -349,6 +360,14 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i > end {
 			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
+
+		}
+
+		j := strings.Index(s.data[s.position+1:], openingStrOf(o))
+
+		if j > -1 && j < i-1 {
+
+			i = findPairMatch(s.data[s.position:], openingStrOf(o), closingStrOf(o))
 
 		}
 
@@ -485,4 +504,27 @@ func (t *tokenizer) textContext() (tctx string) {
 
 	return
 
+}
+
+func findPairMatch(s string, opener, closer string) int {
+
+	var i, c int
+
+	for i = range s {
+
+		if strings.HasPrefix(s[i:], opener) {
+			c++
+			continue
+		}
+
+		if strings.HasPrefix(s[i:], closer) {
+			c--
+			if c == 0 {
+				return i
+			}
+
+		}
+	}
+
+	return -1
 }

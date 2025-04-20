@@ -723,26 +723,15 @@ func inlineNoteOpenLaTex(n *Node, w *strings.Builder) {
 
 	}
 
-	/*
-		if len(s) == 2 {
+	if len(s) == 2 {
 
-			w.WriteString(latexCmd("azconvWarichuM"))
+		w.WriteString(latexCmd("azconvWarichuM"))
 
-			w.WriteString(latexArg(strconv.Itoa(l) + `.5\zw`))
+	} else {
 
-			addToStringsBuilder(w, `{(`, s[0], `)`, `\\(`, s[1], `)`)
+		w.WriteString(latexCmd("azconvWarichu"))
 
-			for _, e := range linearizeDescendants(n) {
-
-				e.SetAttr("ignore", "true")
-
-			}
-
-			return
-		}
-	*/
-
-	w.WriteString(latexCmd("azconvWarichu"))
+	}
 
 	w.WriteString(latexArg(strconv.Itoa(l) + `.5\zw`))
 
