@@ -1,0 +1,339 @@
+\jlreqsetup{warichu_opening=, warichu_closing=}
+
+\usepackage{ifthen}
+
+\usepackage{mdframed}
+
+\usepackage{graphicx}
+
+\usepackage{lltjp-geometry}
+
+\usepackage[driver=dvipdfmx]{geometry}
+
+\usepackage{pxrubrica}
+
+\usepackage{ulem}
+
+\usepackage{luatexja-fontspec}
+
+\usepackage{newunicodechar}
+
+\usepackage{caption}
+
+\usepackage[kumi=aki, tateaki=1]{kanbun}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% environments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{azconvIndented}{n}{m}はｍ字下げ、改行してｎ字下げ。
+% ［＃ｎ字下げ］はｎ字下げ、改行してｎ字下げ。
+% ［＃改行天付き］はｎ字下げ、改行して０字下げ。
+\newenvironment{azconvIndented}[2]{
+  \setlength{\parindent}{#2}
+   \leftskip=#1
+
+  }
+  {
+   \setlength{\parindent}{0\zw}
+   \leftskip=0em
+  }
+
+% \begin{azconvAlignBottom}{n}は下からｎ字上げ。地付きは下から０字上げ。 
+\newenvironment{azconvAlignBottom}[1]{
+  \rightskip=#1
+ }
+ {\rightskip=0\zw}
+
+% #1は字下げ及び字詰めのスコープ内の場合指定される。字下げの場合下げる字数。
+% 字詰めの場合は求められる字数に近づくように設定される。
+ \newenvironment{azconvFramed}[1][]%
+ {\begin{mdframed}[#1,skipabove=8pt]}
+{\end{mdframed}}
+
+
+\newenvironment{azconvNarrow}[1]{
+ \rightskip= \dimexpr\linewidth-#1}
+{\rightskip=0em}
+
+\newenvironment{azconvFigure}{
+ \begin{figure}[h!]
+\begin{center}}
+{\end{center}
+\end{figure}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% (re)define various under/overline styles for ulem
+%%%%% shamelessly reusing and adjusting code from ulem.sty
+
+\makeatletter
+
+\UL@protected\def\uline{\leavevmode \bgroup
+ \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+ \advance\ULdepth-0.5\p@\markoverwith{\lower\ULdepth\hbox
+   {\kern-.03em\vbox{\hrule width.2em}\kern-.03em}}%
+ \ULon}
+
+\UL@protected\def\oline{\leavevmode \bgroup
+ \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+ \advance\ULdepth-0.5\p@\markoverwith{\raise\ULdepth\hbox
+   {\kern-.03em\vbox{\hrule width.2em}\kern-.03em}}%
+ \ULon}
+
+ \UL@protected\def\uuline{\leavevmode \bgroup
+ \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepthi2.8\p@\fi
+ \advance\ULdepth1\p@\markoverwith{\lower\ULdepth\hbox
+   {\kern-.03em\vbox{\hrule width.2em\kern1\p@\hrule}\kern-.03em}}%
+ \ULon}
+
+\UL@protected\def\ooline{\leavevmode \bgroup
+ \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+ \advance\ULdepth-0.5\p@\markoverwith{\raise\ULdepth\hbox
+   {\kern-.03em\vbox{\hrule width.2em\kern1\p@\hrule}\kern-.03em}}%
+ \ULon}
+
+\UL@protected\def\ooline{\leavevmode \bgroup
+ \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+ \advance\ULdepth-.8\p@\markoverwith{\raise\ULdepth\hbox
+   {\kern-.03em\vbox{\hrule width.2em\kern1\p@\hrule}\kern-.03em}}%
+ \ULon}
+
+\UL@protected\def\dotuline{\leavevmode \bgroup 
+  \UL@setULdepth
+  \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+  \markoverwith{\begingroup
+   \advance\ULdepth-2\p@\lower\ULdepth\hbox{\kern.06em .\kern.04em}%
+     \endgroup}%
+  \ULon}
+
+\UL@protected\def\dotoline{\leavevmode \bgroup \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2.8\p@\fi
+ \markoverwith{\begingroup
+ \advance\ULdepth3\p@\raise\ULdepth\hbox{\kern.06em .\kern.04em}%
+	\endgroup}%
+ \ULon}
+
+\UL@protected\def\dashuline{\leavevmode \bgroup 
+  \UL@setULdepth
+  \ifx\UL@on\UL@onin \advance\ULdepth2\p@\fi
+  \markoverwith{\begingroup
+     \advance\ULdepth-0.8\p@\ 
+     \lower\ULdepth\hbox{\kern.06em -\kern.04em}%
+     \endgroup}%
+  \ULon}
+
+\UL@protected\def\dasholine{\leavevmode \bgroup \UL@setULdepth
+ \ifx\UL@on\UL@onin \advance\ULdepth2\p@\fi
+ \markoverwith{\begingroup
+	\advance\ULdepth1.5\p@\raise\ULdepth\hbox{\kern.06em -\kern.04em}%
+	\endgroup}%
+  \ULon}
+
+\UL@protected\def\owave{\leavevmode \bgroup 
+  \ifdim \ULdepth=\maxdimen \ULdepth 3.5\p@
+  \else \advance\ULdepth2\p@ 
+  \fi \advance\ULdepth3.2\p@\markoverwith{\raise\ULdepth\hbox{\sixly \char58}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory drain.
+
+\UL@protected\def\uwave{\leavevmode \bgroup 
+  \ifdim \ULdepth=\maxdimen \ULdepth 3.5\p@
+  \else \advance\ULdepth2\p@ 
+  \fi \advance\ULdepth0.5\p@\markoverwith{\lower\ULdepth\hbox{\sixly \char58}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory drain.
+
+\makeatother
+
+%********
+
+
+\newcommand{\azconvBold}[1]{%
+{\textbf{#1}}}
+
+\newcommand{\azconvContributor}[1]{
+   \hfill #1
+
+  }
+
+\newcommand{\azconvFbox}[1]{
+   \fbox{#1}
+  }
+
+\newcommand{\azconvIncludegraphics}[3]{
+ \begin{center}
+  \hskip -4\zw
+  \resizebox{#2}{#1}{\includegraphics[angle=90, origin=c]{#3}}
+\end{center}}
+
+\newcommand{\azconvIncludegraphicsInline}[1]{
+ \raisebox{-0.6\zw}{\includegraphics[angle=90, origin=c, width=1\zw, height=1\zw]
+{#1}}}
+
+\newcommand{\azconvInlineHeader}[2]{%
+\hskip 0.5\zw\textbf{#2}\hskip-0.5\zw}
+
+\newcommand{\azconvItalic}[1]{%
+{\textit{#1}}}
+
+\newcommand{\azconvKenten}[3][]{%
+ \ifthenelse{\equal{#1}{left}}%
+ {\kentenmarkintate{#2}\kenten[S]{#3}}%
+ {\kentenmarkintate{#2}\kenten{#3}}%
+}
+
+\newcommand{\azconvKunten}[1]{%
+\raisebox{-0.4\zw}{\scriptsize #1}\normalsize}
+
+%　#1は改ページ、改丁など注記で指示されているもの。デフォルトでは無視する。
+\newcommand{\azconvNewpage}[1]{%
+ \newpage
+}
+
+\newcommand{\azconvOkurigana}[1]{%
+\raisebox{0.6\zw}{\scriptsize #1}\normalsize}
+
+\newcommand{\azconvSection}[1]{%
+ \section{#1}
+}
+
+\newcommand{\azconvSubsection}[1]{%
+  \subsection{#1}
+ }
+
+\newcommand{\azconvSubsubsection}[1]{%
+  \subsubsection{#1}
+ }
+
+
+\newcommand{\azconvSup}[1]{%
+\textsuperscript{#1}}
+
+\newcommand{\azconvSub}[1]{%
+\textsubscript{#1}}
+
+\newcommand{\azconvSubtitle}[1]{
+	{\large
+		\begin{azconvIndented}{7\zw}{0\zw}
+
+			#1
+
+	 \end{azconvIndented}
+	}
+ 
+  }
+
+\newcommand{\azconvTatechuyoko}[1]{%
+ \tatechuyoko{#1}}
+
+\newcommand{\azconvTitle}[1]{
+	{\LARGE
+	 
+	 \begin{azconvIndented}{3\zw}{0\zw}
+
+	 #1
+	 
+	\end{azconvIndented}
+		\vskip 1\zw
+	}
+
+  }
+
+ % #1が傍線の種類、#2が左右、#3が対象文字列。
+\newcommand{\azconvUline}[3]{%
+   \ifthenelse
+   {\equal{#1}{solid}}
+	{\ifthenelse{
+	 \equal{#2}{under}}
+	{\oline{#3}}
+   {\uline{#3}}}{}%
+   %
+\ifthenelse
+   {\equal{#1}{double}}
+	{\ifthenelse{
+	 \equal{#2}{under}}
+	 {\ooline{#3}}
+	{\uuline{#3}}}{}%
+	%
+\ifthenelse
+   {\equal{#1}{dotted}}
+	{\ifthenelse{
+	 \equal{#2}{under}}
+	 {\dotoline{#3}}
+	{\dotuline{#3}}}{}%
+	%
+\ifthenelse
+   {\equal{#1}{dashed}}
+	{\ifthenelse{
+	 \equal{#2}{under}}
+	 {\dasholine{#3}}
+	{\dashuline{#3}}}{}%
+	%
+\ifthenelse
+   {\equal{#1}{wavy}}
+	{\ifthenelse{
+	 \equal{#2}{under}}
+	 {\owave{#3}}
+	{\uwave{#3}}}{}%
+}
+
+% #1は必要となるboxのサイズ、#2が文字列。#1はjlreqの場合自動で算出されるので無視。
+\newcommand{\azconvWarichu}[2]{
+ \warichu{#2}}
+
+% 割中の中で改行が指定されている場合に使う。#1はboxのサイズ、#2が文字列。
+\newcommand{\azconvWarichuM}[2]{\linespread{0.5}
+{\scriptsize\parbox{#1}{#2}}}
+
+\newcommand{\azconvYokogumi}[1]{%
+\raisebox{-.35\zw}{\hbox{\utod #1}}}
+
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% for Kanbun kunten 
+%
+% taken from 漢文マクロ kambunsnx 
+%
+% 峰山進(閑舎) https://rakunet.org/p/2022/0729
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\azconvIR{一\kern-.6\zw レ}
+\def\azconvNR{二\kern-.4\zw レ}
+\def\azconvJR{上\kern-.25\zw レ}
+\def\azconvKR{甲\kern-.4\zw レ}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% setup basic lengths, fonts, etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\parindent}{0em}
+
+\renewcommand{\baselinestretch}{1.2}
+
+\captionsetup{font={small, normalfont},labelformat=empty,skip=0pt}
+
+\ModifyHeading{section}{indent=2\zw, format={\Large #2}}
+\ModifyHeading{subsection}{indent=3\zw,format={\large #2}}
+\ModifyHeading{subsubsection}{indent=4\zw,format={\bfseries #2}}
+
+%\usepackage[noto-jp]{luatexja-preset}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Fallback for unavailable characters
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\newjfontfamily{\fallback}{MingLiU-ExtB}
+
+%\newunicodechar{𥥔}{{\fallback 𥥔}} 
