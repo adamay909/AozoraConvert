@@ -278,7 +278,6 @@ HTMLとCSS自体は縦書きにかなりよく対応していますが、ブラ�
 - CSSではtext-emphasisを利用して傍点をつけることができますが、Chromium 系のhtmlレンダラーでは傍点と親字との距離がありすぎる気がするので、デフォルトで傍点はルビとして扱っています。text-emphaisを使いたければ```-rubyForEmph=false```と指定してください。
 - Geckoは結構きちんとしていますが、カッコなどの向きが内側が欧文の場合などのときに異常になります。
 
-## aozora.orihasam.comについて
 
 ### JSON
 
