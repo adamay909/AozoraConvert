@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 func latexCmd(cmd string) string {
 

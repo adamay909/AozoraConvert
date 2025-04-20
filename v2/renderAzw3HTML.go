@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"mime"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func renderHtmlForAzw3(n *Node, w *strings.Builder) {
+func renderHTMLForAzw3(n *Node, w *strings.Builder) {
 
 	Serialize(n, w, htmlAzw3FormatterOpen, htmlAzw3FormatterClose)
 
@@ -21,13 +21,13 @@ func htmlAzw3FormatterOpen(n *Node, w *strings.Builder) {
 		imageAzw3(n, w)
 
 	case "pagination":
-		paginationHtml(n, w)
+		paginationHTML(n, w)
 
 	case "metadata":
-		centeringOpenHtml(n, w)
+		centeringOpenHTML(n, w)
 
 	default:
-		azrHtmlFormatterOpen(n, w)
+		azrHTMLFormatterOpen(n, w)
 
 	}
 
@@ -45,7 +45,7 @@ func htmlAzw3FormatterClose(n *Node, w *strings.Builder) {
 		w.WriteString(newCloseHtag(`div`).String())
 
 	default:
-		azrHtmlFormatterClose(n, w)
+		azrHTMLFormatterClose(n, w)
 
 	}
 

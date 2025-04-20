@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"errors"
@@ -9,12 +9,12 @@ import (
 
 var utf8of map[string]string
 
-// charTypeID represents character types.
-type charTypeID int
+// CharTypeID represents character types.
+type CharTypeID int
 
 // Define charater types.
 const (
-	Symbol charTypeID = 1 << iota //Symbol captures everything that isn't captured by the other categories.
+	Symbol CharTypeID = 1 << iota //Symbol captures everything that isn't captured by the other categories.
 	Hiragana
 	Katakana
 	Kanji
@@ -158,7 +158,7 @@ func initMap() {
 // String returns the character type of c
 // as a string. E.g. "Katakana" if c
 // is katakana.
-func (c charTypeID) String() string {
+func (c CharTypeID) String() string {
 	switch c {
 	case Symbol:
 		return "Symbol"
@@ -277,7 +277,8 @@ var (
 	katakanaR = []*unicode.RangeTable{unicode.Katakana}
 )
 
-func CharType(r rune) charTypeID {
+// CharType returns the character type of r
+func CharType(r rune) CharTypeID {
 
 	switch {
 	case ' ' == r:

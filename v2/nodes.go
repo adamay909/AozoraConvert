@@ -1,10 +1,11 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"sort"
 	"strings"
 )
 
+// Node represents a node in an AST.
 type Node struct {
 	next           *Node
 	prev           *Node
@@ -112,7 +113,7 @@ func (n *Node) Children() []*Node {
 
 }
 
-// IsLastSiblings returns whether or not n has any further siblings.
+// IsLastSibling returns whether or not n has any further siblings.
 func (n *Node) IsLastSibling() bool {
 
 	return n.next == nil
@@ -274,6 +275,7 @@ func (n *Node) SetAttr(key string, val string) {
 
 }
 
+// NestingLevel returns the nesting level of n
 func (n *Node) NestingLevel() int {
 
 	l := -1
@@ -286,13 +288,15 @@ func (n *Node) NestingLevel() int {
 	return l
 }
 
+// HasChild returns whether n has a child node
 func (n *Node) HasChild() bool {
 
 	return n.firstChild != nil
 
 }
 
-func (n *Node) remove() {
+// Remove removes the node. After remove, n will have no siblings, and no parent.
+func (n *Node) Remove() {
 
 	p1 := n.up
 
@@ -324,6 +328,7 @@ func (n *Node) remove() {
 
 }
 
+// ClearChildren removes all children of n
 func (n *Node) ClearChildren() {
 
 	c1 := n.firstChild
@@ -334,7 +339,7 @@ func (n *Node) ClearChildren() {
 
 	for _, e := range c1.Siblings() {
 
-		e.remove()
+		e.Remove()
 
 	}
 

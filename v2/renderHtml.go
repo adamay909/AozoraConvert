@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"log"
@@ -6,30 +6,30 @@ import (
 	"strings"
 )
 
-var o_compatible bool
+var oCompatible bool
 
 var output *strings.Builder
 
 func init() {
 	output = new(strings.Builder)
-	o_compatible = false
+	oCompatible = false
 }
 
 func setCompatible() {
-	o_compatible = true
+	oCompatible = true
 }
 
 func unsetCompatible() {
-	o_compatible = true
+	oCompatible = true
 }
 
-func renderHtml(n *Node, w *strings.Builder) {
+func renderHTML(n *Node, w *strings.Builder) {
 
-	Serialize(n, w, azrHtmlFormatterOpen, azrHtmlFormatterClose)
+	Serialize(n, w, azrHTMLFormatterOpen, azrHTMLFormatterClose)
 
 }
 
-func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
+func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 
 	if _, ok := n.Attr["ignore"]; ok {
 		return
@@ -47,13 +47,13 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 		w.WriteString("<p>")
 
 	case "ruby group":
-		rubyGroupOpenHtml(n, w)
+		rubyGroupOpenHTML(n, w)
 
 	case "ruby parent":
 		newHtag("ruby").AddStringTo(w)
 
 	case "ruby":
-		rubyOpenHtml(n, w)
+		rubyOpenHTML(n, w)
 
 	case "empty line":
 		h := newHtag("br")
@@ -64,105 +64,105 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 		w.WriteString("<section>\n")
 
 	case "gaiji char":
-		gaijiCharOpenHtml(n, w)
+		gaijiCharOpenHTML(n, w)
 
 	case "kunoji":
-		kunojiOpenHtml(n, w)
+		kunojiOpenHTML(n, w)
 
 	case "indentation":
-		indentationOpenHtml(n, w)
+		indentationOpenHTML(n, w)
 
 	case "bottom align":
-		bottomAlignOpenHtml(n, w)
+		bottomAlignOpenHTML(n, w)
 
 	case "emphasis":
-		if o_compatible {
-			rubyLikeOpenHtml(n, w)
+		if oCompatible {
+			rubyLikeOpenHTML(n, w)
 			return
 		}
-		emphOpenHtml(n, w)
+		emphOpenHTML(n, w)
 
 	case "line decoration":
-		lineDecorationOpenHtml(n, w)
+		lineDecorationOpenHTML(n, w)
 
 	case "narrow paragraph":
-		narrowParOpenHtml(n, w)
+		narrowParOpenHTML(n, w)
 
 	case "inline section":
-		inlineHeaderOpenHtml(n, w)
+		inlineHeaderOpenHTML(n, w)
 
 	case "window section":
-		inlineHeaderOpenHtml(n, w)
+		inlineHeaderOpenHTML(n, w)
 
 	case "inline note":
-		inlineNoteOpenHtml(n, w)
+		inlineNoteOpenHTML(n, w)
 
 	case "rubylike note":
-		rubyLikeOpenHtml(n, w)
+		rubyLikeOpenHTML(n, w)
 
 	case "caption":
-		captionOpenHtml(n, w)
+		captionOpenHTML(n, w)
 
 	case "font shape":
-		fontShapeOpenHtml(n, w)
+		fontShapeOpenHTML(n, w)
 
 	case "font size":
-		fontSizeOpenHtml(n, w)
+		fontSizeOpenHTML(n, w)
 
 	case "offset":
-		subsupOpenHtml(n, w)
+		subsupOpenHTML(n, w)
 
 	case "text direction":
-		textDirOpenHtml(n, w)
+		textDirOpenHTML(n, w)
 
 	case "section title":
-		sectionTitleHtml(n, w)
+		sectionTitleHTML(n, w)
 
 	case "figure":
-		figureOpenHtml(n, w)
+		figureOpenHTML(n, w)
 
 	case "image":
-		imageHtml(n, w)
+		imageHTML(n, w)
 
 	case "pagination":
 		return
 
 	case "kunten":
-		kuntenHtml(n, w)
+		kuntenHTML(n, w)
 
 	case "okurigana":
 
-		okuriganaHtml(n, w)
+		okuriganaHTML(n, w)
 
 	case "centering":
-		centeringOpenHtml(n, w)
+		centeringOpenHTML(n, w)
 
 	case "bibliographical info":
-		bibInfoOpenHtml(n, w)
+		bibInfoOpenHTML(n, w)
 
 	case "gaiji note":
-		gaijiNoteOpenHtml(n, w)
+		gaijiNoteOpenHTML(n, w)
 
 	case "warichu line break":
 		w.WriteString("\n")
 
 	case "special char":
-		specialCharOpenHtml(n, w)
+		specialCharOpenHTML(n, w)
 
 	case "accent string":
-		accentOpenHtml(n, w)
+		accentOpenHTML(n, w)
 
 	case "metadata":
-		metadataOpenHtml(n, w)
+		metadataOpenHTML(n, w)
 
 	case "meta title":
-		metaTitleOpenHtml(n, w)
+		metaTitleOpenHTML(n, w)
 
 	case "meta subtitle":
-		metaSubtitleOpenHtml(n, w)
+		metaSubtitleOpenHTML(n, w)
 
 	case "meta contributor":
-		metaContributorOpenHtml(n, w)
+		metaContributorOpenHTML(n, w)
 
 	case "main text":
 		return
@@ -171,16 +171,16 @@ func azrHtmlFormatterOpen(n *Node, w *strings.Builder) {
 		return
 
 	case "unknown":
-		unknownOpenHtml(n, w)
+		unknownOpenHTML(n, w)
 
 	default:
 		log.Println("Renderer: unknown node type: " + n.String())
-		unknownOpenHtml(n, w)
+		unknownOpenHTML(n, w)
 	}
 
 }
 
-func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
+func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 
 	if _, ok := n.Attr["ignore"]; ok {
 		return
@@ -198,13 +198,13 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 		w.WriteString("</p>\n")
 
 	case "ruby group":
-		rubyGroupCloseHtml(n, w)
+		rubyGroupCloseHTML(n, w)
 
 	case "ruby parent":
-		rubyParentCloseHtml(n, w)
+		rubyParentCloseHTML(n, w)
 
 	case "ruby":
-		rubyCloseHtml(n, w)
+		rubyCloseHTML(n, w)
 
 	case "empty line":
 		return
@@ -213,56 +213,56 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 		w.WriteString("</section>\n")
 
 	case "indentation":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "bottom align":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "emphasis":
-		if o_compatible {
-			rubyLikeCloseHtml(n, w)
+		if oCompatible {
+			rubyLikeCloseHTML(n, w)
 			return
 		}
-		emphCloseHtml(n, w)
+		emphCloseHTML(n, w)
 
 	case "line decoration":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "narrow paragraph":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "inline section":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "window section":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "inline note":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "rubylike note":
-		rubyLikeCloseHtml(n, w)
+		rubyLikeCloseHTML(n, w)
 
 	case "caption":
-		captionCloseHtml(n, w)
+		captionCloseHTML(n, w)
 
 	case "font shape":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "font size":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "offset":
-		subsupCloseHtml(n, w)
+		subsupCloseHTML(n, w)
 
 	case "text direction":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "section title":
-		sectionTitleEndHtml(n, w)
+		sectionTitleEndHTML(n, w)
 
 	case "figure":
-		figureCloseHtml(n, w)
+		figureCloseHTML(n, w)
 
 	case "image":
 		return
@@ -277,22 +277,22 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "centering":
-		standardCloserHtml(n, w)
+		standardCloserHTML(n, w)
 
 	case "bibliographical info":
-		bibInfoCloseHtml(n, w)
+		bibInfoCloseHTML(n, w)
 
 	case "metadata":
-		metadataCloseHtml(n, w)
+		metadataCloseHTML(n, w)
 
 	case "meta title":
-		metaTitleCloseHtml(n, w)
+		metaTitleCloseHTML(n, w)
 
 	case "meta subtitle":
-		metaSubtitleCloseHtml(n, w)
+		metaSubtitleCloseHTML(n, w)
 
 	case "meta contributor":
-		metaContributorCloseHtml(n, w)
+		metaContributorCloseHTML(n, w)
 
 	case "special char":
 		return
@@ -326,7 +326,7 @@ func azrHtmlFormatterClose(n *Node, w *strings.Builder) {
 	return
 }
 
-func standardCloserHtml(n *Node, w *strings.Builder) {
+func standardCloserHTML(n *Node, w *strings.Builder) {
 
 	if n.Attr["type"] == "metadata" {
 
@@ -352,7 +352,7 @@ func standardCloserHtml(n *Node, w *strings.Builder) {
 
 }
 
-func emphOpenHtml(n *Node, w *strings.Builder) {
+func emphOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("em")
 
@@ -400,7 +400,7 @@ func emphOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func emphCloseHtml(n *Node, w *strings.Builder) {
+func emphCloseHTML(n *Node, w *strings.Builder) {
 
 	if !n.hasGaijiWithin {
 
@@ -414,7 +414,7 @@ func emphCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyLikeOpenHtml(n *Node, w *strings.Builder) {
+func rubyLikeOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("ruby")
 
@@ -426,7 +426,7 @@ func rubyLikeOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyLikeCloseHtml(n *Node, w *strings.Builder) {
+func rubyLikeCloseHTML(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("rt")
 
@@ -450,7 +450,7 @@ func rubyLikeCloseHtml(n *Node, w *strings.Builder) {
 
 	} else {
 
-		output.WriteString(getRefStrings(n.RawCloserString())[0])
+		output.WriteString(getRefStrings(n.rawCloserString())[0])
 
 	}
 
@@ -469,7 +469,7 @@ func rubyLikeCloseHtml(n *Node, w *strings.Builder) {
 	w.WriteString(n.firstDescendantOfType("gaiji note").gaijiNoteString())
 }
 
-func bibinfostringHtml(n *Node, w *strings.Builder) {
+func bibinfostringHTML(n *Node, w *strings.Builder) {
 
 	if n.Attr["raw"] == "底本：" {
 		w.WriteString(n.Attr["raw"])
@@ -480,7 +480,7 @@ func bibinfostringHtml(n *Node, w *strings.Builder) {
 
 }
 
-func fontShapeOpenHtml(n *Node, w *strings.Builder) {
+func fontShapeOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("")
 
@@ -501,7 +501,7 @@ func fontShapeOpenHtml(n *Node, w *strings.Builder) {
 	h.AddStringTo(w)
 }
 
-func fontSizeOpenHtml(n *Node, w *strings.Builder) {
+func fontSizeOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("")
 
@@ -540,7 +540,7 @@ func fontSizeOpenHtml(n *Node, w *strings.Builder) {
 	h.AddStringTo(w)
 }
 
-func sectionTitleHtml(n *Node, w *strings.Builder) {
+func sectionTitleHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("")
 
@@ -570,7 +570,7 @@ func sectionTitleHtml(n *Node, w *strings.Builder) {
 	h.AddStringTo(w)
 }
 
-func sectionTitleEndHtml(n *Node, w *strings.Builder) {
+func sectionTitleEndHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("")
 
@@ -595,7 +595,7 @@ func sectionTitleEndHtml(n *Node, w *strings.Builder) {
 	h.AddStringTo(w)
 }
 
-func imageHtml(n *Node, w *strings.Builder) {
+func imageHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("img")
 
@@ -615,7 +615,7 @@ func imageHtml(n *Node, w *strings.Builder) {
 
 }
 
-func indentationOpenHtml(n *Node, w *strings.Builder) {
+func indentationOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("div")
 
@@ -629,7 +629,7 @@ func indentationOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func bottomAlignOpenHtml(n *Node, w *strings.Builder) {
+func bottomAlignOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -650,7 +650,7 @@ func bottomAlignOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func inlineNoteOpenHtml(n *Node, w *strings.Builder) {
+func inlineNoteOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -693,7 +693,7 @@ func inlineNoteOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func inlineHeaderOpenHtml(n *Node, w *strings.Builder) {
+func inlineHeaderOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -724,7 +724,7 @@ func inlineHeaderOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func inlineHeaderCloseHtml(n *Node, w *strings.Builder) {
+func inlineHeaderCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -734,7 +734,7 @@ func inlineHeaderCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func kuntenHtml(n *Node, w *strings.Builder) {
+func kuntenHTML(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("sub")
 
@@ -751,7 +751,7 @@ func kuntenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func okuriganaHtml(n *Node, w *strings.Builder) {
+func okuriganaHTML(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("sup")
 
@@ -768,7 +768,7 @@ func okuriganaHtml(n *Node, w *strings.Builder) {
 
 }
 
-func lineDecorationOpenHtml(n *Node, w *strings.Builder) {
+func lineDecorationOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -813,7 +813,7 @@ func lineDecorationOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func narrowParOpenHtml(n *Node, w *strings.Builder) {
+func narrowParOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("div")
 
@@ -827,7 +827,7 @@ func narrowParOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func subsupOpenHtml(n *Node, w *strings.Builder) {
+func subsupOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("")
 
@@ -854,7 +854,7 @@ func subsupOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func textDirOpenHtml(n *Node, w *strings.Builder) {
+func textDirOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("span")
 
@@ -879,13 +879,13 @@ func textDirOpenHtml(n *Node, w *strings.Builder) {
 	h.AddStringTo(w)
 }
 
-func textDirCloseHtml(n *Node, w *strings.Builder) {
+func textDirCloseHTML(n *Node, w *strings.Builder) {
 
-	standardCloserHtml(n, w)
+	standardCloserHTML(n, w)
 
 }
 
-func paginationHtml(n *Node, w *strings.Builder) {
+func paginationHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("div")
 
@@ -897,7 +897,7 @@ func paginationHtml(n *Node, w *strings.Builder) {
 
 }
 
-func subsupCloseHtml(n *Node, w *strings.Builder) {
+func subsupCloseHTML(n *Node, w *strings.Builder) {
 
 	if strings.HasSuffix(n.Attr["raw"], "行右小書き") {
 		newCloseHtag("sup").AddStringTo(w)
@@ -913,7 +913,7 @@ func subsupCloseHtml(n *Node, w *strings.Builder) {
 	newCloseHtag("sub").AddStringTo(w)
 }
 
-func centeringOpenHtml(n *Node, w *strings.Builder) {
+func centeringOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("div")
 
@@ -925,7 +925,7 @@ func centeringOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func figureOpenHtml(n *Node, w *strings.Builder) {
+func figureOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("figure")
 
@@ -937,7 +937,7 @@ func figureOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func figureCloseHtml(n *Node, w *strings.Builder) {
+func figureCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("figure")
 
@@ -947,7 +947,7 @@ func figureCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func bibInfoOpenHtml(n *Node, w *strings.Builder) {
+func bibInfoOpenHTML(n *Node, w *strings.Builder) {
 
 	h2 := newHtag("footer")
 	h2.setAfter("\n")
@@ -961,20 +961,20 @@ func bibInfoOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func bibInfoCloseHtml(n *Node, w *strings.Builder) {
+func bibInfoCloseHTML(n *Node, w *strings.Builder) {
 
 	newCloseHtag("footer").AddStringTo(w)
 	w.WriteString("\n")
 
 }
 
-func renderNavHtml(n *Node, w *strings.Builder) {
+func renderNavHTML(n *Node, w *strings.Builder) {
 
-	Serialize(n.sectionStructure(), w, navOpenHtml, navCloseHtml)
+	Serialize(n.sectionStructure(), w, navOpenHTML, navCloseHTML)
 
 }
 
-func navOpenHtml(n *Node, w *strings.Builder) {
+func navOpenHTML(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
@@ -988,7 +988,7 @@ func navOpenHtml(n *Node, w *strings.Builder) {
 
 		}
 
-		w.WriteString(n.tocEntryHtml())
+		w.WriteString(n.tocEntryHTML())
 
 	case "top":
 		t := newHtag("ol")
@@ -996,7 +996,7 @@ func navOpenHtml(n *Node, w *strings.Builder) {
 		t.setAfter("\n")
 		t.AddStringTo(w)
 
-		w.WriteString(n.tocEntryHtml())
+		w.WriteString(n.tocEntryHTML())
 
 	default:
 		return
@@ -1004,7 +1004,7 @@ func navOpenHtml(n *Node, w *strings.Builder) {
 	}
 }
 
-func navCloseHtml(n *Node, w *strings.Builder) {
+func navCloseHTML(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
@@ -1037,7 +1037,7 @@ func navCloseHtml(n *Node, w *strings.Builder) {
 	}
 }
 
-func (n *Node) tocEntryHtml() string {
+func (n *Node) tocEntryHTML() string {
 
 	h := newHtag("li")
 
@@ -1051,17 +1051,17 @@ func (n *Node) tocEntryHtml() string {
 
 }
 
-func gaijiNoteOpenHtml(n *Node, w *strings.Builder) {
+func gaijiNoteOpenHTML(n *Node, w *strings.Builder) {
 
 	if n.withinNoteExclScope() {
 		return
 	}
 
-	addToStringsBuilder(w, noteStartStr, n.RawString(), noteEndStr)
+	addToStringsBuilder(w, noteStartStr, n.rawString(), noteEndStr)
 
 }
 
-func rubyParentCloseHtml(n *Node, w *strings.Builder) {
+func rubyParentCloseHTML(n *Node, w *strings.Builder) {
 
 	if !n.hasGaijiWithin {
 
@@ -1085,25 +1085,25 @@ func (n *Node) gaijiNoteString() string {
 
 }
 
-func specialCharOpenHtml(n *Node, w *strings.Builder) {
+func specialCharOpenHTML(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.RawString())
-
-}
-
-func gaijiCharOpenHtml(n *Node, w *strings.Builder) {
-
-	w.WriteString(n.RawString())
+	w.WriteString(n.rawString())
 
 }
 
-func kunojiOpenHtml(n *Node, w *strings.Builder) {
+func gaijiCharOpenHTML(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.RawString())
+	w.WriteString(n.rawString())
 
 }
 
-func metadataOpenHtml(n *Node, w *strings.Builder) {
+func kunojiOpenHTML(n *Node, w *strings.Builder) {
+
+	w.WriteString(n.rawString())
+
+}
+
+func metadataOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("div")
 
@@ -1111,17 +1111,17 @@ func metadataOpenHtml(n *Node, w *strings.Builder) {
 
 	h.AddStringTo(w)
 
-	//centeringOpenHtml(n, w)
+	//centeringOpenHTML(n, w)
 
 }
 
-func metadataCloseHtml(n *Node, w *strings.Builder) {
+func metadataCloseHTML(n *Node, w *strings.Builder) {
 
-	standardCloserHtml(n, w)
+	standardCloserHTML(n, w)
 
 }
 
-func metaTitleOpenHtml(n *Node, w *strings.Builder) {
+func metaTitleOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("h1")
 
@@ -1131,7 +1131,7 @@ func metaTitleOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func metaTitleCloseHtml(n *Node, w *strings.Builder) {
+func metaTitleCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("h1")
 
@@ -1141,7 +1141,7 @@ func metaTitleCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func metaSubtitleOpenHtml(n *Node, w *strings.Builder) {
+func metaSubtitleOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("h2")
 
@@ -1151,7 +1151,7 @@ func metaSubtitleOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func metaSubtitleCloseHtml(n *Node, w *strings.Builder) {
+func metaSubtitleCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("h2")
 
@@ -1161,7 +1161,7 @@ func metaSubtitleCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func metaContributorOpenHtml(n *Node, w *strings.Builder) {
+func metaContributorOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("h2")
 
@@ -1171,7 +1171,7 @@ func metaContributorOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func metaContributorCloseHtml(n *Node, w *strings.Builder) {
+func metaContributorCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("h2")
 
@@ -1181,7 +1181,7 @@ func metaContributorCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func captionOpenHtml(n *Node, w *strings.Builder) {
+func captionOpenHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("figcaption")
 
@@ -1191,7 +1191,7 @@ func captionOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func captionCloseHtml(n *Node, w *strings.Builder) {
+func captionCloseHTML(n *Node, w *strings.Builder) {
 
 	h := newCloseHtag("figcaption")
 
@@ -1207,7 +1207,7 @@ func captionCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyOpenHtml(n *Node, w *strings.Builder) {
+func rubyOpenHTML(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("rp")
 
@@ -1223,7 +1223,7 @@ func rubyOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyCloseHtml(n *Node, w *strings.Builder) {
+func rubyCloseHTML(n *Node, w *strings.Builder) {
 
 	h1 := newCloseHtag("rt")
 
@@ -1239,13 +1239,13 @@ func rubyCloseHtml(n *Node, w *strings.Builder) {
 
 }
 
-func accentOpenHtml(n *Node, w *strings.Builder) {
+func accentOpenHTML(n *Node, w *strings.Builder) {
 
 	accentOpenTxt(n, w)
 
 }
 
-func unknownOpenHtml(n *Node, w *strings.Builder) {
+func unknownOpenHTML(n *Node, w *strings.Builder) {
 
 	h1 := newHtag("span")
 
@@ -1255,7 +1255,7 @@ func unknownOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyGroupOpenHtml(n *Node, w *strings.Builder) {
+func rubyGroupOpenHTML(n *Node, w *strings.Builder) {
 
 	defer func() {
 		for _, e := range linearizeDescendants(n) {
@@ -1296,7 +1296,7 @@ func rubyGroupOpenHtml(n *Node, w *strings.Builder) {
 
 }
 
-func rubyGroupCloseHtml(n *Node, w *strings.Builder) {
+func rubyGroupCloseHTML(n *Node, w *strings.Builder) {
 
 	w.WriteString(newCloseHtag("ruby").String())
 

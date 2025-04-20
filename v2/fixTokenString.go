@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"log"
@@ -221,7 +221,7 @@ func (t *token) fixruby() {
 
 			msg := "line " + strconv.Itoa(e2.lineNumber()) + " wrong order of ruby and annotation:" + e2.prev.String() + e2.String() + e2.next.String() + e2.next.next.String()
 
-			if o_strict {
+			if oStrict {
 				panic("ERROR: " + msg)
 			}
 
@@ -322,7 +322,7 @@ func (t *token) insertRubyParentStart() {
 		return
 
 	}
-	var ref charTypeID
+	var ref CharTypeID
 
 	var r []rune
 
@@ -437,39 +437,39 @@ func (t *token) insertRubyParentStart() {
 	return
 }
 
-func (tok *token) reformgaiji() {
+func (t *token) reformgaiji() {
 
-	if tok.tokType != gaijiToken {
+	if t.tokType != gaijiToken {
 
 		return
 
 	}
 
-	tok.setString(noteStartStr + "※は" + tok.innerString() + noteEndStr)
+	t.setString(noteStartStr + "※は" + t.innerString() + noteEndStr)
 
-	tok.tokType = gaijiNoteToken
+	t.tokType = gaijiNoteToken
 
-	tok.modified = true
+	t.modified = true
 
 	n := newTokenOfType(textToken)
 
 	n.setString(referenceMarkStr)
 
-	tok.insertTokenLeft(n)
+	t.insertTokenLeft(n)
 
 }
 
-func (tok *token) fixgaiji() {
+func (t *token) fixgaiji() {
 
 	switch {
 
-	case tok.tokType == gaijiToken:
+	case t.tokType == gaijiToken:
 
-		tok.replaceGaiji()
+		t.replaceGaiji()
 
-	case tok.tokType == noteToken:
+	case t.tokType == noteToken:
 
-		tk2 := tokenize(tok.innerString())
+		tk2 := tokenize(t.innerString())
 
 		hasgaiji := false
 
@@ -484,8 +484,8 @@ func (tok *token) fixgaiji() {
 
 		if hasgaiji {
 			for e := tk2; e != nil; e = e.next {
-				tok.unicodeContent = tok.unicodeContent + e.unicodeString()
-				tok.jis0213Content = tok.jis0213Content + e.jis0213String()
+				t.unicodeContent = t.unicodeContent + e.unicodeString()
+				t.jis0213Content = t.jis0213Content + e.jis0213String()
 			}
 		}
 
@@ -494,29 +494,29 @@ func (tok *token) fixgaiji() {
 		return
 	}
 
-	if tok.tokType == gaijiToken {
+	if t.tokType == gaijiToken {
 
-		tokenizerLog.Println("gaiji conversion failed:", tok.info())
+		tokenizerLog.Println("gaiji conversion failed:", t.info())
 
-		tok.reformgaiji()
+		t.reformgaiji()
 
 	}
 }
 
-func (tok *token) replaceGaiji() {
+func (t *token) replaceGaiji() {
 
 	var uni string
 
-	originalNote := tok.innerString()
+	originalNote := t.innerString()
 
 	j := jisCodeOf(originalNote)
 
 	if j != "" {
 		uni, _ = convert(j)
 
-		tok.jis0213Content = uni
+		t.jis0213Content = uni
 
-		tok.unicodeContent = uni
+		t.unicodeContent = uni
 
 	} else {
 
@@ -528,53 +528,53 @@ func (tok *token) replaceGaiji() {
 
 		uni = unicodeOf(u)
 
-		tok.unicodeContent = uni
+		t.unicodeContent = uni
 
 	}
 
 	switch uni {
 
 	case "《":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "》":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "［":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "］":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "〔":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "〕":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "｜":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "＃":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	case "※":
-		tok.tokType = specialCharToken
+		t.tokType = specialCharToken
 
 	default:
-		tok.tokType = gaijiCharToken
+		t.tokType = gaijiCharToken
 	}
 
-	tok.modified = true
+	t.modified = true
 
 	return
 }
 
 // convert everything to nested formatting notes
 // to ease parsing of notes. The returned token is new opener.
-func (note *token) fixImpliedOpener() {
+func (t *token) fixImpliedOpener() {
 
-	if note.tokType != noteToken {
+	if t.tokType != noteToken {
 		return
 	}
 
@@ -582,7 +582,7 @@ func (note *token) fixImpliedOpener() {
 
 	for _, e := range impliedOpenerMarker {
 
-		if strings.HasSuffix(note.innerString(), e) {
+		if strings.HasSuffix(t.innerString(), e) {
 
 			m = e
 
@@ -596,22 +596,22 @@ func (note *token) fixImpliedOpener() {
 		return
 	}
 
-	if note.next.tokType == rubyStartToken {
+	if t.next.tokType == rubyStartToken {
 
-		msg := "line " + strconv.Itoa(note.lineNumber()) + " wrong order of ruby and annotation:" + note.prev.String() + note.String() + note.next.String() + note.next.next.String()
+		msg := "line " + strconv.Itoa(t.lineNumber()) + " wrong order of ruby and annotation:" + t.prev.String() + t.String() + t.next.String() + t.next.next.String()
 
 		log.Println("WARNING: " + msg)
 
 		e := new(token)
 
-		for e := note.next; e.tokType != rubyEndToken; e = e.next {
+		for e := t.next; e.tokType != rubyEndToken; e = e.next {
 		}
 
-		n2 := copyOf(note)
+		n2 := copyOf(t)
 
 		e.insertTokenRight(n2)
 
-		note.tokType = emptyToken
+		t.tokType = emptyToken
 
 		return
 	}
@@ -619,19 +619,19 @@ func (note *token) fixImpliedOpener() {
 	switch m {
 
 	case "ルビ":
-		fixLeftRuby(note)
+		fixLeftRuby(t)
 
 	case "注記":
-		fixChuki(note)
+		fixChuki(t)
 
 	case "大きな文字":
-		fixFontSize(note)
+		fixFontSize(t)
 
 	case "小さな文字":
-		fixFontSize(note)
+		fixFontSize(t)
 
 	default:
-		fixopener(note, m)
+		fixopener(t, m)
 
 	}
 
@@ -1354,7 +1354,7 @@ func (t *token) fixBlockFormat() {
 			return
 		}
 
-		if o_strict {
+		if oStrict {
 			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
 			return
 		}
@@ -1371,7 +1371,7 @@ func (t *token) fixBlockFormat() {
 			return
 		}
 
-		if o_strict {
+		if oStrict {
 			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
 			return
 		}

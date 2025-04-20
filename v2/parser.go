@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"errors"
@@ -26,7 +26,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 	if t == nil {
 
-		return new(Node), errors.New("No tokens to process.")
+		return new(Node), errors.New("no tokens to process")
 
 	}
 
@@ -749,6 +749,7 @@ func (n *Node) fixKanbun() {
 	n.SetAttr("type", "kanbun")
 }
 
+// ClearMetadata clears the metadata node of n.
 func (n *Node) ClearMetadata() {
 
 	for _, e := range n.Children() {
@@ -763,6 +764,8 @@ func (n *Node) ClearMetadata() {
 	}
 }
 
+// SetTitle sets the title of n to title.
+// n must have a child node with Attr["type"]=="metadata"
 func (n *Node) SetTitle(title string) {
 
 	if n.Attr["type"] != "document" {
@@ -788,6 +791,8 @@ func (n *Node) SetTitle(title string) {
 		return
 	}
 }
+
+// SetSubtitle sets the subtitle.
 func (n *Node) SetSubtitle(subtitle string) {
 
 	if n.Attr["type"] != "document" {
@@ -814,6 +819,7 @@ func (n *Node) SetSubtitle(subtitle string) {
 	}
 }
 
+// AddContributor adds a contributor
 func (n *Node) AddContributor(name string) {
 
 	if n.Attr["type"] != "document" {

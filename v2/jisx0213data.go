@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 //This defines the map from JIS X 0213:2004 to Unicode.
 //Based on data published by Project X0213 (included in

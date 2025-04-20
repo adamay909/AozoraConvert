@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 
 type opt int
 
-var o_full, o_fragment, o_jis0208, o_jis0213, o_raw, o_strict bool
+var oFull, oFragment, oJis0208, oJis0213, oRaw, oStrict bool
 
 type tokenizer struct {
 	data        string
@@ -25,15 +25,15 @@ var dummyLog *strings.Builder
 
 func init() {
 
-	o_full = true
+	oFull = true
 
-	o_raw = false
+	oRaw = false
 
-	o_jis0208 = false
+	oJis0208 = false
 
-	o_jis0213 = false
+	oJis0213 = false
 
-	o_strict = false
+	oStrict = false
 
 	tokenizerLog = log.New(os.Stdout, "", 0)
 
@@ -45,25 +45,25 @@ func setOutputOption(o string) {
 
 	switch o {
 	case "jis0208":
-		o_full = false
-		o_jis0208 = true
-		o_raw = false
+		oFull = false
+		oJis0208 = true
+		oRaw = false
 
 	case "jis0213":
-		o_full = false
-		o_jis0208 = false
-		o_jis0213 = true
+		oFull = false
+		oJis0208 = false
+		oJis0213 = true
 
 	case "raw":
-		o_full = false
-		o_jis0208 = true
-		o_raw = true
+		oFull = false
+		oJis0208 = true
+		oRaw = true
 
 	default:
-		o_full = true
-		o_jis0208 = false
-		o_jis0213 = true
-		o_raw = false
+		oFull = true
+		oJis0208 = false
+		oJis0213 = true
+		oRaw = false
 	}
 	return
 }
@@ -104,7 +104,7 @@ func tokenizeAndFix(text string) (tk *token, err error) {
 
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
-	if !o_raw {
+	if !oRaw {
 
 		tokenString.fixLines()
 
@@ -114,7 +114,7 @@ func tokenizeAndFix(text string) (tk *token, err error) {
 
 		tokenString.insertSectionEnds()
 
-		if !o_fragment {
+		if !oFragment {
 			tokenString.insertAozoraBookMarker()
 		}
 
@@ -475,13 +475,13 @@ func openingStrOf(o tokenType) string {
 
 }
 
-func (t *tokenizer) textContext() (tctx string) {
+func (tknz *tokenizer) textContext() (tctx string) {
 
 	maxlen := 20
 
-	r1 := []rune(t.data[:t.position])
+	r1 := []rune(tknz.data[:tknz.position])
 
-	r2 := []rune(t.data[t.position:])
+	r2 := []rune(tknz.data[tknz.position:])
 
 	if len(r1) > maxlen/2+1 {
 

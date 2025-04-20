@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"archive/zip"
@@ -32,11 +32,11 @@ type fileData struct {
 // file.
 func (b *Book) RenderEpub() []byte {
 
-	o_compatible = true
+	oCompatible = true
 
 	defer func() {
 
-		o_compatible = false
+		oCompatible = false
 
 	}()
 
@@ -139,7 +139,7 @@ func (b *Book) RenderAZW3() []byte {
 
 		if sec.Attr["type"] == "metadata" {
 
-			renderHtmlForAzw3(sec, w)
+			renderHTMLForAzw3(sec, w)
 
 			mb.Chapters = append(mb.Chapters, mobi.Chapter{
 				Title:  sec.getSectionTitle(),
@@ -157,7 +157,7 @@ func (b *Book) RenderAZW3() []byte {
 			continue
 		}
 
-		renderHtmlForAzw3(sec, w)
+		renderHTMLForAzw3(sec, w)
 
 		mb.Chapters = append(mb.Chapters, mobi.Chapter{
 			Title:  sec.getSectionTitle(),
@@ -176,7 +176,7 @@ func (b *Book) RenderAZW3() []byte {
 				continue
 			}
 
-			renderHtmlForAzw3(e, w)
+			renderHTMLForAzw3(e, w)
 
 			mb.Chapters = append(mb.Chapters, mobi.Chapter{
 				Title:  b.Body.getTitle(),
@@ -195,7 +195,7 @@ func (b *Book) RenderAZW3() []byte {
 			continue
 		}
 
-		renderHtmlForAzw3(e, w)
+		renderHTMLForAzw3(e, w)
 
 		mb.Chapters = append(mb.Chapters, mobi.Chapter{
 			Title:  "この青空文庫テキストについて",
@@ -214,6 +214,7 @@ func (b *Book) RenderAZW3() []byte {
 
 }
 
+// RenderPackage returns a zip package for the given format
 func (b *Book) RenderPackage(format string) []byte {
 
 	var renderer func(*Node, *strings.Builder) error
@@ -288,13 +289,15 @@ func (b *Book) RenderPackage(format string) []byte {
 
 }
 
-func (b *Book) RenderMonolithicHtml() []byte {
+// RenderMonolithicHTML returns the book with the
+// images embedded into the HTML.
+func (b *Book) RenderMonolithicHTML() []byte {
 
 	b.EmbedImages()
 
 	w := new(strings.Builder)
 
-	renderHtmlMonolithic(b.Body, w)
+	renderHTMLMonolithic(b.Body, w)
 
 	return []byte(w.String())
 
@@ -408,7 +411,7 @@ func tocep3(b *Book) []byte {
 
 	w := new(strings.Builder)
 
-	renderNavHtml(b.Body, w)
+	renderNavHTML(b.Body, w)
 
 	resp := strings.ReplaceAll(epubtoc, `{{.RenderEP3TOC}}`, w.String())
 
@@ -422,7 +425,7 @@ func tocep3(b *Book) []byte {
 
 }
 
-func (bk *Book) addFilesFromZip(arch *zip.Reader) {
+func (b *Book) addFilesFromZip(arch *zip.Reader) {
 
 	for _, f := range arch.File {
 
@@ -448,10 +451,10 @@ func (bk *Book) addFilesFromZip(arch *zip.Reader) {
 			return
 		}
 
-		bk.Files = append(bk.Files, fi)
+		b.Files = append(b.Files, fi)
 
 		if fi.Mtype == "image/png" || fi.Mtype == "image/jpeg" {
-			bk.Images = append(bk.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
+			b.Images = append(b.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
 		}
 	}
 }

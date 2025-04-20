@@ -1,12 +1,12 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"strings"
 )
 
-var o_prettyStrings bool
+var oPrettystrings bool
 
-func renderJson(n *Node, w *strings.Builder) {
+func renderJSON(n *Node, w *strings.Builder) {
 
 	egressFunc := func(n *Node, w *strings.Builder) {
 

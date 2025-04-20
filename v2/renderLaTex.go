@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"log"
@@ -27,7 +27,7 @@ func azrLaTexFormatterOpen(n *Node, w *strings.Builder) {
 	switch n.Attr["type"] {
 
 	case "text":
-		w.WriteString(n.RawString())
+		w.WriteString(n.rawString())
 
 	case "paragraph":
 		paragraphStartLaTex(n, w)
@@ -406,7 +406,7 @@ func rubyLikeCloseLaTex(n *Node, w *strings.Builder) {
 
 	w.WriteString(`}{`)
 
-	w.WriteString(getRefStrings(n.RawCloserString())[0])
+	w.WriteString(getRefStrings(n.rawCloserString())[0])
 
 	w.WriteString(`}`)
 
@@ -445,7 +445,7 @@ func doubleSidedRubyCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`{`)
 
-	w.WriteString(getRefStrings(n.RawCloserString())[0])
+	w.WriteString(getRefStrings(n.rawCloserString())[0])
 
 	w.WriteString(`}`)
 
@@ -676,7 +676,7 @@ func bottomAlignCloseLaTex(n *Node, w *strings.Builder) {
 
 	if !n.isBlockFormat() {
 
-		n.firstChild.remove()
+		n.firstChild.Remove()
 
 		w.WriteString("\n\n")
 
@@ -789,7 +789,7 @@ func kuntenLaTex(n *Node, w *strings.Builder) {
 
 	var str string
 
-	switch n.RawString() {
+	switch n.rawString() {
 	case "一レ":
 		str = `\azconvIR`
 	case "二レ":
@@ -799,7 +799,7 @@ func kuntenLaTex(n *Node, w *strings.Builder) {
 	case "甲レ":
 		str = `azconvKR`
 	default:
-		str = n.RawString()
+		str = n.rawString()
 	}
 
 	w.WriteString(latexArg(str))
@@ -810,7 +810,7 @@ func kanbunKuntenLaTex(n *Node, w *strings.Builder) {
 
 	w.WriteString(`[`)
 
-	w.WriteString(n.RawString())
+	w.WriteString(n.rawString())
 
 	w.WriteString(`]`)
 
@@ -1071,10 +1071,9 @@ func textDirOpenLaTex(n *Node, w *strings.Builder) {
 			w.WriteString("\n")
 
 			return
-		} else {
-
-			w.WriteString(latexCmd("azconvYokogumi"))
 		}
+
+		w.WriteString(latexCmd("azconvYokogumi"))
 	}
 
 	w.WriteString(`{`)
@@ -1194,19 +1193,19 @@ func rubyParentCloseLaTex(n *Node, w *strings.Builder) {
 
 func specialCharOpenLaTex(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.RawString())
+	w.WriteString(n.rawString())
 
 }
 
 func gaijiCharOpenLaTex(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.RawString())
+	w.WriteString(n.rawString())
 
 }
 
 func kunojiOpenLaTex(n *Node, w *strings.Builder) {
 
-	addToStringsBuilder(w, `{`, n.RawString(), `}`)
+	addToStringsBuilder(w, `{`, n.rawString(), `}`)
 
 }
 

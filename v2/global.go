@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 const (
 	markupNoteStartStr = "\n" + `-------------------------------------------------------

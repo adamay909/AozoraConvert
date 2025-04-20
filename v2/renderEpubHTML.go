@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"strings"
@@ -22,17 +22,17 @@ func htmlEpubFormatterOpen(n *Node, w *strings.Builder) {
 
 	case "metadata":
 
-		centeringOpenHtml(n, w)
+		centeringOpenHTML(n, w)
 
 	case "image":
 
-		imageXHtml(n, w)
+		imageXHTML(n, w)
 
 	case "pagination":
-		paginationHtml(n, w)
+		paginationHTML(n, w)
 
 	default:
-		azrHtmlFormatterOpen(n, w)
+		azrHTMLFormatterOpen(n, w)
 
 	}
 
@@ -47,13 +47,13 @@ func htmlEpubFormatterClose(n *Node, w *strings.Builder) {
 		w.WriteString(newCloseHtag(`div`).String())
 
 	default:
-		azrHtmlFormatterClose(n, w)
+		azrHTMLFormatterClose(n, w)
 
 	}
 
 }
 
-func imageXHtml(n *Node, w *strings.Builder) {
+func imageXHTML(n *Node, w *strings.Builder) {
 
 	h := newHtag("img")
 

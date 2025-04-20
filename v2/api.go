@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	_ "embed" //for embedding
@@ -6,9 +6,14 @@ import (
 	"strings"
 )
 
+// LaTeXdefinitions contains the default definitions of commands and environments
+// for LaTeX output.
+//
 //go:embed assets/azcommands.tex
 var LaTeXdefinitions string
 
+// AozoraCSS is the default CSS to be used with HTML files rendered through aozoraconvert.
+//
 //go:embed assets/aozora.css
 var AozoraCSS string
 
@@ -20,40 +25,44 @@ func init() {
 
 }
 
-// SetSJIS0208 sets output to JIS0208.
+// SetJIS0208 sets output to JIS0208.
 func SetJIS0208() {
 
-	o_jis0208 = true
+	oJis0208 = true
 
-	o_jis0213 = false
+	oJis0213 = false
 
-	o_full = false
+	oFull = false
 
 }
 
+// SetJIS0213 sets output to JIS0213.
 func SetJIS0213() {
 
-	o_jis0208 = false
+	oJis0208 = false
 
-	o_jis0213 = true
+	oJis0213 = true
 
-	o_full = false
+	oFull = false
 
 }
 
+// SetFullUnicode sets output to allow the full range of unicode codepoints.
 func SetFullUnicode() {
 
-	o_jis0208 = false
+	oJis0208 = false
 
-	o_jis0213 = false
+	oJis0213 = false
 
-	o_full = true
+	oFull = true
 
 }
 
+// SetRubyEmph sets whether ruby are handled as text-emphasis or as ruby
+// (only relevant for (X)HTML output).
 func SetRubyEmph(v bool) {
 
-	o_compatible = v
+	oCompatible = v
 
 }
 
@@ -63,24 +72,26 @@ func SetFragment(v bool) {
 
 	if v {
 
-		o_fragment = true
+		oFragment = true
 
 	} else {
 
-		o_fragment = false
+		oFragment = false
 	}
 
 }
 
+// SetStrict tells the parser whether fixable errors in the input
+// file should abort the parsing.
 func SetStrict(v bool) {
 
 	if v {
 
-		o_strict = true
+		oStrict = true
 
 	} else {
 
-		o_strict = false
+		oStrict = false
 
 	}
 }
@@ -146,7 +157,7 @@ func RenderHTML(ast *Node, w *strings.Builder) (err error) {
 		return
 	}
 
-	renderHtml(ast, w)
+	renderHTML(ast, w)
 
 	return
 }
@@ -154,6 +165,7 @@ func RenderHTML(ast *Node, w *strings.Builder) (err error) {
 //go:embed assets/skel.html
 var htmltemplate string
 
+// RenderHTMLFull renders ast as a full HTML file including doctype declararation and head element.
 func RenderHTMLFull(ast *Node, w *strings.Builder) (err error) {
 
 	defer func() {
@@ -201,11 +213,12 @@ func RenderNavHTML(ast *Node, w *strings.Builder) (err error) {
 		}
 	}()
 
-	renderNavHtml(ast, w)
+	renderNavHTML(ast, w)
 
 	return
 }
 
+// RenderJSON renders ast in JSON format.
 func RenderJSON(ast *Node, w *strings.Builder) (err error) {
 
 	defer func() {
@@ -218,7 +231,7 @@ func RenderJSON(ast *Node, w *strings.Builder) (err error) {
 		}
 	}()
 
-	renderJson(ast, w)
+	renderJSON(ast, w)
 
 	return
 }

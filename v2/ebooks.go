@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"archive/zip"
@@ -36,6 +36,8 @@ func NewBook() *Book {
 	return b
 }
 
+// NewEbookFromZip returns Book from dz which must be zip
+// archive containing the Aozorabunko text and any needed graphics files.
 func NewEbookFromZip(dz []byte) (bk *Book) {
 
 	var err error
@@ -163,6 +165,8 @@ func (b *Book) SetPublisher(p string) {
 	return
 }
 
+// SetMetadataFromText sets metadata from
+// text.
 func (b *Book) SetMetadataFromText() {
 
 	w := new(strings.Builder)
@@ -211,6 +215,7 @@ func (b *Book) SetMetadataFromText() {
 	return
 }
 
+// EmbedImages embeds the image data in the relevant nodes in the ast of b.l
 func (b *Book) EmbedImages() {
 
 	for _, e := range linearizeNode(b.Body) {

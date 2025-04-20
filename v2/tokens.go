@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"fmt"
@@ -956,7 +956,7 @@ func (t *token) textContext() string {
 
 func (t *token) mainTextStart() *token {
 
-	if o_fragment {
+	if oFragment {
 		return t.firstToken()
 	}
 

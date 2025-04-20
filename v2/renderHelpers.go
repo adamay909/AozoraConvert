@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"strings"
@@ -52,7 +52,7 @@ func (n *Node) decoOnLeft() bool {
 
 func (n *Node) okuriganaString() string {
 
-	return strings.TrimSuffix(strings.TrimPrefix(n.RawString(), "（"), "）")
+	return strings.TrimSuffix(strings.TrimPrefix(n.rawString(), "（"), "）")
 
 }
 
@@ -113,7 +113,7 @@ func (n *Node) descendantsOfType(t string) []*Node {
 
 }
 
-func (n *Node) HasDescendantOfType(t string) bool {
+func (n *Node) hasDescendantOfType(t string) bool {
 
 	return len(n.descendantsOfType(t)) > 0
 
@@ -145,19 +145,19 @@ func (n *Node) innerParagraphCount() int {
 	return count
 }
 
-func (n *Node) RawString() string {
+func (n *Node) rawString() string {
 
 	switch {
 
-	case o_jis0208:
+	case oJis0208:
 		return regularizeLaTeX(n.Attr["raw"])
 
-	case o_jis0213:
+	case oJis0213:
 		if n.Attr["jis0213 raw"] != "" {
 			return regularizeLaTeX(n.Attr["jis0213 raw"])
 		}
 
-	case o_full:
+	case oFull:
 		if n.Attr["unicode raw"] != "" {
 			return regularizeLaTeX(n.Attr["unicode raw"])
 		}
@@ -167,19 +167,19 @@ func (n *Node) RawString() string {
 
 }
 
-func (n *Node) RawCloserString() string {
+func (n *Node) rawCloserString() string {
 
 	switch {
 
-	case o_jis0208:
+	case oJis0208:
 		return n.Attr["raw closer"]
 
-	case o_jis0213:
+	case oJis0213:
 		if n.Attr["raw jis0213 closer"] != "" {
 			return n.Attr["raw jis0213 closer"]
 		}
 
-	case o_full:
+	case oFull:
 		if n.Attr["raw unicode closer"] != "" {
 			return n.Attr["raw unicode closer"]
 		}

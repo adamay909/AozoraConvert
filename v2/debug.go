@@ -1,15 +1,11 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"strings"
 )
 
-func CheckStructure(text string) {
-
-	return
-
-}
-
+// ListRawTokens lists the tokens returned through
+// the initial tokenization.
 func ListRawTokens(text string) string {
 
 	t := tokenize(text)
@@ -18,6 +14,8 @@ func ListRawTokens(text string) string {
 
 }
 
+// ListProcessedTokens lists the tokens after preparation
+// for parsing.
 func ListProcessedTokens(text string) string {
 
 	t, err := tokenizeAndFix(text)

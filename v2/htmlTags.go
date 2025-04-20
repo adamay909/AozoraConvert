@@ -1,4 +1,4 @@
-package aozoraConvert
+package aozoraconvert
 
 import (
 	"sort"
@@ -42,108 +42,108 @@ func newCloseHtag(elem string) *htmlTagSpec {
 
 }
 
-func (data *htmlTagSpec) AddStringTo(w *strings.Builder) {
+func (h *htmlTagSpec) AddStringTo(w *strings.Builder) {
 
-	w.WriteString(data.before)
+	w.WriteString(h.before)
 
 	w.WriteString("<")
 
-	if data.open {
+	if h.open {
 
-		w.WriteString(data.element)
-		if len(data.class) > 0 {
-			addToStringsBuilder(w, ` class="`, strings.Join(data.class, " "), `"`)
+		w.WriteString(h.element)
+		if len(h.class) > 0 {
+			addToStringsBuilder(w, ` class="`, strings.Join(h.class, " "), `"`)
 		}
 
-		if len(data.extraKeyVal) > 0 {
+		if len(h.extraKeyVal) > 0 {
 
 			keys := []string{}
 
-			for k := range data.extraKeyVal {
+			for k := range h.extraKeyVal {
 				keys = append(keys, k)
 			}
 
 			sort.Strings(keys)
 
 			for _, k := range keys {
-				addToStringsBuilder(w, " ", k, `="`, strings.Join(data.extraKeyVal[k], " "), `"`)
+				addToStringsBuilder(w, " ", k, `="`, strings.Join(h.extraKeyVal[k], " "), `"`)
 			}
 		}
 
-		if len(data.extra) > 0 {
-			addToStringsBuilder(w, " ", strings.Join(data.extra, " "))
+		if len(h.extra) > 0 {
+			addToStringsBuilder(w, " ", strings.Join(h.extra, " "))
 		}
 
-		if data.id != "" {
-			addToStringsBuilder(w, ` id="`, data.id, `"`)
+		if h.id != "" {
+			addToStringsBuilder(w, ` id="`, h.id, `"`)
 		}
 
-		if data.selfclose {
+		if h.selfclose {
 			w.WriteString(`/`)
 		}
 
 	} else {
 		w.WriteString(`/`)
-		w.WriteString(data.element)
+		w.WriteString(h.element)
 	}
 
 	w.WriteString(">")
 
-	w.WriteString(data.after)
+	w.WriteString(h.after)
 
 }
 
-func (data *htmlTagSpec) String() string {
+func (h *htmlTagSpec) String() string {
 
 	output.Reset()
 
-	output.WriteString(data.before)
+	output.WriteString(h.before)
 
 	output.WriteString("<")
 
-	if data.open {
+	if h.open {
 
-		output.WriteString(data.element)
-		if len(data.class) > 0 {
-			addToStringsBuilder(output, ` class="`, strings.Join(data.class, " "), `"`)
+		output.WriteString(h.element)
+		if len(h.class) > 0 {
+			addToStringsBuilder(output, ` class="`, strings.Join(h.class, " "), `"`)
 		}
 
-		if len(data.extraKeyVal) > 0 {
+		if len(h.extraKeyVal) > 0 {
 
 			keys := []string{}
 
-			for k := range data.extraKeyVal {
+			for k := range h.extraKeyVal {
 				keys = append(keys, k)
 			}
 
 			sort.Strings(keys)
 
 			for _, k := range keys {
-				addToStringsBuilder(output, " ", k, `="`, strings.Join(data.extraKeyVal[k], " "), `"`)
+				addToStringsBuilder(output, " ", k, `="`, strings.Join(h.extraKeyVal[k], " "), `"`)
 			}
 		}
 
-		if len(data.extra) > 0 {
-			addToStringsBuilder(output, " ", strings.Join(data.extra, " "))
+		if len(h.extra) > 0 {
+			addToStringsBuilder(output, " ", strings.Join(h.extra, " "))
 		}
 
-		if data.id != "" {
-			addToStringsBuilder(output, ` id="`, data.id, `"`)
+		if h.id != "" {
+			addToStringsBuilder(output, ` id="`, h.id, `"`)
 		}
 
-		if data.selfclose {
+		if h.selfclose {
 
 			output.WriteString(`/`)
 		}
 
 	} else {
 		output.WriteString(`/`)
-		output.WriteString(data.element)
+		output.WriteString(h.element)
 	}
 
 	output.WriteString(">")
 
-	output.WriteString(data.after)
+	output.WriteString(h.after)
 
 	return output.String()
 

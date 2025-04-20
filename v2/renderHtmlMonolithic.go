@@ -1,8 +1,8 @@
-package aozoraConvert
+package aozoraconvert
 
 import "strings"
 
-func renderHtmlMonolithic(n *Node, w *strings.Builder) {
+func renderHTMLMonolithic(n *Node, w *strings.Builder) {
 
 	Serialize(n, w, htmlMonoFormatterOpen, htmlMonoFormatterClose)
 
@@ -18,7 +18,7 @@ func htmlMonoFormatterOpen(n *Node, w *strings.Builder) {
 
 	default:
 
-		azrHtmlFormatterOpen(n, w)
+		azrHTMLFormatterOpen(n, w)
 
 	}
 }
@@ -32,7 +32,7 @@ func htmlMonoFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	default:
-		azrHtmlFormatterClose(n, w)
+		azrHTMLFormatterClose(n, w)
 
 	}
 
