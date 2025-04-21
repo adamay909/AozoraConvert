@@ -5,7 +5,7 @@ import (
 	"io"
 	"math"
 
-	"github.com/adamay909/AozoraConvert/mobi/pdb"
+	"github.com/adamay909/AozoraConvert/v1/mobi/pdb"
 )
 
 const FLISRecordLength = 36

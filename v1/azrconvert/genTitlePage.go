@@ -8,7 +8,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/adamay909/AozoraConvert/drawtext"
+	"github.com/adamay909/AozoraConvert/v1/drawtext"
 	"golang.org/x/image/font/opentype"
 )
 

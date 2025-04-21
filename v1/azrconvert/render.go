@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adamay909/AozoraConvert/mobi"
-	"github.com/adamay909/AozoraConvert/mobi/records"
+	"github.com/adamay909/AozoraConvert/v1/mobi"
+	"github.com/adamay909/AozoraConvert/v1/mobi/records"
 	"golang.org/x/net/html"
 	"golang.org/x/text/language"
 )

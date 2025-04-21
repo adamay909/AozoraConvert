@@ -3,7 +3,7 @@ package mobi
 import (
 	"strings"
 
-	r "github.com/adamay909/AozoraConvert/mobi/records"
+	r "github.com/adamay909/AozoraConvert/v1/mobi/records"
 )
 
 func chaptersToText(m Book) (string, []r.ChunkInfo, []r.ChapterInfo, error) {

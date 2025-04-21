@@ -3,7 +3,7 @@ package azrconvert
 import (
 	"strings"
 
-	"github.com/adamay909/AozoraConvert/runes"
+	"github.com/adamay909/AozoraConvert/v1/runes"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )

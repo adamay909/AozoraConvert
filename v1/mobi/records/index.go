@@ -3,8 +3,8 @@ package records
 import (
 	"fmt"
 
-	"github.com/adamay909/AozoraConvert/mobi/pdb"
-	t "github.com/adamay909/AozoraConvert/mobi/types"
+	"github.com/adamay909/AozoraConvert/v1/mobi/pdb"
+	t "github.com/adamay909/AozoraConvert/v1/mobi/types"
 )
 
 func NCXHeaderIndexRecord(entryCount int) IndexRecord {

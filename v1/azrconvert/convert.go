@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/adamay909/AozoraConvert/jptools"
-	"github.com/adamay909/AozoraConvert/mobi/records"
-	"github.com/adamay909/AozoraConvert/runes"
+	"github.com/adamay909/AozoraConvert/v1/jptools"
+	"github.com/adamay909/AozoraConvert/v1/mobi/records"
+	"github.com/adamay909/AozoraConvert/v1/runes"
 	"github.com/google/uuid"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"

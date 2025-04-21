@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	azrconvert "github.com/adamay909/AozoraConvert/azrconvert"
+	azrconvert "github.com/adamay909/AozoraConvert/v1/azrconvert"
 )
 
 var (
