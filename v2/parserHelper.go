@@ -2,6 +2,7 @@ package aozoraconvert
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -43,6 +44,14 @@ func isValidStructure(prevNode *Node, tok *token) (err error) {
 }
 
 func matched(closer, opener *token) bool {
+
+	if oVerbose {
+
+		fmt.Println("opener: ", opener.info())
+		fmt.Println("closer: ", closer.info())
+		fmt.Println()
+
+	}
 
 	if closer == nil || opener == nil {
 		return false

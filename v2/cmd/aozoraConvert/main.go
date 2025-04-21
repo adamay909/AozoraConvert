@@ -134,6 +134,8 @@ func init() {
 
 	ac.SetRubyEmph(*rubyForEmph)
 
+	//ac.SetVerbose()
+
 }
 
 func main() {

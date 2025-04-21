@@ -9,7 +9,7 @@ import (
 
 type opt int
 
-var oFull, oFragment, oJis0208, oJis0213, oRaw, oStrict bool
+var oFull, oFragment, oJis0208, oJis0213, oRaw, oStrict, oVerbose bool
 
 type tokenizer struct {
 	data        string

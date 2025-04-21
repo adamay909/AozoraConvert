@@ -1350,35 +1350,57 @@ func (t *token) fixBlockFormat() {
 
 	if strings.HasPrefix(t.innerString(), blockStartStr) {
 
-		if t.next.tokType == endOfLineToken {
-			return
+		if t.next.tokType != endOfLineToken {
+
+			if oStrict {
+				panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
+			}
+
+			log.Println("WARNING: line", t.lineNumber(), "block start annotation should be on own line. Fixed.")
+
+			t.insertTokenRight(newTokenOfType(endOfLineToken))
 		}
 
-		if oStrict {
-			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
-			return
+		if t.prev != nil && t.prev.tokType != endOfLineToken {
+
+			if oStrict {
+				panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block start annotation should be on own line.")
+			}
+
+			log.Println("WARNING: line", t.lineNumber(), "block start annotation should be on own line. Fixed.")
+
+			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 		}
-
-		log.Println("WARNING: line", t.lineNumber(), "block start annotation should be on own line. Fixed.")
-
-		t.insertTokenRight(newTokenOfType(endOfLineToken))
 		return
 	}
 
 	if strings.HasPrefix(t.innerString(), blockEndStr) {
 
-		if t.prev.tokType == endOfLineToken {
-			return
+		if t.prev.tokType != endOfLineToken {
+
+			if oStrict {
+				panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
+				return
+			}
+
+			log.Println("WARNING: line", t.lineNumber(), "block end annotation should be on own line. Fixed.")
+
+			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 		}
 
-		if oStrict {
-			panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
-			return
+		if t.next != nil && t.next.tokType != endOfLineToken {
+
+			if oStrict {
+				panic("ERROR: line " + strconv.Itoa(t.lineNumber()) + " block end annotation should be on own line.")
+				return
+			}
+
+			log.Println("WARNING: line", t.lineNumber(), "block end annotation should be on own line. Fixed.")
+
+			t.insertTokenRight(newTokenOfType(endOfLineToken))
 		}
 
-		log.Println("WARNING: line", t.lineNumber(), "block end annotation should be on own line. Fixed.")
-
-		t.insertTokenLeft(newTokenOfType(endOfLineToken))
+		return
 	}
-	return
+
 }

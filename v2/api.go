@@ -283,3 +283,9 @@ func RenderLaTeXFull(ast *Node, w *strings.Builder) (err error) {
 
 	return
 }
+
+func SetVerbose() {
+
+	oVerbose = true
+
+}
