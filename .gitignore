@@ -8,3 +8,4 @@ testing/
 *.sty
 *.txt
 *.dvi
+v2/cmd/checkFiles/

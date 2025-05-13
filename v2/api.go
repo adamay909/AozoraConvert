@@ -58,6 +58,14 @@ func SetFullUnicode() {
 
 }
 
+// SetParsable sets output to a parsable form if v is true. Only useful for text
+// output.
+func SetParsable(v bool) {
+
+	oParsable = v
+
+}
+
 // SetRubyEmph sets whether ruby are handled as text-emphasis or as ruby
 // (only relevant for (X)HTML output).
 func SetRubyEmph(v bool) {
@@ -87,11 +95,11 @@ func SetStrict(v bool) {
 
 	if v {
 
-		oStrict = true
+		oTolerant = false
 
 	} else {
 
-		oStrict = false
+		oTolerant = true
 
 	}
 }
@@ -104,8 +112,6 @@ func AST(data string) (n *Node, err error) {
 	defer func() {
 
 		if r := recover(); r != nil {
-
-			//			log.Println(r)
 
 			err = errors.New(r.(string))
 			return

@@ -450,7 +450,8 @@ func rubyLikeCloseHTML(n *Node, w *strings.Builder) {
 
 	} else {
 
-		output.WriteString(getRefStrings(n.rawCloserString())[0])
+		//output.WriteString(getRefStrings(n.rawCloserString())[0])
+		output.WriteString(n.tok.getRefStrings()[0])
 
 	}
 

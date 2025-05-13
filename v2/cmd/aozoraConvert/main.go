@@ -36,6 +36,8 @@ var (
 	supFiles = flag.Bool("supportFiles", false, "サポートファイルも出力する.")
 
 	rubyForEmph = flag.Bool("rubyForEmph", true, "出力がHTML系の場合、傍点類にCSSのtext-emphasisを利用する.")
+
+	parsable = flag.Bool("parsable", false, "出力から再度AST抽出可能なようにする.")
 )
 
 func init() {
@@ -133,6 +135,8 @@ func init() {
 	ac.SetStrict(false)
 
 	ac.SetRubyEmph(*rubyForEmph)
+
+	ac.SetParsable(*parsable)
 
 	//ac.SetVerbose()
 

@@ -27,7 +27,7 @@ func azrLaTexFormatterOpen(n *Node, w *strings.Builder) {
 	switch n.Attr["type"] {
 
 	case "text":
-		w.WriteString(n.rawString())
+		w.WriteString(n.rawStringLaTeX())
 
 	case "paragraph":
 		paragraphStartLaTex(n, w)
@@ -406,7 +406,8 @@ func rubyLikeCloseLaTex(n *Node, w *strings.Builder) {
 
 	w.WriteString(`}{`)
 
-	w.WriteString(getRefStrings(n.rawCloserString())[0])
+	//w.WriteString(getRefStrings(n.rawCloserString())[0])
+	w.WriteString(n.tok.getRefStrings()[0])
 
 	w.WriteString(`}`)
 
@@ -445,7 +446,8 @@ func doubleSidedRubyCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`{`)
 
-	w.WriteString(getRefStrings(n.rawCloserString())[0])
+	//w.WriteString(getRefStrings(n.rawCloserString())[0])
+	w.WriteString(n.tok.getRefStrings()[0])
 
 	w.WriteString(`}`)
 
@@ -789,7 +791,7 @@ func kuntenLaTex(n *Node, w *strings.Builder) {
 
 	var str string
 
-	switch n.rawString() {
+	switch n.rawStringLaTeX() {
 	case "一レ":
 		str = `\azconvIR`
 	case "二レ":
@@ -799,7 +801,7 @@ func kuntenLaTex(n *Node, w *strings.Builder) {
 	case "甲レ":
 		str = `azconvKR`
 	default:
-		str = n.rawString()
+		str = n.rawStringLaTeX()
 	}
 
 	w.WriteString(latexArg(str))
@@ -810,7 +812,7 @@ func kanbunKuntenLaTex(n *Node, w *strings.Builder) {
 
 	w.WriteString(`[`)
 
-	w.WriteString(n.rawString())
+	w.WriteString(n.rawStringLaTeX())
 
 	w.WriteString(`]`)
 
@@ -1193,19 +1195,19 @@ func rubyParentCloseLaTex(n *Node, w *strings.Builder) {
 
 func specialCharOpenLaTex(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.rawString())
+	w.WriteString(n.rawStringLaTeX())
 
 }
 
 func gaijiCharOpenLaTex(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.rawString())
+	w.WriteString(n.rawStringLaTeX())
 
 }
 
 func kunojiOpenLaTex(n *Node, w *strings.Builder) {
 
-	addToStringsBuilder(w, `{`, n.rawString(), `}`)
+	addToStringsBuilder(w, `{`, n.rawStringLaTeX(), `}`)
 
 }
 

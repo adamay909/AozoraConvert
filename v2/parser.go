@@ -61,6 +61,8 @@ func getAST(t *token) (nd *Node, err error) {
 
 	for e := t.mainTextStart(); e != nil; e = e.next {
 
+		//fmt.Print(e)
+
 		n = newNode("")
 
 		addNewNodeAsChild = nextIsChild
@@ -186,7 +188,23 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
-		case e.isPairMarkerClose():
+		case e.tokType == accentStartToken:
+
+			n.setType("accent start")
+
+			nextIsChild = false
+
+			closeNode = false
+
+		case e.tokType == accentEndToken:
+
+			n.setType("accent end")
+
+			nextIsChild = false
+
+			closeNode = false
+
+		case e.isPairClose():
 
 			nextIsChild = false
 
@@ -322,12 +340,6 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
-		case e.tokType == figureEndToken:
-
-			nextIsChild = false
-
-			closeNode = true
-
 		case e.isImage():
 
 			n.setType("image")
@@ -345,6 +357,12 @@ func getAST(t *token) (nd *Node, err error) {
 		case e.isFormatOfType(captionMarker):
 
 			n.setType("caption")
+
+			if strings.HasPrefix(e.innerString(), blockStartStr) {
+
+				n.SetAttr("scope", "block")
+
+			}
 
 			nextIsChild = true
 
@@ -394,12 +412,6 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
-		case e.tokType == centeringEndToken:
-
-			nextIsChild = false
-
-			closeNode = true
-
 		case e.tokType == bibInfoToken:
 
 			n.setType("bibliographical info")
@@ -422,12 +434,6 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
-		case e.tokType == alignBottomCloserToken:
-
-			nextIsChild = false
-
-			closeNode = true
-
 		case e.isFormatOfType(warichuLineBreakMarker):
 
 			n.setType("warichu line break")
@@ -439,14 +445,6 @@ func getAST(t *token) (nd *Node, err error) {
 		case e.tokType == specialCharToken:
 
 			n.setType("special char")
-
-			nextIsChild = false
-
-			closeNode = false
-
-		case e.tokType == accentToken:
-
-			n.setType("accent string")
 
 			nextIsChild = false
 
@@ -472,21 +470,41 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
-		case e.tokType == mainTextEndToken:
+		case e.tokType == noteEndToken:
+
+			n.setType("special char")
 
 			nextIsChild = false
 
-			closeNode = true
+			closeNode = false
 
 		case e.tokType == emptyToken:
 
 			continue
+
+		case strings.HasPrefix(e.innerString(), blockStartStr):
+
+			n.setType("unknown block type")
+
+			nextIsChild = true
+
+			closeNode = false
+
+		case strings.HasPrefix(e.innerString(), blockEndStr) && strings.HasSuffix(e.innerString(), formatEndStr):
+
+			nextIsChild = false
+
+			closeNode = true
 
 		default:
 
 			n.setType("unknown")
 
 			log.Println("Parser: unknown annotation type: " + e.info())
+
+			if e.next != nil && e.next.tokType == endOfLineToken {
+				n.SetAttr("force linebreak", "true")
+			}
 
 			nextIsChild = false
 
@@ -505,14 +523,21 @@ func getAST(t *token) (nd *Node, err error) {
 			err := isValidStructure(prevNode, e)
 
 			if err != nil {
+				//	if !oTolerant {
 				panic(err.Error())
+				//				}
+				//				log.Println(err)
 			}
 
-			prevNode.SetAttr("raw closer", e.innerString())
+			if prevNode.Attr["raw closer"] == "" {
 
-			prevNode.SetAttr("raw unicode closer", e.unicodeContent)
+				prevNode.SetAttr("raw closer", e.innerString())
 
-			prevNode.SetAttr("raw jis0213 closer", e.jis0213Content)
+				prevNode.SetAttr("raw unicode closer", e.innerUnicodeString())
+
+				prevNode.SetAttr("raw jis0213 closer", e.innerJis0213String())
+
+			}
 
 			if prevNode.Attr["maybe kanbun"] != "" {
 
@@ -526,9 +551,9 @@ func getAST(t *token) (nd *Node, err error) {
 
 			n.setRaw(e.innerString())
 
-			n.SetAttr("unicode raw", e.unicodeContent)
+			n.SetAttr("unicode raw", e.innerUnicodeString())
 
-			n.SetAttr("jis0213 raw", e.jis0213Content)
+			n.SetAttr("jis0213 raw", e.innerJis0213String())
 
 			n.setBlock(e)
 
@@ -558,26 +583,66 @@ func getAST(t *token) (nd *Node, err error) {
 
 			}
 
-			if n.Attr["type"] == "image" {
-				n.fixImage()
-			}
+			switch {
 
-			if n.Attr["type"] == "kunten" || n.Attr["type"] == "okurigana" {
+			case n.Attr["type"] == "image":
+
+				n.fixImage()
+
+			case n.Attr["type"] == "kunten" || n.Attr["type"] == "okurigana":
+
 				if n.Parent().Attr["type"] == "paragraph" {
+
 					n.Parent().SetAttr("maybe kanbun", "true")
 				}
-			}
 
+			case n.Attr["type"] == "bottom align":
+
+				if n.prev == nil {
+
+					n.SetAttr("scope", "block")
+
+					if !strings.HasPrefix(n.Attr["raw"], blockStartStr) {
+
+						n.SetAttr("raw", blockStartStr+n.Attr["raw"])
+
+						n.SetAttr("unicode raw", n.Attr["raw"])
+
+						n.SetAttr("jis0213 raw", n.Attr["raw"])
+
+					}
+
+					if n.Attr["bottom margin"] == "0" {
+
+						n.SetAttr("raw closer", blockEndStr+"地付き"+formatEndStr)
+
+					} else {
+
+						n.SetAttr("raw closer", blockEndStr+"字上げ"+formatEndStr)
+
+					}
+
+					n.SetAttr("raw unicode closer", n.Attr["raw closer"])
+
+					n.SetAttr("raw jis0213 closer", n.Attr["raw jis0213 closer"])
+				}
+
+			case n.Attr["type"] == "special char":
+
+				n.SetAttr("escaped raw", e.specialCharEscape())
+			}
 			prevNode = n
 
 		}
 
 	}
 
-	if prevNode.Parent().Attr["type"] != "document" {
+	if prevNode.Parent() == nil || prevNode.Parent().Attr["type"] != "document" {
 
 		fmt.Println("last node is ", prevNode.Attr["type"])
-		fmt.Println("Parent is ", prevNode.Parent().Attr["type"])
+		if prevNode.Parent() != nil {
+			fmt.Println("Parent is ", prevNode.Parent().Attr["type"])
+		}
 
 		for _, e := range linearizeNode(document) {
 
@@ -598,17 +663,29 @@ func getAST(t *token) (nd *Node, err error) {
 }
 
 func getMetadata(t *token) (metadataNode *Node) {
+	/*
+		defer func() {
+			oParsable = oParsable
+		}()
 
+		oParsable = true
+	*/
 	text := ""
 
+	//for e := t.firstToken(); e.tokType != emptyLineToken && !e.isBlockStartNote(); e = e.next {
 	for e := t.firstToken(); e.tokType != emptyLineToken; e = e.next {
 
-		if e.tokType == paragraphEndToken {
+		switch e.tokType {
+
+		case paragraphEndToken:
 			text = text + "\n"
-		} else {
+
+		case specialCharToken:
+			text = text + e.specialCharEscape()
+
+		default:
 			text = text + e.String()
 		}
-
 	}
 
 	metadataNode = newNode("metadata")
@@ -662,6 +739,11 @@ func getMetadata(t *token) (metadataNode *Node) {
 			panic(err.Error())
 
 		}
+
+		dw := new(strings.Builder)
+
+		renderAozoraText(subtitleText, dw)
+
 		subtitleNode.addChild(subtitleText.firstChild.firstChild)
 
 		metadataNode.addChild(subtitleNode)

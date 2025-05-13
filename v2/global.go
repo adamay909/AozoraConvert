@@ -1,12 +1,14 @@
 package aozoraconvert
 
 const (
-	markupNoteStartStr = "\n" + `-------------------------------------------------------
-【テキスト中に現れる記号について】` + "\n"
+	//	markupNoteStartStr = "\n" + `-------------------------------------------------------
+	//
+	// 【テキスト中に現れる記号について】` + "\n"
+	markupNoteStartStr = `テキスト中に現れる記号について`
 
 	markupNoteEndStr = "\n" + `-------------------------------------------------------` + "\n"
 
-	markupNoteDelimiterStr = `-------------------------------------------------------`
+	markupNoteDelimiterStr = `-`
 
 	rubyStartStr = `《`
 
@@ -18,9 +20,11 @@ const (
 
 	noteStartStr = `［＃`
 
+	squareBracketOpenStr = `［`
+
 	noteEndStr = `］`
 
-	bibInfoStartStr = "\n" + `底本：`
+	bibInfoStartStr = `底本：`
 
 	emptyStr = ""
 
@@ -46,6 +50,8 @@ const (
 
 	formatEndStr = "終わり"
 
+	formatEndTolerantStr = "おわり"
+
 	referenceMarkStr = "※"
 
 	accentStartStr = "〔"
@@ -53,6 +59,8 @@ const (
 	accentEndStr = "〕"
 
 	mainTextEndStr = "本文終わり"
+
+	indentationCloserStr = "ここで字下げ終わり"
 
 	fwqSpaceStr = "？　"
 

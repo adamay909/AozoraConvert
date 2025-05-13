@@ -25,7 +25,11 @@ func (n *Node) isJisage() bool {
 		return false
 	}
 
-	return n.Attr["type"] == "indentation"
+	if n.Attr["type"] != "indentation" {
+		return false
+	}
+
+	return n.Attr["indent"] == "0"
 
 }
 
@@ -52,7 +56,7 @@ func (n *Node) decoOnLeft() bool {
 
 func (n *Node) okuriganaString() string {
 
-	return strings.TrimSuffix(strings.TrimPrefix(n.rawString(), "（"), "）")
+	return strings.TrimSuffix(strings.TrimPrefix(n.rawStringLaTeX(), "（"), "）")
 
 }
 
@@ -146,6 +150,27 @@ func (n *Node) innerParagraphCount() int {
 }
 
 func (n *Node) rawString() string {
+
+	switch {
+
+	case oJis0208:
+		return n.Attr["raw"]
+
+	case oJis0213:
+		if n.Attr["jis0213 raw"] != "" {
+			return n.Attr["jis0213 raw"]
+		}
+
+	case oFull:
+		if n.Attr["unicode raw"] != "" {
+			return n.Attr["unicode raw"]
+		}
+	}
+
+	return n.Attr["raw"]
+
+}
+func (n *Node) rawStringLaTeX() string {
 
 	switch {
 

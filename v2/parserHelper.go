@@ -32,6 +32,10 @@ func isValidStructure(prevNode *Node, tok *token) (err error) {
 
 		addToStringsBuilder(msgBuilder, prevNode.tok.info(), prevNode.tok.prev.String(), "\n closed by: \n")
 
+		if prevNode.tok.tokType == rubyParentStartToken {
+			addToStringsBuilder(msgBuilder, printContext(prevNode.tok, 10))
+		}
+
 		addToStringsBuilder(msgBuilder, tok.info())
 
 		return errors.New(msgBuilder.String())
@@ -89,6 +93,9 @@ func matched(closer, opener *token) bool {
 	case bibInfoEndToken:
 		return opener.tokType == bibInfoToken
 
+	case accentEndToken:
+		return opener.tokType == accentStartToken
+
 	case mainTextEndToken:
 		return opener.tokType == mainTextStartToken
 	}
@@ -126,6 +133,10 @@ func matched(closer, opener *token) bool {
 			}
 		}
 
+	}
+
+	if strings.TrimPrefix(opener.innerString(), blockStartStr) == strings.TrimPrefix(strings.TrimSuffix(closer.innerString(), formatEndStr), blockEndStr) {
+		return true
 	}
 
 	return false
@@ -207,41 +218,16 @@ func (n *Node) setFontSizeAttr(e *token) {
 
 func (n *Node) setIndentationAttr(e *token) {
 
-	str := strings.TrimPrefix(e.innerString(), "ここから")
+	defer func() {
+		if r := recover(); r != nil {
+			msg := `can't parse info from ` + e.info()
+			panic(msg)
+		}
+	}()
 
-	switch {
+	n.SetAttr("top margin", strconv.Itoa(e.getTopMargin()))
 
-	case strings.HasPrefix(str, "改行天付き"):
-
-		str = strings.TrimPrefix(str, "改行天付き、折り返して")
-
-		n.SetAttr("top margin", getNumberString(str))
-
-		n.SetAttr("indent", "-"+getNumberString(str))
-
-	case strings.Contains(str, "折り返して"):
-
-		part := strings.Split(str, "字下げ、折り返して")
-
-		a, _ := strconv.Atoi(getNumberString(part[0]))
-
-		b, _ := strconv.Atoi(getNumberString(part[1]))
-
-		n.SetAttr("top margin", strconv.Itoa(b))
-
-		n.SetAttr("indent", strconv.Itoa(a-b))
-
-	case strings.HasSuffix(str, "字下げ"):
-
-		str = strings.TrimSuffix(str, "字下げ")
-
-		n.SetAttr("top margin", getNumberString(str))
-
-		n.SetAttr("indent", "0")
-
-	}
-
-	return
+	n.SetAttr("indent", "-"+strconv.Itoa(e.getIndentation()))
 }
 
 func (n *Node) setNarrowParagraphAttr(e *token) {
@@ -296,15 +282,41 @@ func getNumberString(str string) (num string) {
 	return num
 }
 
+// Convert full width numerals to half width numeral.
+// it will work through str until it encounters a
+// fw-numeral string
+func getFirstNumberString(str string) (num string) {
+
+	rs := []rune(str)
+
+	found := false
+
+	for _, c := range rs {
+
+		if !isFWnumeral(c) {
+			if found {
+				break
+			}
+			continue
+		}
+
+		found = true
+
+		num = num + strconv.Itoa(intOf[c])
+
+	}
+
+	return num
+}
 func (n *Node) setImageData(e *token) {
 
-	p := strings.Split(e.innerString(), "（")
+	p := strings.Split(e.innerString(), "（fig")
 
 	n.SetAttr("alt text", p[0])
 
 	p = strings.Split(strings.TrimSuffix(p[1], "）入る"), "、")
 
-	n.SetAttr("file", p[0])
+	n.SetAttr("file", "fig"+p[0])
 
 	if len(p) == 1 {
 

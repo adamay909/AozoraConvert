@@ -27,7 +27,7 @@ func plaintextWriterOpen(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
-	case "text", "special char", "kunoji", "accent string", "gaiji char":
+	case "text", "special char", "kunoji", "gaiji char":
 		azrTxtFormatterOpen(n, w)
 
 	default:
@@ -39,7 +39,7 @@ func plaintextWriterClose(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
 
-	case "text", "special char", "kunoji", "accent string", "gaiji char":
+	case "text", "special char", "kunoji", "gaiji char":
 		azrTxtFormatterClose(n, w)
 
 	default:
@@ -130,6 +130,12 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 		noteStringOpenTxt(n, w)
 		w.WriteString("\n")
 
+	case "accent start":
+		accentStartTxt(n, w)
+
+	case "accent end":
+		accentEndTxt(n, w)
+
 	case "kunten":
 		noteStringOpenTxt(n, w)
 
@@ -169,9 +175,6 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 	case "special char":
 		specialCharOpenTxt(n, w)
 
-	case "accent string":
-		accentOpenTxt(n, w)
-
 	case "main text":
 		return
 
@@ -179,12 +182,26 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 		return
 
 	case "unknown":
-		if oJis0208 {
-			addToStringsBuilder(w, noteStartStr, n.rawString(), noteEndStr)
-			return
+		switch {
+		case oJis0208:
+			addToStringsBuilder(w, noteStartStr, n.Attr["raw"], noteEndStr)
+
+		case oJis0213:
+			addToStringsBuilder(w, noteStartStr, n.Attr["jis0213 raw"], noteEndStr)
+
+		default:
+
+			addToStringsBuilder(w, noteStartStr, n.Attr["unicode raw"], noteEndStr)
 		}
-		addToStringsBuilder(w, noteStartStr, n.Attr["unicode raw"], noteEndStr)
+
+		if n.Attr["force linebreak"] == "true" {
+			w.WriteString("\n")
+		}
+
 		return
+
+	case "unknown block type":
+		noteStringOpenTxt(n, w)
 
 	default:
 		log.Println("Renderer: unknown node type: " + n.String())
@@ -284,6 +301,12 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 	case "pagination":
 		return
 
+	case "accent start":
+		return
+
+	case "accent end":
+		return
+
 	case "kunten":
 		return
 
@@ -312,6 +335,9 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 
 	case "document":
 		return
+
+	case "unknown block type":
+		noteStringCloseTxt(n, w)
 
 	default:
 		return
@@ -351,19 +377,31 @@ func noteStringCloseTxt(n *Node, w *strings.Builder) {
 	if n.isBlockFormat() {
 
 		w.WriteString("\n")
+		return
+	}
 
+	if n.next != nil && n.next.Attr["type"] == "empty line" {
+		w.WriteString("\n")
 	}
 
 }
 
 func indentationOpenTxt(n *Node, w *strings.Builder) {
 
-	if n.firstChild.Attr["type"] == "section title" {
+	if n.isJisage() && (n.prev == nil || !n.prev.isJisage()) && (n.next == nil || !n.next.isJisage()) {
 
-		addToStringsBuilder(w, noteStartStr, strings.TrimPrefix(n.rawString(), blockStartStr), noteEndStr)
+		b := new(strings.Builder)
 
-		return
+		renderInnerTextOnly(n, b)
 
+		if n.innerParagraphCount() < 2 && len([]rune(b.String())) < 80 {
+
+			addToStringsBuilder(w, noteStartStr, strings.TrimPrefix(n.rawString(), blockStartStr), noteEndStr)
+
+			n.SetAttr("single line jisage", "true")
+
+			return
+		}
 	}
 
 	noteStringOpenTxt(n, w)
@@ -371,16 +409,12 @@ func indentationOpenTxt(n *Node, w *strings.Builder) {
 
 func indentationCloseTxt(n *Node, w *strings.Builder) {
 
-	if n.firstChild.Attr["type"] == "section title" {
-
+	if n.next.isJisage() {
 		return
-
 	}
 
-	if n.next.isJisage() {
-
+	if n.Attr["single line jisage"] == "true" {
 		return
-
 	}
 
 	noteStringCloseTxt(n, w)
@@ -396,7 +430,21 @@ func bottomAlignOpenTxt(n *Node, w *strings.Builder) {
 func bottomAlignCloseTxt(n *Node, w *strings.Builder) {
 
 	if n.Attr["scope"] == "block" {
+
+		w2 := new(strings.Builder)
+
+		renderInnerAozoraText(n, w2)
+
+		if !strings.HasSuffix(w2.String(), "\n") {
+			w.WriteString("\n")
+		}
+
 		noteStringCloseTxt(n, w)
+		return
+	}
+
+	if ok, _ := n.withinScopeOfType("paragraph"); !ok {
+		w.WriteString("\n")
 	}
 
 	return
@@ -405,7 +453,9 @@ func bottomAlignCloseTxt(n *Node, w *strings.Builder) {
 
 func sectionTitleCloseTxt(n *Node, w *strings.Builder) {
 
-	addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr, "\n")
+	addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr)
+
+	w.WriteString("\n")
 
 }
 
@@ -421,10 +471,10 @@ func bibinfostringTxt(n *Node) string {
 
 func captionOpenTxt(n *Node, w *strings.Builder) {
 
-	if n.innerParagraphCount() > 1 {
+	if n.isBlockFormat() || n.innerParagraphCount() > 1 {
 
 		w.WriteString("［＃ここからキャプション］\n")
-
+		return
 	}
 
 	w.WriteString("［＃キャプション］")
@@ -433,13 +483,19 @@ func captionOpenTxt(n *Node, w *strings.Builder) {
 
 func captionCloseTxt(n *Node, w *strings.Builder) {
 
-	if n.innerParagraphCount() > 1 {
+	if n.isBlockFormat() || n.innerParagraphCount() > 1 {
 
 		w.WriteString("［＃ここでキャプション終わり］\n")
-
+		return
 	}
 
-	w.WriteString("［＃キャプション終わり］\n")
+	w.WriteString("［＃キャプション終わり］")
+
+	if ok, _ := n.withinScopeOfType("paragraph"); ok {
+		return
+	}
+
+	w.WriteString("\n")
 }
 
 func gaijiNoteOpenTxt(n *Node, w *strings.Builder) {
@@ -462,7 +518,12 @@ func metadataCloseTxt(n *Node, w *strings.Builder) {
 
 func specialCharOpenTxt(n *Node, w *strings.Builder) {
 
-	w.WriteString(n.Attr["raw"])
+	if !oParsable {
+		w.WriteString(n.rawString())
+		return
+	}
+
+	w.WriteString(n.Attr["escaped raw"])
 
 }
 
@@ -476,13 +537,22 @@ func accentOpenTxt(n *Node, w *strings.Builder) {
 
 	if oJis0208 {
 
-		addToStringsBuilder(w, accentStartStr, n.Attr["raw"], accentEndStr)
+		addToStringsBuilder(w, accentStartStr)
 
 		return
 	}
+	return
+}
 
-	w.WriteString(n.Attr["unicode raw"])
+func accentCloseTxt(n *Node, w *strings.Builder) {
 
+	if oJis0208 {
+
+		addToStringsBuilder(w, accentEndStr)
+
+		return
+	}
+	return
 }
 
 func kunojiOpenTxt(n *Node, w *strings.Builder) {
@@ -527,4 +597,28 @@ func rubyGroupCloseTxt(n *Node, w *strings.Builder) {
 	for _, e := range linearizeDescendants(n) {
 		delete(e.Attr, "ignore")
 	}
+}
+
+func accentStartTxt(n *Node, w *strings.Builder) {
+
+	if oJis0208 {
+
+		w.WriteString(accentStartStr)
+
+	}
+
+	return
+
+}
+
+func accentEndTxt(n *Node, w *strings.Builder) {
+
+	if oJis0208 {
+
+		w.WriteString(accentEndStr)
+
+	}
+
+	return
+
 }

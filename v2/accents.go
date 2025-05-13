@@ -14,6 +14,18 @@ func convertAccent(str string) string {
 
 }
 
+func (t *token) convertAccentToken() {
+
+	if t.tokType != textToken {
+		return
+	}
+
+	t.unicodeContent = convertAccent(t.content)
+
+	t.jis0213Content = t.unicodeContent
+
+}
+
 var accentTable = [][2]string{
 
 	{"à", "a`"},

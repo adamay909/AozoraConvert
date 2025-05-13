@@ -344,3 +344,13 @@ func (n *Node) ClearChildren() {
 	}
 
 }
+
+func (n *Node) hasChildOfType(t string) bool {
+
+	for _, e := range n.Children() {
+		if e.Attr["type"] == t {
+			return true
+		}
+	}
+	return false
+}

@@ -219,11 +219,20 @@ func (m Book) createNullRecord() r.NullRecord {
 	if m.FixedLayout {
 		null.EXTHSection.AddString(t.EXTHFixedLayout, "true")
 	}
-	if m.Vertical {
-		null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "vertical-rl")
-	}
+	//	if m.Vertical {
+	//		null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "vertical-rl")
+	//	}
 	if m.RightToLeft {
+		if m.Vertical {
+			null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "vertical-rl")
+		} else {
+			null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "horizontal-rl")
+		}
 		null.EXTHSection.AddString(t.EXTHPageProgressionDirection, "rtl")
+	} else {
+		if m.Vertical {
+			null.EXTHSection.AddString(t.EXTHPrimaryWritingMode, "vertical-lr")
+		}
 	}
 	if m.CoverImage != nil {
 		null.EXTHSection.AddInt(t.EXTHCoverOffset, lastImageID)

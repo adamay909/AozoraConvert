@@ -2,6 +2,7 @@ package aozoraconvert
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -19,6 +20,7 @@ type token struct {
 	lineNo          int
 	modified        bool
 	inserted        bool
+	accentProcessed bool
 	// extra   string
 }
 
@@ -54,7 +56,8 @@ const (
 	figureEndToken
 	gaijiNoteToken
 	specialCharToken
-	accentToken
+	accentStartToken
+	accentEndToken
 	gaijiCharToken
 	kunojiToken
 	alignBottomCloserToken
@@ -64,6 +67,9 @@ const (
 	mainTextEndToken
 	eofToken
 	gaijiImgToken
+	noteStartToken
+	noteEndToken
+	gaijiStartToken
 )
 
 type tokenSubType int
@@ -156,8 +162,11 @@ func (t tokenType) String() string {
 	case specialCharToken:
 		return "specialCharToken"
 
-	case accentToken:
-		return "accentToken"
+	case accentStartToken:
+		return "accentStartToken"
+
+	case accentEndToken:
+		return "accentEndToken"
 
 	case gaijiCharToken:
 		return "gaijiCharToken"
@@ -208,29 +217,27 @@ func (t *token) addTokenRight(t2 *token) {
 		return
 	}
 
-	t2.next = t.next
+	t.insertTokenRight(t2)
 
-	if t2.next != nil {
-		t2.next.prev = t2
-	}
+	t2.inserted = false
 
-	t2.prev = t
-
-	t.next = t2
+	return
 
 }
 
 func (t *token) insertTokenRight(t2 *token) {
 
-	t2.next = t.next
+	if t.next != nil {
 
-	if t2.next != nil {
-		t2.next.prev = t2
+		t.next.prev = t2
+
 	}
 
-	t2.prev = t
+	t2.next = t.next
 
 	t.next = t2
+
+	t2.prev = t
 
 	t2.inserted = true
 
@@ -238,18 +245,17 @@ func (t *token) insertTokenRight(t2 *token) {
 
 func (t *token) insertTokenLeft(t2 *token) {
 
-	e := t.prev
+	if t.prev != nil {
+
+		t.prev.next = t2
+
+	}
+
+	t2.prev = t.prev
 
 	t.prev = t2
 
 	t2.next = t
-
-	t2.prev = e
-
-	if e != nil {
-
-		e.next = t2
-	}
 
 	t2.inserted = true
 
@@ -385,13 +391,63 @@ func (t *token) innerString() string {
 
 		return strings.TrimSuffix(strings.TrimPrefix(t.String(), noteStartStr), noteEndStr)
 
-	case accentToken:
-
-		return strings.TrimSuffix(strings.TrimPrefix(t.String(), accentStartStr), accentEndStr)
-
 	default:
 
 		return t.String()
+
+	}
+}
+
+func (t *token) innerUnicodeString() string {
+
+	if t == nil {
+		return t.unicodeString()
+	}
+
+	switch t.tokType {
+
+	case noteToken, gaijiImgToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.unicodeString(), noteStartStr), noteEndStr)
+
+	case gaijiToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.unicodeString(), gaijiMarkerStr), noteEndStr)
+
+	case gaijiNoteToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.unicodeString(), noteStartStr), noteEndStr)
+
+	default:
+
+		return t.unicodeString()
+
+	}
+}
+
+func (t *token) innerJis0213String() string {
+
+	if t == nil {
+		return t.jis0213String()
+	}
+
+	switch t.tokType {
+
+	case noteToken, gaijiImgToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.jis0213String(), noteStartStr), noteEndStr)
+
+	case gaijiToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.jis0213String(), gaijiMarkerStr), noteEndStr)
+
+	case gaijiNoteToken:
+
+		return strings.TrimSuffix(strings.TrimPrefix(t.jis0213String(), noteStartStr), noteEndStr)
+
+	default:
+
+		return t.jis0213String()
 
 	}
 }
@@ -443,13 +499,19 @@ func (t *token) refString() (ref string) {
 		return emptyStr
 	}
 
-	return getRefStrings(t.innerString())[0]
+	return t.getRefStrings()[0]
 
 }
 
-func getRefStrings(s string) []string {
+func (t *token) getRefStrings() []string {
 
 	var rs []string
+
+	s := strings.TrimSuffix(strings.TrimPrefix(t.unicodeContent, noteStartStr), noteEndStr)
+
+	if s == "" {
+		s = t.innerString()
+	}
 
 	for i1 := strings.Index(s, refStartStr); i1 != -1; i1 = strings.Index(s, refStartStr) {
 
@@ -459,7 +521,50 @@ func getRefStrings(s string) []string {
 			break
 		}
 
-		rs = append(rs, s[i1+len(refStartStr):i2])
+		ostr := s[i1+len(refStartStr) : i2]
+
+		if oTolerant {
+
+			ignore := false
+			newstr := ""
+
+			for k, r := range ostr {
+
+				if strings.HasPrefix(ostr[k:], rubyStartStr) {
+					ignore = true
+					continue
+				}
+
+				if strings.HasPrefix(ostr[k:], gaijiMarkerStr) {
+					ignore = true
+					newstr = newstr + referenceMarkStr
+					continue
+				}
+
+				if !ignore {
+					newstr = newstr + string(r)
+				}
+
+				if strings.HasPrefix(ostr[k:], rubyEndStr) {
+					ignore = false
+					continue
+				}
+
+				if strings.HasPrefix(ostr[k:], noteEndStr) {
+					ignore = false
+					continue
+				}
+
+			}
+			if newstr != ostr {
+
+				ostr = newstr
+
+				log.Println("line ", t.lineNumber(), t.String(), "前方参照文字列の指定にはルビ不要")
+			}
+		}
+
+		rs = append(rs, ostr)
 
 		s = s[i2+len(refEndStr):]
 
@@ -553,32 +658,47 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	nesting := 0
 
+	ignore := false
+
 	for e = t.prev; e != nil; e = e.prev {
 
 		if e.tokType == endOfLineToken {
 			break
 		}
 
-		if e.tokType == rubyEndToken {
-
-			for ; e.tokType != rubyStartToken; e = e.prev {
-			}
-
-			e = e.prev
+		if e.tokType == emptyLineToken {
+			break
 		}
 
-		if e.isFormatCloseToken() {
+		if e.isPairClose() {
 			nesting++
+		}
+
+		if e.isPairOpen() {
+			nesting--
+		}
+
+		if e.tokType == rubyEndToken {
+			ignore = true
 			continue
 		}
 
-		if e.tokType != textToken {
+		if e.tokType == rubyStartToken {
+			ignore = false
+			continue
+		}
+
+		if ignore {
+			continue
+		}
+
+		if !e.isText() {
 			continue
 		}
 
 		cr = c
 
-		c = len(e.content) + cr
+		c = len(e.unicodeString()) + cr
 
 		if c >= len(txt) {
 
@@ -596,27 +716,35 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	}
 
-	if e.tokType == endOfLineToken {
+	if e.tokType == endOfLineToken || e.tokType == emptyLineToken {
 
-		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
+		if !oTolerant {
+			panic("Can't find place to insert implied opener note. " + t.info())
+		}
 
+		log.Println("Can't find place to insert implied opener note. Defaulting to start of line. " + t.info())
+		e.insertTokenRight(nt)
 		return
 
 	}
 
+	//	fmt.Println(e, nesting)
+
+	if nesting > 0 {
+
+		for ; nesting > 0; e = e.prev {
+			if e.isPairOpen() {
+				nesting--
+			}
+		}
+
+		//e=e.prev is executed once after nesting has gone down to zero
+		e.insertTokenRight(nt)
+		return
+	}
+
 	if c == len(txt) {
 
-		if e.prev != nil && e.prev.tokType == rubyParentStartToken {
-
-			e = e.prev.prev
-
-		}
-
-		for range nesting {
-
-			e = e.prev
-
-		}
 		e.insertTokenLeft(nt)
 
 		return
@@ -755,6 +883,12 @@ func (t *token) lineNumber() int {
 
 }
 
+func (t *token) lineNumberStr() string {
+
+	return strconv.Itoa(t.lineNumber())
+
+}
+
 func (t *token) lastTokenInLine() *token {
 
 	if t == nil {
@@ -765,15 +899,11 @@ func (t *token) lastTokenInLine() *token {
 
 	for e = t; e != nil; e = e.next {
 
-		if e.next == nil {
+		if e.tokType == endOfLineToken {
 			return e
 		}
 
-		if e.next.tokType == endOfLineToken {
-			return e
-		}
-
-		if e.next.tokType == paragraphEndToken {
+		if e.tokType == paragraphEndToken {
 			return e
 		}
 	}
@@ -819,41 +949,25 @@ func (t *token) nextSignificantToken() *token {
 
 func (t *token) unicodeString() string {
 
-	switch t.tokType {
-
-	case gaijiCharToken:
-		return t.unicodeContent
-
-	case specialCharToken:
-		return t.unicodeContent
-
-	case kunojiToken:
-		return t.unicodeContent
-
-	default:
-		return t.String()
-
+	if t.unicodeContent == "" {
+		return t.content
 	}
+
+	return t.unicodeContent
+
 }
 
 func (t *token) jis0213String() string {
 
-	switch t.tokType {
-
-	case gaijiCharToken:
-		return t.jis0213Content
-
-	case specialCharToken:
-		return t.jis0213Content
-
-	case kunojiToken:
-		return t.jis0213Content
-
-	default:
-		return t.String()
+	if t.jis0213Content == "" {
+		return t.content
 
 	}
+
+	return t.jis0213Content
+
 }
+
 func (t *token) nextLine() *token {
 
 	e := t.lastTokenInLine()
@@ -899,6 +1013,10 @@ func (t *token) isFirstTokenInLine() bool {
 	}
 
 	if t.prev.tokType == endOfLineToken {
+		return true
+	}
+
+	if t.prev.tokType == emptyLineToken {
 		return true
 	}
 
@@ -990,7 +1108,14 @@ func (t *token) isFormatCloseToken() bool {
 	return false
 }
 
-func (t *token) isPairMarkerOpen() bool {
+func (t *token) isPairOpen() bool {
+
+	switch t.tokType {
+
+	case paragraphToken, rubyStartToken, rubyParentStartToken, rubyGroupStartToken, figureStartToken, mainTextStartToken:
+		return true
+
+	}
 
 	if t.tokType != noteToken {
 		return false
@@ -1003,11 +1128,17 @@ func (t *token) isPairMarkerOpen() bool {
 		}
 
 	}
-
 	return false
 }
 
-func (t *token) isPairMarkerClose() bool {
+func (t *token) isPairClose() bool {
+
+	switch t.tokType {
+
+	case paragraphEndToken, rubyEndToken, rubyParentEndToken, rubyGroupEndToken, figureEndToken, centeringEndToken, alignBottomCloserToken, mainTextEndToken:
+		return true
+
+	}
 
 	if t.tokType != noteToken {
 		return false
@@ -1022,7 +1153,9 @@ func (t *token) isPairMarkerClose() bool {
 		if strings.HasSuffix(strings.TrimSuffix(t.innerString(), formatEndStr), m) {
 			return true
 		}
+
 	}
+
 	return false
 
 }
@@ -1044,19 +1177,27 @@ func (t *token) isSectionTitleStart() bool {
 
 func (t *token) isSectionTitleEnd() bool {
 
+	if t == nil {
+		return false
+	}
+
 	if t.tokType != noteToken {
 
 		return false
 
 	}
 
-	if !strings.HasSuffix(strings.TrimPrefix(t.innerString(), blockEndStr), formatEndStr) {
+	str := strings.TrimPrefix(t.innerString(), blockEndStr)
+
+	if !strings.HasSuffix(str, formatEndStr) {
 		return false
 	}
 
+	str = strings.TrimSuffix(str, formatEndStr)
+
 	for _, m := range sectionMarker {
 
-		if strings.TrimSuffix(t.innerString(), formatEndStr) == m {
+		if str == m {
 			return true
 		}
 	}
@@ -1078,13 +1219,57 @@ func (t *token) isIndentationStart() bool {
 	return strings.HasSuffix(t.innerString(), "字下げ")
 }
 
+func (t *token) isIndentationEnd() bool {
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if !strings.HasPrefix(t.innerString(), blockEndStr) {
+		return false
+	}
+
+	return strings.HasSuffix(strings.TrimSuffix(strings.TrimPrefix(t.innerString(), blockEndStr), formatEndStr), "字下げ")
+}
+
 func (t *token) matchingIndentationCloser() *token {
 
 	pos := new(token)
 
+	c := 0
+
 	for pos = t.next; pos != nil; pos = pos.next {
 
-		if pos.tokType != noteToken {
+		//need to ensure proper nesting
+		if pos.isBlockStartNote() {
+			c++
+		}
+
+		if pos.isBlockClosingNote() {
+			c--
+			if c < 0 {
+				return pos
+			}
+		}
+
+		if pos.isFrameStart() {
+
+			for pos2 := pos; pos2 != pos.matchingCloserToken(); pos2 = pos2.next {
+				if pos2.isIndentationStart() {
+					pos2.fixblockformatting()
+				}
+			}
+			pos = pos.matchingCloserToken()
+			continue
+		}
+
+		if pos.isNarrowStart() {
+			for pos2 := pos; pos2 != pos.matchingCloserToken(); pos2 = pos2.next {
+				if pos2.isIndentationStart() {
+					pos2.fixblockformatting()
+				}
+			}
+			pos = pos.matchingCloserToken()
 			continue
 		}
 
@@ -1092,9 +1277,14 @@ func (t *token) matchingIndentationCloser() *token {
 			return pos
 		}
 
-		if strings.HasSuffix(pos.innerString(), "字下げ終わり") {
+		if pos.isIndentationEnd() {
 			return pos
 		}
+
+		if pos.tokType == mainTextEndToken {
+			return pos.prev
+		}
+
 	}
 
 	panic(t.info() + " No matching closer.")
@@ -1154,6 +1344,10 @@ func (t *token) isKunten() bool {
 	s := []rune(t.innerString())
 
 	if len(s) > 2 {
+		return false
+	}
+
+	if len(s) == 0 {
 		return false
 	}
 
@@ -1227,11 +1421,19 @@ func matchingCloserToken(t *token) *token {
 
 	for pos = t.next; ; pos = pos.next {
 
-		if pos.isPairMarkerOpen() {
+		if pos.isPairOpen() {
 			count++
 		}
 
-		if pos.isPairMarkerClose() {
+		if pos.isPairClose() {
+			count--
+		}
+
+		if pos.tokType == paragraphToken {
+			count++
+		}
+
+		if pos.tokType == paragraphEndToken {
 			count--
 		}
 
@@ -1273,6 +1475,10 @@ func (t *token) isBlockStartNote() bool {
 
 func (t *token) isBlockClosingNote() bool {
 
+	if t.tokType == centeringEndToken {
+		return true
+	}
+
 	if t.tokType != noteToken {
 		return false
 	}
@@ -1281,15 +1487,15 @@ func (t *token) isBlockClosingNote() bool {
 		return true
 	}
 
-	if t.isFormatEndOfType(centeringMarker) {
-		return true
-	}
-
 	if !strings.HasPrefix(t.innerString(), blockEndStr) {
 		return false
 	}
 
-	return strings.HasSuffix(t.innerString(), formatEndStr)
+	if strings.HasSuffix(t.innerString(), formatEndStr) {
+		return true
+	}
+
+	return false
 }
 
 func (t *token) isFormatOfType(m []string) bool {
@@ -1410,9 +1616,184 @@ func copyOf(t *token) *token {
 
 	nt.unicodeContent = t.unicodeContent
 
+	nt.jis0213Content = t.jis0213Content
+
 	nt.originalContent = t.originalContent
 
-	nt.lineNo = t.lineNo
-
 	return nt
+}
+
+func (t *token) isEmptyText() bool {
+
+	if t.tokType != textToken {
+		return false
+	}
+	for _, c := range t.String() {
+
+		if c == ' ' {
+			continue
+		}
+
+		if c == '　' {
+			continue
+		}
+
+		return false
+	}
+
+	return true
+}
+
+func (t *token) isText() bool {
+
+	if t.tokType == textToken {
+		return true
+	}
+
+	if t.tokType == kunojiToken {
+		return true
+	}
+
+	if t.tokType == accentStartToken {
+		return true
+	}
+
+	if t.tokType == accentEndToken {
+		return true
+	}
+
+	if t.tokType == gaijiCharToken {
+		return true
+	}
+
+	if t.tokType == specialCharToken {
+		return true
+	}
+
+	return false
+}
+
+func (t *token) isFrameStart() bool {
+
+	if strings.HasSuffix(t.innerString(), "罫囲み") {
+		return true
+	}
+
+	return false
+}
+
+func (t *token) isNarrowStart() bool {
+
+	if strings.HasSuffix(t.innerString(), "字詰め") {
+		return true
+	}
+
+	return false
+}
+
+func (t *token) isLineBreak() bool {
+
+	if t.tokType == endOfLineToken {
+		return true
+	}
+
+	if t.tokType == emptyLineToken {
+		return true
+	}
+
+	return false
+}
+
+func (t *token) matchingNoteStart() *token {
+
+	if t.tokType != noteEndToken {
+		return t
+	}
+
+	counter := 0
+
+	for e := t; e != nil; e = e.prev {
+
+		if e.tokType == noteEndToken {
+			counter++
+			continue
+		}
+
+		if e.tokType != noteStartToken {
+			continue
+		}
+
+		counter--
+
+		if counter == 0 {
+			return e
+		}
+	}
+
+	return nil
+}
+
+func (t *token) matchingNoteEnd() *token {
+
+	if t.tokType != noteStartToken {
+		return t
+	}
+
+	counter := 0
+
+	for e := t; e != nil; e = e.next {
+
+		if e.tokType == noteStartToken {
+			counter++
+			continue
+		}
+
+		if e.tokType != noteEndToken {
+			continue
+		}
+
+		counter--
+
+		if counter == 0 {
+			return e
+		}
+	}
+
+	return nil
+}
+
+func (t *token) specialCharEscape() string {
+
+	switch t.content {
+
+	case "《":
+		return "※［＃始め二重山括弧、1-1-52］"
+
+	case "》":
+		return "※［＃終わり二重山括弧、1-1-53］"
+
+	case "［":
+		return "※［＃始め角括弧、1-1-46］"
+
+	case "］":
+		return "※［＃終わり角括弧、1-1-47］"
+
+	case "〔":
+		return "※［＃始めきっこう（亀甲）括弧、1-1-44］"
+
+	case "〕":
+		return "※［＃終わりきっこう（亀甲）括弧、1-1-45］"
+
+	case "｜":
+		return "※［＃縦線、1-1-35］"
+
+	case "＃":
+		return "※［＃井げた、1-1-84］"
+
+	case "※":
+		return "※［＃米印、1-2-8］"
+
+	default:
+		return t.content
+	}
 }

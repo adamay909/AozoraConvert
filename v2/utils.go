@@ -57,7 +57,8 @@ func ucode(txt string) string {
 	}
 
 	k := 0
-	for k = i + 2; strings.Contains(`0123456789ABCDEF`, string(txt[k])); k++ {
+	for k = i + 2; k < len(txt) && strings.Contains(`0123456789ABCDEF`, string(txt[k])); k++ {
+
 	}
 	_, err := hextoi(txt[i+2 : k])
 
@@ -93,23 +94,43 @@ func firstChar(s string) rune {
 
 func jisCodeOf(txt string) string {
 
-	i := strings.Index(txt, "1-")
+	i := strings.Index(txt, "水準1-")
 
 	if i == -1 {
 
-		i = strings.Index(txt, "2-")
+		i = strings.Index(txt, "水準2-")
 
 	}
 
 	if i == -1 {
-		return emptyStr
+
+		i0 := strings.Index(txt, "1-")
+		i1 := strings.Index(txt, "2-")
+
+		switch {
+
+		case i0 == -1 && i1 == -1:
+			return emptyStr
+
+		case i0 == -1:
+			i = i1
+
+		case i1 == -1:
+			i = i0
+
+		case i0 < i1:
+			i = i0
+
+		case i1 < i0:
+			i = i1
+		}
+
+		i = i - 6
 	}
+
+	i = i + 6 //len("水準")
 
 	j := indexNotAnyOf(txt[i:], "1234567890-")
-
-	if j == -1 {
-		return emptyStr
-	}
 
 	c := strings.Split(txt[i:i+j], "-")
 

@@ -155,6 +155,23 @@ func initMap() {
 
 }
 
+func fwnum(n int) string {
+
+	hstr := strconv.Itoa(n)
+
+	fstr := ""
+
+	for _, d := range hstr {
+
+		k, _ := strconv.Atoi(string(d))
+
+		fstr = fstr + string(fwanumOf[k])
+
+	}
+
+	return fstr
+}
+
 // String returns the character type of c
 // as a string. E.g. "Katakana" if c
 // is katakana.
@@ -346,6 +363,15 @@ func convert(mkt string) (s string, err error) {
 		return
 	}
 	return
+}
+
+// ConvertMKT returns the unicode string corresponding to the JIS code point
+// given in the 面区点(men-ku-ten) format.
+// mkt needs to be formatetted as a string of the form "d-dd-dd".
+func ConvertMKT(mkt string) (s string, err error) {
+
+	return convert(mkt)
+
 }
 
 // mktToJis returns the JIS code point corresponding

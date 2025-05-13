@@ -31,7 +31,7 @@ func ToUTF8(data []byte) string {
 
 	dec := japanese.ShiftJIS.NewDecoder()
 
-	out, err := dec.Bytes(data)
+	outdata, err := dec.Bytes(data)
 
 	if err != nil {
 
@@ -43,6 +43,17 @@ func ToUTF8(data []byte) string {
 
 	}
 
-	return strings.ReplaceAll(string(out), "\r\n", "\n")
+	out := string(outdata)
+
+	if strings.Index(out, "\r\n") == -1 {
+
+		if strings.Index(out, "\n") != -1 {
+			return out
+		}
+
+		return strings.ReplaceAll(out, "\r", "\n")
+	}
+
+	return strings.ReplaceAll(out, "\r\n", "\n")
 
 }
