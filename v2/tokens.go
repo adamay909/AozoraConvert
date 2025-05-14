@@ -1,5 +1,6 @@
 package aozoraconvert
 
+//go:generate stringer -type=tokenType
 import (
 	"fmt"
 	"strconv"
@@ -69,137 +70,140 @@ const (
 	noteStartToken
 	noteEndToken
 	gaijiStartToken
+	endMarkerToken
 )
 
 type tokenSubType int
 
+/*
 func (t tokenType) String() string {
 
-	switch t {
+		switch t {
 
-	case emptyToken:
-		return "emptyToken"
+		case emptyToken:
+			return "emptyToken"
 
-	case textToken:
-		return "textToken"
+		case textToken:
+			return "textToken"
 
-	case gaijiToken:
-		return "gaijiToken"
+		case gaijiToken:
+			return "gaijiToken"
 
-	case rubyGroupStartToken:
-		return "rubyGroupStartToken"
+		case rubyGroupStartToken:
+			return "rubyGroupStartToken"
 
-	case rubyGroupEndToken:
-		return "rubyGroupEndToken"
+		case rubyGroupEndToken:
+			return "rubyGroupEndToken"
 
-	case rubyParentStartToken:
-		return "rubyParentStartToken"
+		case rubyParentStartToken:
+			return "rubyParentStartToken"
 
-	case rubyParentEndToken:
-		return "rubyParentEndToken"
+		case rubyParentEndToken:
+			return "rubyParentEndToken"
 
-	case rubyStartToken:
-		return "rubyStartToken"
+		case rubyStartToken:
+			return "rubyStartToken"
 
-	case rubyEndToken:
-		return "rubyEndToken"
+		case rubyEndToken:
+			return "rubyEndToken"
 
-	case noteToken:
-		return "noteToken"
+		case noteToken:
+			return "noteToken"
 
-	case bibInfoToken:
-		return "bibInfoToken"
+		case bibInfoToken:
+			return "bibInfoToken"
 
-	case bibInfoEndToken:
-		return "bibInfoEndToken"
+		case bibInfoEndToken:
+			return "bibInfoEndToken"
 
-	case emptyLineToken:
-		return "emptyLineToken"
+		case emptyLineToken:
+			return "emptyLineToken"
 
-	case endOfLineToken:
-		return "endOfLineToken"
+		case endOfLineToken:
+			return "endOfLineToken"
 
-	case paragraphEndToken:
-		return "paragraphEndToken"
+		case paragraphEndToken:
+			return "paragraphEndToken"
 
-	case paragraphToken:
-		return "paragraphToken"
+		case paragraphToken:
+			return "paragraphToken"
 
-	case sectionTitleStartToken:
-		return "sectionTitleStartToken"
+		case sectionTitleStartToken:
+			return "sectionTitleStartToken"
 
-	case sectionTitleEndToken:
-		return "sectionTitleEndToken"
+		case sectionTitleEndToken:
+			return "sectionTitleEndToken"
 
-	case sectionToken:
-		return "sectionToken"
+		case sectionToken:
+			return "sectionToken"
 
-	case subsectionToken:
-		return "subsectionToken"
+		case subsectionToken:
+			return "subsectionToken"
 
-	case subsubsectionToken:
-		return "subsubsectionToken"
+		case subsubsectionToken:
+			return "subsubsectionToken"
 
-	case sectionEndToken:
-		return "sectionEndToken"
+		case sectionEndToken:
+			return "sectionEndToken"
 
-	case subsectionEndToken:
-		return "subsectionEndToken"
+		case subsectionEndToken:
+			return "subsectionEndToken"
 
-	case subsubsectionEndToken:
-		return "subsubsectionEndToken"
+		case subsubsectionEndToken:
+			return "subsubsectionEndToken"
 
-	case figureStartToken:
-		return "figureStartToken"
+		case figureStartToken:
+			return "figureStartToken"
 
-	case figureEndToken:
-		return "figureEndToken"
+		case figureEndToken:
+			return "figureEndToken"
 
-	case gaijiNoteToken:
-		return "gaijiNoteToken"
+		case gaijiNoteToken:
+			return "gaijiNoteToken"
 
-	case specialCharToken:
-		return "specialCharToken"
+		case specialCharToken:
+			return "specialCharToken"
 
-	case accentStartToken:
-		return "accentStartToken"
+		case accentStartToken:
+			return "accentStartToken"
 
-	case accentEndToken:
-		return "accentEndToken"
+		case accentEndToken:
+			return "accentEndToken"
 
-	case gaijiCharToken:
-		return "gaijiCharToken"
+		case gaijiCharToken:
+			return "gaijiCharToken"
 
-	case kunojiToken:
-		return "kunojiToken"
+		case kunojiToken:
+			return "kunojiToken"
 
-	case alignBottomCloserToken:
-		return "alignBottomCloserToken"
+		case alignBottomCloserToken:
+			return "alignBottomCloserToken"
 
-	case centeringEndToken:
-		return "centeringEndToken"
+		case centeringEndToken:
+			return "centeringEndToken"
 
-	case markupNoteToken:
-		return "markupNoteToken"
+		case markupNoteToken:
+			return "markupNoteToken"
 
-	case mainTextStartToken:
-		return "mainTextStartToken"
+		case mainTextStartToken:
+			return "mainTextStartToken"
 
-	case mainTextEndToken:
-		return "mainTextEndToken"
+		case mainTextEndToken:
+			return "mainTextEndToken"
 
-	case eofToken:
-		return "eofToken"
+		case eofToken:
+			return "eofToken"
 
-	case gaijiImgToken:
-		return "gaijiImageToken"
+		case gaijiImgToken:
+			return "gaijiImageToken"
 
-	default:
+		default:
 
-		return strconv.Itoa(int(t))
+			return strconv.Itoa(int(t))
 
+		}
 	}
-}
+*/
 
 func newToken() *token {
 

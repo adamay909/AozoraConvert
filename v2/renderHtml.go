@@ -169,6 +169,9 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 	case "main text":
 		return
 
+	case "end marker":
+		return
+
 	case "document":
 		return
 
@@ -321,6 +324,9 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 		metaContributorCloseHTML(n, w)
 
 	case "main text":
+		return
+
+	case "end marker":
 		return
 
 	case "document":

@@ -1444,6 +1444,7 @@ func (t *token) fixBibInfo() (stopProcessing bool) {
 
 	//if notetoken, we are done
 	if t.innerString() == noteStartStr+mainTextEndStr+noteEndStr {
+		t.tokType = endMarkerToken
 		return true
 	}
 

@@ -112,6 +112,9 @@ func (t *token) gatherNotes() {
 
 		e = note
 
+		if e.innerString() == mainTextEndStr {
+			e.tokType = endMarkerToken
+		}
 	}
 
 }

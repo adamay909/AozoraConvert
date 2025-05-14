@@ -152,6 +152,9 @@ func azrLaTeXFormatterOpen(n *Node, w *strings.Builder) {
 	case "main text":
 		return
 
+	case "end marker":
+		return
+
 	case "document":
 		return
 
@@ -305,6 +308,9 @@ func azrLaTeXFormatterClose(n *Node, w *strings.Builder) {
 		metaContributorCloseLaTeX(n, w)
 
 	case "main text":
+		return
+
+	case "end marker":
 		return
 
 	case "document":

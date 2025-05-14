@@ -180,6 +180,9 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 	case "document":
 		return
 
+	case "end marker":
+		endMarkerOpenTxt(n, w)
+
 	case "unknown":
 		switch {
 		case oJis0208:
@@ -346,6 +349,9 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "main text":
+		return
+
+	case "end marker":
 		return
 
 	case "document":
@@ -647,5 +653,11 @@ func accentEndTxt(n *Node, w *strings.Builder) {
 	}
 
 	return
+
+}
+
+func endMarkerOpenTxt(n *Node, w *strings.Builder) {
+
+	addToStringsBuilder(w, n.Attr["raw"], "\n")
 
 }

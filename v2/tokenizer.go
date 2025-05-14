@@ -211,10 +211,6 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 	case gaijiToken:
 		end = findMatchingCloser(gaijiToken, tknz)
-		/*
-			case noteToken:
-				end = findMatchingCloser(noteToken, tknz)
-		*/
 
 	case noteStartToken:
 		end = len(noteStartStr)
@@ -226,7 +222,6 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		tknz.lineCounter++
 		e.lineNo = tknz.lineCounter
 		tknz.simpleProcessing = true
-		//	end = len(tknz.data[tknz.position:])
 		end = len(bibInfoStartStr)
 
 	case accentStartToken:
@@ -248,13 +243,6 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	}
 
 	e.content = tknz.readNext(end)
-
-	if e.tokType == noteToken {
-		if e.innerString() == mainTextEndStr {
-			e.tokType = bibInfoToken
-			tknz.simpleProcessing = true
-		}
-	}
 
 	if e.tokType == markupNoteToken {
 
@@ -329,7 +317,7 @@ func typeOf(s *tokenizer) tokenType {
 		if !oTolerant {
 			panic(msg)
 		}
-		clog.Println(msg)
+		clog.Println(s.lineCounter, "行：", msg)
 		return specialCharToken
 
 	case strings.HasPrefix(s.data[s.position:], noteEndStr):
@@ -337,7 +325,7 @@ func typeOf(s *tokenizer) tokenType {
 		if !oTolerant {
 			panic(msg)
 		}
-		clog.Println(msg)
+		clog.Println(s.lineCounter, "行：", msg)
 		return specialCharToken
 
 	case len(s.data[s.position:]) == 0:

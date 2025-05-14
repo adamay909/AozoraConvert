@@ -477,6 +477,14 @@ func getAST(t *token) (nd *Node, err error) {
 
 			closeNode = false
 
+		case e.tokType == endMarkerToken:
+
+			n.setType("end marker")
+
+			nextIsChild = false
+
+			closeNode = false
+
 		case e.tokType == emptyToken:
 
 			continue
