@@ -1344,7 +1344,7 @@ func rubyGroupCloseHTML(n *Node, w *strings.Builder) {
 
 		if e.Attr["type"] == "gaiji note" {
 
-			addToStringsBuilder(w, `{`, latexCmd(`small`), " ", e.gaijiNoteString(), `}`)
+			addToStringsBuilder(w, noteStartStr, e.rawString(), noteEndStr)
 
 		}
 	}

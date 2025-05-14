@@ -170,6 +170,7 @@ func (n *Node) rawString() string {
 	return n.Attr["raw"]
 
 }
+
 func (n *Node) rawStringLaTeX() string {
 
 	switch {
