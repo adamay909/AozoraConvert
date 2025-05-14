@@ -14,7 +14,7 @@ func (t *token) fixLines() {
 
 	t.gatherNotes()
 
-	t.removeEmptyToken()
+	t.cleanupTokenString()
 
 	if oTolerant {
 		for e := t.firstToken(); e != nil; e = e.next {
@@ -189,7 +189,7 @@ func (t *token) fixruby() {
 					panic(strconv.Itoa(t.lineNumber()) + "行：ルビの文字列が指定されていません")
 				}
 
-				log.Println(strconv.Itoa(t.lineNumber()), "行：ルビの文字列が指定されていないのを無視します")
+				clog.Println(strconv.Itoa(t.lineNumber()), "行：空のルビを削除")
 
 				t.tokType = emptyToken
 
@@ -224,7 +224,15 @@ func (t *token) fixruby() {
 	}
 	if !found {
 
-		panic(t.lineNumberStr() + "行：ルビ文字列の終了位置が指定されていません。" + t.info() + "\n surrounding text: " + t.textContext())
+		if !oTolerant {
+			panic(t.lineNumberStr() + "行：ルビ文字列の終了位置が指定されていません。" + t.info() + "\n surrounding text: " + t.textContext())
+		}
+
+		clog.Println(t.lineNumberStr() + "行：《　=> 外字注記")
+
+		t.tokType = specialCharToken
+
+		return
 
 	}
 
@@ -242,7 +250,7 @@ func (t *token) fixruby() {
 
 			note.tokType = gaijiImgToken
 
-			log.Println("警告: " + msg)
+			msglog.Println("警告: " + msg)
 
 		} else {
 
@@ -252,7 +260,7 @@ func (t *token) fixruby() {
 				panic("ERROR: " + msg)
 			}
 
-			log.Println("警告: " + msg)
+			clog.Println("警告: ルビと注記の順番を入れ替え")
 
 			note.remove()
 
@@ -522,7 +530,7 @@ func (t *token) fixgaiji() {
 
 	if t.tokType == gaijiToken {
 
-		tokenizerLog.Println("gaiji conversion failed:", t.info())
+		msglog.Println("gaiji conversion failed:", t.info())
 
 		t.reformgaiji()
 
@@ -631,31 +639,31 @@ func (t *token) fixImpliedOpener() {
 	if m == "" {
 		return
 	}
+	/*
+		if t.next.tokType == rubyStartToken {
 
-	if t.next.tokType == rubyStartToken {
+			msg := "line " + strconv.Itoa(t.lineNumber()) + " wrong order of ruby and annotation:" + t.prev.String() + t.String() + t.next.String() + t.next.next.String()
 
-		msg := "line " + strconv.Itoa(t.lineNumber()) + " wrong order of ruby and annotation:" + t.prev.String() + t.String() + t.next.String() + t.next.next.String()
+			if !oTolerant {
+				panic(msg)
+			}
 
-		if !oTolerant {
-			panic(msg)
+			log.Println("WARNING: " + msg + " fixed")
+
+			e := new(token)
+
+			for e := t.next; e.tokType != rubyEndToken; e = e.next {
+			}
+
+			n2 := copyOf(t)
+
+			e.insertTokenRight(n2)
+
+			t.tokType = emptyToken
+
+			return
 		}
-
-		log.Println("WARNING: " + msg + " fixed")
-
-		e := new(token)
-
-		for e := t.next; e.tokType != rubyEndToken; e = e.next {
-		}
-
-		n2 := copyOf(t)
-
-		e.insertTokenRight(n2)
-
-		t.tokType = emptyToken
-
-		return
-	}
-
+	*/
 	switch m {
 
 	case "ルビ":
@@ -1579,7 +1587,7 @@ func (t *token) fixnote() {
 
 		t.setInnerString(string(r[:k]))
 
-		log.Println(oldStr, "=>", t.String())
+		clog.Println(t.lineNumberStr()+"行："+oldStr, "=>", t.String())
 	}
 
 	for _, e := range pairMarker {
@@ -1588,7 +1596,7 @@ func (t *token) fixnote() {
 
 			newstr := strings.TrimSuffix(t.innerString(), e+"おわり") + e + "終わり"
 
-			log.Println("line", t.lineNumber(), t.String(), "=>", newstr)
+			clog.Println(t.lineNumberStr()+"行：", t.String(), "=>", newstr)
 
 			t.setInnerString(newstr)
 
@@ -1627,7 +1635,7 @@ func (t *token) fixnote() {
 	}
 
 	if newstr != "" {
-		log.Println("line", t.lineNumber(), t.String(), "=>", newstr)
+		clog.Println(t.lineNumberStr()+"行：", t.String(), "=>", newstr)
 
 		t.setInnerString(newstr)
 	}
@@ -1636,7 +1644,7 @@ func (t *token) fixnote() {
 
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			log.Println(t.lineNumber(), "行: ", "ブロック開始注記の前には改行必須")
+			clog.Println(t.lineNumber(), "行: ", "ブロック開始注記の前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
@@ -1644,7 +1652,7 @@ func (t *token) fixnote() {
 
 		if t.next != nil && !t.next.isLineBreak() {
 
-			log.Println(t.lineNumber(), "行: ", "ブロック開始注記の後には改行必須")
+			clog.Println(t.lineNumber(), "行: ", "ブロック開始注記の後に改行")
 
 			t.insertTokenRight(newTokenOfType(endOfLineToken))
 
@@ -1655,7 +1663,7 @@ func (t *token) fixnote() {
 
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			log.Println(t.lineNumber(), "行: ", "ブロック終了注記の前には改行必須")
+			clog.Println(t.lineNumber(), "行: ", "ブロック終了注記の前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
@@ -1663,7 +1671,7 @@ func (t *token) fixnote() {
 
 		if t.next != nil && !t.next.isLineBreak() {
 
-			log.Println(t.lineNumber(), "行: ", "ブロック終了注記の後には改行必須")
+			clog.Println(t.lineNumber(), "行: ", "ブロック終了注記の後に改行")
 
 			t.insertTokenRight(newTokenOfType(endOfLineToken))
 
@@ -1675,7 +1683,7 @@ func (t *token) fixnote() {
 		//if t.prev != nil && t.prev.tokType != endOfLineToken {
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			log.Println(t.lineNumber(), "字下げ前は改行")
+			log.Println(t.lineNumber(), "行：", "字下げ前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
@@ -1697,7 +1705,7 @@ func (t *token) fixIndentationRound2() {
 			nstr := e.innerString()[:idx+len("字下げ")]
 
 			if nstr != e.innerString() {
-				log.Println("警告：", strconv.Itoa(e.lineNumber()), "行", e.String(), "=>", nstr)
+				clog.Println("警告：", strconv.Itoa(e.lineNumber()), "行", e.String(), "=>", nstr)
 				e.originalContent = e.innerString()
 				e.setInnerString(nstr)
 				e.modified = true
@@ -1719,7 +1727,7 @@ func (t *token) fixIndentationRound2() {
 			continue
 		}
 
-		log.Println("line", e.lineNumber(), e.String(), " Attempting to fix unmatched closer")
+		log.Println(e.lineNumberStr(), "行のあたり：字下げが入れ子になっているか？修復を試みる")
 
 		c2 := 0
 
@@ -1764,10 +1772,9 @@ func (t *token) fixIndentationRound2() {
 
 		if c2 != 2 {
 
-			panic("ERROR: " + "line " + strconv.Itoa(e.lineNumber()) + " closer without opener " + e.String())
+			panic(e.lineNumberStr() + "行：修復不能")
 
 		}
-		log.Println("fixed")
 		c++
 	}
 
@@ -1781,7 +1788,7 @@ func (t *token) getIndentation() int {
 
 	case strings.Contains(str, "天付き") && strings.Contains(str, "折り返して"):
 
-		return 0
+		return 0 - t.getTopMargin()
 
 	case strings.Contains(str, "折り返して"):
 

@@ -18,7 +18,12 @@ func (t *token) cleanup() {
 
 		if e.tokType == accentStartToken {
 			if withinAccent {
-				panic(e.lineNumberStr() + "行：アクセント注記が入れ子")
+				if !oTolerant {
+					panic(e.lineNumberStr() + "行：アクセント注記が入れ子")
+				} else {
+					clog.Println(e.lineNumberStr() + "行：〔 => 外字注記")
+					accentStart.tokType = specialCharToken
+				}
 			}
 			withinAccent = true
 			accentStart = e
@@ -57,6 +62,9 @@ func (t *token) cleanup() {
 		if stopProcessing {
 			break
 		}
+	}
+	if withinAccent {
+		accentStart.tokType = specialCharToken
 	}
 }
 
@@ -134,7 +142,7 @@ func getnote(start, end *token) *token {
 
 }
 
-func (t *token) removeEmptyToken() {
+func (t *token) cleanupTokenString() {
 
 	e := t.firstToken().next
 
@@ -144,8 +152,19 @@ func (t *token) removeEmptyToken() {
 
 	for ; e != nil; e = e.next {
 
-		if e.prev.tokType == emptyToken {
+		switch {
+
+		case e.prev.tokType == emptyToken:
 			e.prev.remove()
+
+		case e.tokType == rubyParentStartToken:
+			if e.prev == nil || e.prev.tokType != rubyGroupStartToken {
+				e.tokType = specialCharToken
+			}
+
+		case e.tokType == noteEndToken:
+			e.tokType = specialCharToken
+
 		}
 	}
 }

@@ -8,17 +8,17 @@ import (
 
 func renderLaTeX(n *Node, w *strings.Builder) {
 
-	Serialize(n, w, azrLaTexFormatterOpen, azrLaTexFormatterClose)
+	Serialize(n, w, azrLaTeXFormatterOpen, azrLaTeXFormatterClose)
 
 }
 
 func renderInnerLaTeX(n *Node, w *strings.Builder) {
 
-	SerializeDescendants(n, w, azrLaTexFormatterOpen, azrLaTexFormatterClose)
+	SerializeDescendants(n, w, azrLaTeXFormatterOpen, azrLaTeXFormatterClose)
 
 }
 
-func azrLaTexFormatterOpen(n *Node, w *strings.Builder) {
+func azrLaTeXFormatterOpen(n *Node, w *strings.Builder) {
 
 	if _, ok := n.Attr["ignore"]; ok {
 		return
@@ -30,121 +30,124 @@ func azrLaTexFormatterOpen(n *Node, w *strings.Builder) {
 		w.WriteString(n.rawStringLaTeX())
 
 	case "paragraph":
-		paragraphStartLaTex(n, w)
+		paragraphStartLaTeX(n, w)
 
 	case "kanbun":
-		kanbunStartLaTex(n, w)
+		kanbunStartLaTeX(n, w)
 
 	case "ruby group":
-		rubyGroupOpenLatex(n, w)
+		rubyGroupOpenLaTeX(n, w)
 
 	case "ruby parent":
-		rubyParentStartLatex(n, w)
+		rubyParentStartLaTeX(n, w)
 
 	case "ruby":
-		rubyOpenLaTex(n, w)
+		rubyOpenLaTeX(n, w)
 
 	case "empty line":
-		emptyLineLatex(n, w)
+		emptyLineLaTeX(n, w)
 
 	case "section":
 		return
 
-	case "gaiji char":
-		gaijiCharOpenLaTex(n, w)
-
-	case "kunoji":
-		kunojiOpenLaTex(n, w)
-
 	case "indentation":
-		indentationOpenLaTex(n, w)
+		indentationOpenLaTeX(n, w)
 
 	case "bottom align":
-		bottomAlignOpenLaTex(n, w)
+		bottomAlignOpenLaTeX(n, w)
 
 	case "emphasis":
-		emphOpenLaTex(n, w)
+		emphOpenLaTeX(n, w)
 
 	case "line decoration":
-		lineDecorationOpenLaTex(n, w)
+		lineDecorationOpenLaTeX(n, w)
 
 	case "narrow paragraph":
-		narrowParOpenLaTex(n, w)
+		narrowParOpenLaTeX(n, w)
 
 	case "inline section":
-		inlineHeaderOpenLaTex(n, w)
+		inlineHeaderOpenLaTeX(n, w)
 
 	case "window section":
-		inlineHeaderOpenLaTex(n, w)
+		inlineHeaderOpenLaTeX(n, w)
 
 	case "inline note":
-		inlineNoteOpenLaTex(n, w)
+		inlineNoteOpenLaTeX(n, w)
 
 	case "rubylike note":
-		rubyLikeOpenLaTex(n, w)
+		rubyLikeOpenLaTeX(n, w)
 
 	case "caption":
-		captionOpenLaTex(n, w)
+		captionOpenLaTeX(n, w)
 
 	case "font shape":
-		fontShapeOpenLaTex(n, w)
+		fontShapeOpenLaTeX(n, w)
 
 	case "font size":
-		fontSizeOpenLaTex(n, w)
+		fontSizeOpenLaTeX(n, w)
 
 	case "offset":
-		subsupOpenLaTex(n, w)
+		subsupOpenLaTeX(n, w)
 
 	case "text direction":
-		textDirOpenLaTex(n, w)
+		textDirOpenLaTeX(n, w)
 
 	case "section title":
-		sectionTitleLaTex(n, w)
+		sectionTitleLaTeX(n, w)
 
 	case "figure":
-		figureOpenLaTex(n, w)
+		figureOpenLaTeX(n, w)
 
 	case "image":
-		imageLaTex(n, w)
+		imageLaTeX(n, w)
 
 	case "pagination":
-		paginationLaTex(n, w)
+		paginationLaTeX(n, w)
+
+	case "accent start":
+		return
+
+	case "accent end":
+		return
 
 	case "kunten":
-		kuntenLaTex(n, w)
+		kuntenLaTeX(n, w)
 
 	case "okurigana":
-		okuriganaLaTex(n, w)
+		okuriganaLaTeX(n, w)
 
 	case "centering":
-		centeringOpenLaTex(n, w)
+		centeringOpenLaTeX(n, w)
 
 	case "bibliographical info":
-		bibInfoOpenLaTex(n, w)
+		bibInfoOpenLaTeX(n, w)
+
+	case "kunoji":
+		kunojiOpenLaTeX(n, w)
 
 	case "gaiji note":
-		gaijiNoteOpenLaTex(n, w)
+		gaijiNoteOpenLaTeX(n, w)
 
 	case "warichu line break":
 		w.WriteString(`\\`)
 
-	case "special char":
-		specialCharOpenLaTex(n, w)
+	case "gaiji char":
+		gaijiCharOpenLaTeX(n, w)
 
-	case "accent string":
-		accentOpenLaTex(n, w)
+	case "special char":
+		specialCharOpenLaTeX(n, w)
 
 	case "metadata":
-		metadataOpenLaTex(n, w)
+		metadataOpenLaTeX(n, w)
 
 	case "meta title":
-		metaTitleOpenLaTex(n, w)
+		metaTitleOpenLaTeX(n, w)
 
 	case "meta subtitle":
-		metaSubtitleOpenLaTex(n, w)
+		metaSubtitleOpenLaTeX(n, w)
 
 	case "meta contributor":
-		metaContributorOpenLaTex(n, w)
+		metaContributorOpenLaTeX(n, w)
 
 	case "main text":
 		return
@@ -153,16 +156,19 @@ func azrLaTexFormatterOpen(n *Node, w *strings.Builder) {
 		return
 
 	case "unknown":
-		unknownOpenLaTex(n, w)
+		unknownOpenLaTeX(n, w)
+
+	case "unknown block type":
+		unknownBlockOpenLaTeX(n, w)
 
 	default:
-		log.Println("Renderer: unknown node type: " + n.String())
-		unknownOpenLaTex(n, w)
+		msglog.Println("Renderer: unknown node type: " + n.String())
+		unknownOpenLaTeX(n, w)
 	}
 
 }
 
-func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
+func azrLaTeXFormatterClose(n *Node, w *strings.Builder) {
 
 	if _, ok := n.Attr["ignore"]; ok {
 		return
@@ -185,16 +191,16 @@ func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
 		}
 
 	case "kanbun":
-		kanbunEndLaTex(n, w)
+		kanbunEndLaTeX(n, w)
 
 	case "ruby group":
-		rubyGroupCloseLatex(n, w)
+		rubyGroupCloseLaTeX(n, w)
 
 	case "ruby parent":
-		rubyParentCloseLaTex(n, w)
+		rubyParentCloseLaTeX(n, w)
 
 	case "ruby":
-		rubyCloseLaTex(n, w)
+		rubyCloseLaTeX(n, w)
 
 	case "empty line":
 		return
@@ -203,19 +209,19 @@ func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "indentation":
-		indentationCloseLaTex(n, w)
+		indentationCloseLaTeX(n, w)
 
 	case "bottom align":
-		bottomAlignCloseLaTex(n, w)
+		bottomAlignCloseLaTeX(n, w)
 
 	case "emphasis":
 		standardCloserLaTeX(n, w)
 
 	case "line decoration":
-		lineDecorationCloseLaTex(n, w)
+		lineDecorationCloseLaTeX(n, w)
 
 	case "narrow paragraph":
-		narrowParCloseLaTex(n, w)
+		narrowParCloseLaTeX(n, w)
 
 	case "inline section":
 		standardCloserLaTeX(n, w)
@@ -224,13 +230,13 @@ func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
 		standardCloserLaTeX(n, w)
 
 	case "inline note":
-		inlineNoteCloseLaTex(n, w)
+		inlineNoteCloseLaTeX(n, w)
 
 	case "rubylike note":
-		rubyLikeCloseLaTex(n, w)
+		rubyLikeCloseLaTeX(n, w)
 
 	case "caption":
-		captionCloseLaTex(n, w)
+		captionCloseLaTeX(n, w)
 
 	case "font shape":
 		standardCloserLaTeX(n, w)
@@ -239,21 +245,27 @@ func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
 		standardCloserLaTeX(n, w)
 
 	case "offset":
-		subsupCloseLaTex(n, w)
+		subsupCloseLaTeX(n, w)
 
 	case "text direction":
-		textDirCloseLaTex(n, w)
+		textDirCloseLaTeX(n, w)
 
 	case "section title":
-		sectionTitleEndLaTex(n, w)
+		sectionTitleEndLaTeX(n, w)
 
 	case "figure":
-		figureCloseLaTex(n, w)
+		figureCloseLaTeX(n, w)
 
 	case "image":
 		return
 
 	case "pagination":
+		return
+
+	case "accent start":
+		return
+
+	case "accent end":
 		return
 
 	case "kunten":
@@ -263,28 +275,46 @@ func azrLaTexFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "centering":
-		centeringCloseLaTex(n, w)
+		centeringCloseLaTeX(n, w)
 
 	case "bibliographical info":
 		return
 
+	case "gaiji char":
+		return
+
+	case "gaiji note":
+		return
+
+	case "warichu line break":
+		return
+
+	case "special char":
+		return
+
 	case "metadata":
-		metadataCloseLaTex(n, w)
+		metadataCloseLaTeX(n, w)
 
 	case "meta title":
-		metaTitleCloseLaTex(n, w)
+		metaTitleCloseLaTeX(n, w)
 
 	case "meta subtitle":
-		metaSubtitleCloseLaTex(n, w)
+		metaSubtitleCloseLaTeX(n, w)
 
 	case "meta contributor":
-		metaContributorCloseLaTex(n, w)
+		metaContributorCloseLaTeX(n, w)
 
 	case "main text":
 		return
 
 	case "document":
 		return
+
+	case "unknown":
+		return
+
+	case "unknown block type":
+		unknownBlockCloseLaTeX(n, w)
 
 	default:
 		return
@@ -305,13 +335,13 @@ func standardCloserLaTeX(n *Node, w *strings.Builder) {
 
 }
 
-func paragraphStartLaTex(n *Node, w *strings.Builder) {
+func paragraphStartLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(n.Attr["latex extra"])
 
 }
 
-func emphOpenLaTex(n *Node, w *strings.Builder) {
+func emphOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvKenten"))
 
@@ -354,25 +384,25 @@ func emphOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func emphCloseLaTex(n *Node, w *strings.Builder) {
+func emphCloseLaTeX(n *Node, w *strings.Builder) {
 
 	standardCloserLaTeX(n, w)
 
 }
 
-func rubyOpenLaTex(n *Node, w *strings.Builder) {
+func rubyOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`}{`)
 
 }
 
-func rubyCloseLaTex(n *Node, w *strings.Builder) {
+func rubyCloseLaTeX(n *Node, w *strings.Builder) {
 
 	standardCloserLaTeX(n, w)
 
 }
 
-func rubyLikeOpenLaTex(n *Node, w *strings.Builder) {
+func rubyLikeOpenLaTeX(n *Node, w *strings.Builder) {
 
 	for _, e := range linearizeDescendants(n) {
 		if strings.HasPrefix(e.Attr["type"], "ruby") {
@@ -395,7 +425,7 @@ func rubyLikeOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func rubyLikeCloseLaTex(n *Node, w *strings.Builder) {
+func rubyLikeCloseLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["latex dblruby"] == "true" {
 
@@ -461,7 +491,7 @@ func doubleSidedRubyCloseLaTeX(n *Node, w *strings.Builder) {
 	}
 }
 
-func fontShapeOpenLaTex(n *Node, w *strings.Builder) {
+func fontShapeOpenLaTeX(n *Node, w *strings.Builder) {
 
 	switch n.Attr["font shape"] {
 	case "太字":
@@ -474,7 +504,7 @@ func fontShapeOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func fontSizeOpenLaTex(n *Node, w *strings.Builder) {
+func fontSizeOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString("{")
 
@@ -511,7 +541,7 @@ func fontSizeOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func sectionTitleLaTex(n *Node, w *strings.Builder) {
+func sectionTitleLaTeX(n *Node, w *strings.Builder) {
 
 	switch n.sectionLevel() {
 
@@ -541,13 +571,13 @@ func sectionTitleLaTex(n *Node, w *strings.Builder) {
 	w.WriteString("{")
 }
 
-func sectionTitleEndLaTex(n *Node, w *strings.Builder) {
+func sectionTitleEndLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString("}\n")
 
 }
 
-func imageLaTex(n *Node, w *strings.Builder) {
+func imageLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["style"] == "inline" {
 		inlineImageLaTeX(n, w)
@@ -601,7 +631,7 @@ func inlineImageLaTeX(n *Node, w *strings.Builder) {
 
 }
 
-func indentationOpenLaTex(n *Node, w *strings.Builder) {
+func indentationOpenLaTeX(n *Node, w *strings.Builder) {
 
 	for _, e := range linearizeDescendants(n) {
 
@@ -623,7 +653,7 @@ func indentationOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func indentationCloseLaTex(n *Node, w *strings.Builder) {
+func indentationCloseLaTeX(n *Node, w *strings.Builder) {
 
 	for _, e := range linearizeDescendants(n) {
 
@@ -642,7 +672,7 @@ func indentationCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func bottomAlignOpenLaTex(n *Node, w *strings.Builder) {
+func bottomAlignOpenLaTeX(n *Node, w *strings.Builder) {
 
 	if !n.isBlockFormat() {
 
@@ -674,7 +704,7 @@ func bottomAlignOpenLaTex(n *Node, w *strings.Builder) {
 	}
 }
 
-func bottomAlignCloseLaTex(n *Node, w *strings.Builder) {
+func bottomAlignCloseLaTeX(n *Node, w *strings.Builder) {
 
 	if !n.isBlockFormat() {
 
@@ -692,7 +722,7 @@ func bottomAlignCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func inlineNoteOpenLaTex(n *Node, w *strings.Builder) {
+func inlineNoteOpenLaTeX(n *Node, w *strings.Builder) {
 
 	wt := new(strings.Builder)
 
@@ -741,7 +771,7 @@ func inlineNoteOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func inlineNoteCloseLaTex(n *Node, w *strings.Builder) {
+func inlineNoteCloseLaTeX(n *Node, w *strings.Builder) {
 
 	for _, e := range linearizeDescendants(n) {
 
@@ -753,7 +783,7 @@ func inlineNoteCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func inlineHeaderOpenLaTex(n *Node, w *strings.Builder) {
+func inlineHeaderOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvInlineHeader"))
 
@@ -763,17 +793,17 @@ func inlineHeaderOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func inlineHeaderCloseLaTex(n *Node, w *strings.Builder) {
+func inlineHeaderCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`}`)
 
 }
 
-func kuntenLaTex(n *Node, w *strings.Builder) {
+func kuntenLaTeX(n *Node, w *strings.Builder) {
 
 	if ok, _ := n.withinScopeOfType("kanbun"); ok {
 
-		kanbunKuntenLaTex(n, w)
+		kanbunKuntenLaTeX(n, w)
 
 		return
 
@@ -808,7 +838,7 @@ func kuntenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func kanbunKuntenLaTex(n *Node, w *strings.Builder) {
+func kanbunKuntenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`[`)
 
@@ -818,11 +848,11 @@ func kanbunKuntenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func okuriganaLaTex(n *Node, w *strings.Builder) {
+func okuriganaLaTeX(n *Node, w *strings.Builder) {
 
 	if ok, _ := n.withinScopeOfType("kanbun"); ok {
 
-		kanbunOkuriganaLaTex(n, w)
+		kanbunOkuriganaLaTeX(n, w)
 
 		return
 
@@ -841,7 +871,7 @@ func okuriganaLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func kanbunOkuriganaLaTex(n *Node, w *strings.Builder) {
+func kanbunOkuriganaLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`{`)
 
@@ -851,11 +881,11 @@ func kanbunOkuriganaLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func lineDecorationOpenLaTex(n *Node, w *strings.Builder) {
+func lineDecorationOpenLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["style"] == "罫囲み" {
 
-		boxedTextOpenLaTex(n, w)
+		boxedTextOpenLaTeX(n, w)
 
 		return
 	}
@@ -907,7 +937,7 @@ func lineDecorationOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func boxedTextOpenLaTex(n *Node, w *strings.Builder) {
+func boxedTextOpenLaTeX(n *Node, w *strings.Builder) {
 
 	if n.isBlockFormat() {
 
@@ -941,7 +971,7 @@ func boxedTextOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func lineDecorationCloseLaTex(n *Node, w *strings.Builder) {
+func lineDecorationCloseLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["style"] == "罫囲み" {
 
@@ -978,7 +1008,8 @@ func boxedTextCloseLaTeX(n *Node, w *strings.Builder) {
 
 }
 
-func lineDecorationCloseLatex(n *Node, w *strings.Builder) {
+/*
+func lineDecorationCloseLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["style"] != "罫囲み" {
 
@@ -989,8 +1020,9 @@ func lineDecorationCloseLatex(n *Node, w *strings.Builder) {
 	boxedTextCloseLaTeX(n, w)
 
 }
+*/
 
-func narrowParOpenLaTex(n *Node, w *strings.Builder) {
+func narrowParOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("begin"))
 
@@ -1012,7 +1044,7 @@ func narrowParOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func narrowParCloseLaTex(n *Node, w *strings.Builder) {
+func narrowParCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("end"))
 
@@ -1022,7 +1054,7 @@ func narrowParCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func subsupOpenLaTex(n *Node, w *strings.Builder) {
+func subsupOpenLaTeX(n *Node, w *strings.Builder) {
 
 	switch {
 
@@ -1043,7 +1075,7 @@ func subsupOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func textDirOpenLaTex(n *Node, w *strings.Builder) {
+func textDirOpenLaTeX(n *Node, w *strings.Builder) {
 
 	switch {
 
@@ -1081,7 +1113,7 @@ func textDirOpenLaTex(n *Node, w *strings.Builder) {
 	w.WriteString(`{`)
 }
 
-func textDirCloseLaTex(n *Node, w *strings.Builder) {
+func textDirCloseLaTeX(n *Node, w *strings.Builder) {
 
 	if n.isBlockFormat() {
 
@@ -1094,7 +1126,7 @@ func textDirCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func paginationLaTex(n *Node, w *strings.Builder) {
+func paginationLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvNewpage"))
 
@@ -1104,13 +1136,13 @@ func paginationLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func subsupCloseLaTex(n *Node, w *strings.Builder) {
+func subsupCloseLaTeX(n *Node, w *strings.Builder) {
 
 	standardCloserLaTeX(n, w)
 
 }
 
-func centeringOpenLaTex(n *Node, w *strings.Builder) {
+func centeringOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd(`vspace*`))
 
@@ -1120,14 +1152,14 @@ func centeringOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func centeringCloseLaTex(n *Node, w *strings.Builder) {
+func centeringCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("vfill"))
 
 	w.WriteString("\n")
 }
 
-func figureOpenLaTex(n *Node, w *strings.Builder) {
+func figureOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("begin"))
 
@@ -1137,7 +1169,7 @@ func figureOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func figureCloseLaTex(n *Node, w *strings.Builder) {
+func figureCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("end"))
 
@@ -1147,29 +1179,29 @@ func figureCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func bibInfoOpenLaTex(n *Node, w *strings.Builder) {
+func bibInfoOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd(`newpage`) + "\n")
 
 }
 
-func bibInfoCloseLaTex(n *Node, w *strings.Builder) {
+func bibInfoCloseLaTeX(n *Node, w *strings.Builder) {
 
 	return
 
 }
 
-func gaijiNoteOpenLaTex(n *Node, w *strings.Builder) {
+func gaijiNoteOpenLaTeX(n *Node, w *strings.Builder) {
 
 	if n.withinNoteExclScope() {
 		return
 	}
 
-	unknownOpenLaTex(n, w)
+	unknownOpenLaTeX(n, w)
 
 }
 
-func rubyParentStartLatex(n *Node, w *strings.Builder) {
+func rubyParentStartLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Attr["latex dblruby"] == "true" {
 
@@ -1180,7 +1212,7 @@ func rubyParentStartLatex(n *Node, w *strings.Builder) {
 
 }
 
-func rubyParentCloseLaTex(n *Node, w *strings.Builder) {
+func rubyParentCloseLaTeX(n *Node, w *strings.Builder) {
 
 	e := n.firstDescendantOfType("gaiji note")
 
@@ -1193,25 +1225,25 @@ func rubyParentCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func specialCharOpenLaTex(n *Node, w *strings.Builder) {
+func specialCharOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(n.rawStringLaTeX())
 
 }
 
-func gaijiCharOpenLaTex(n *Node, w *strings.Builder) {
+func gaijiCharOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(n.rawStringLaTeX())
 
 }
 
-func kunojiOpenLaTex(n *Node, w *strings.Builder) {
+func kunojiOpenLaTeX(n *Node, w *strings.Builder) {
 
 	addToStringsBuilder(w, `{`, n.rawStringLaTeX(), `}`)
 
 }
 
-func metadataOpenLaTex(n *Node, w *strings.Builder) {
+func metadataOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd(`thispagestyle`))
 
@@ -1219,7 +1251,7 @@ func metadataOpenLaTex(n *Node, w *strings.Builder) {
 
 	w.WriteString("\n")
 
-	centeringOpenLaTex(n, w)
+	centeringOpenLaTeX(n, w)
 
 	w.WriteString(latexCmd(`vskip`))
 
@@ -1227,9 +1259,9 @@ func metadataOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func metadataCloseLaTex(n *Node, w *strings.Builder) {
+func metadataCloseLaTeX(n *Node, w *strings.Builder) {
 
-	centeringCloseLaTex(n, w)
+	centeringCloseLaTeX(n, w)
 
 	w.WriteString(latexCmd(`newpage`))
 
@@ -1237,33 +1269,33 @@ func metadataCloseLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func metaTitleOpenLaTex(n *Node, w *strings.Builder) {
+func metaTitleOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvTitle"))
 	w.WriteString(`{`)
 
 }
 
-func metaTitleCloseLaTex(n *Node, w *strings.Builder) {
+func metaTitleCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString("}\n")
 
 }
 
-func metaSubtitleOpenLaTex(n *Node, w *strings.Builder) {
+func metaSubtitleOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvSubtitle"))
 
 	w.WriteString(`{`)
 }
 
-func metaSubtitleCloseLaTex(n *Node, w *strings.Builder) {
+func metaSubtitleCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString("}\n")
 
 }
 
-func metaContributorOpenLaTex(n *Node, w *strings.Builder) {
+func metaContributorOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("azconvContributor"))
 
@@ -1271,13 +1303,13 @@ func metaContributorOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func metaContributorCloseLaTex(n *Node, w *strings.Builder) {
+func metaContributorCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(`}` + "\n")
 
 }
 
-func captionOpenLaTex(n *Node, w *strings.Builder) {
+func captionOpenLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString(latexCmd("caption"))
 
@@ -1285,25 +1317,39 @@ func captionOpenLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func captionCloseLaTex(n *Node, w *strings.Builder) {
+func captionCloseLaTeX(n *Node, w *strings.Builder) {
 
 	w.WriteString("}\n")
 
 }
 
-func accentOpenLaTex(n *Node, w *strings.Builder) {
+func accentOpenLaTeX(n *Node, w *strings.Builder) {
 
 	accentOpenTxt(n, w)
 
 }
 
-func unknownOpenLaTex(n *Node, w *strings.Builder) {
+func unknownOpenLaTeX(n *Node, w *strings.Builder) {
 
 	addToStringsBuilder(w, `{`, latexCmd(`small`), ` `)
 
 	addToStringsBuilder(w, noteStartStr, n.Attr["raw"], noteEndStr, `}`)
 	//addToStringsBuilder(w, noteStartStr, n.Attr["raw"], noteEndStr)
 
+}
+
+func unknownBlockOpenLaTeX(n *Node, w *strings.Builder) {
+
+	addToStringsBuilder(w, `{`, latexCmd(`small`), ` `)
+
+	addToStringsBuilder(w, noteStartStr, n.Attr["raw"], noteEndStr, `}`, "\n")
+}
+
+func unknownBlockCloseLaTeX(n *Node, w *strings.Builder) {
+
+	addToStringsBuilder(w, `{`, latexCmd(`small`), ` `)
+
+	addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr, `}`, "\n")
 }
 
 func documentStartLaTeX(n *Node, w *strings.Builder) {
@@ -1324,7 +1370,7 @@ func documentEndLaTeX(n *Node, w *strings.Builder) {
 
 }
 
-func emptyLineLatex(n *Node, w *strings.Builder) {
+func emptyLineLaTeX(n *Node, w *strings.Builder) {
 
 	if n.Parent() != nil {
 		if n.Parent().Attr["type"] == "centering" {
@@ -1336,7 +1382,7 @@ func emptyLineLatex(n *Node, w *strings.Builder) {
 
 }
 
-func rubyGroupOpenLatex(n *Node, w *strings.Builder) {
+func rubyGroupOpenLaTeX(n *Node, w *strings.Builder) {
 
 	defer func() {
 		for _, e := range linearizeDescendants(n) {
@@ -1436,7 +1482,7 @@ func rubyGroupOpenLatex(n *Node, w *strings.Builder) {
 
 }
 
-func rubyGroupCloseLatex(n *Node, w *strings.Builder) {
+func rubyGroupCloseLaTeX(n *Node, w *strings.Builder) {
 
 	for _, e := range linearizeDescendants(n) {
 
@@ -1451,7 +1497,7 @@ func rubyGroupCloseLatex(n *Node, w *strings.Builder) {
 
 }
 
-func kanbunStartLaTex(n *Node, w *strings.Builder) {
+func kanbunStartLaTeX(n *Node, w *strings.Builder) {
 
 	if n.prev != nil && n.prev.Attr["type"] == "kanbun" {
 		return
@@ -1463,7 +1509,7 @@ func kanbunStartLaTex(n *Node, w *strings.Builder) {
 
 }
 
-func kanbunEndLaTex(n *Node, w *strings.Builder) {
+func kanbunEndLaTeX(n *Node, w *strings.Builder) {
 
 	if n.next != nil && n.next.Attr["type"] == "kanbun" {
 		w.WriteString("\n\n")

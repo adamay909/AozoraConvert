@@ -1,7 +1,7 @@
 package aozoraconvert
 
 import (
-	"log"
+	"errors"
 	"strings"
 
 	"golang.org/x/text/encoding/japanese"
@@ -16,9 +16,9 @@ func ToSJIS(text string) string {
 
 	if err != nil {
 
-		log.Println("errors while converting to ShiftJIS.")
+		err = errors.Join(errors.New("errors while converting to ShiftJIS:"), err)
 
-		log.Println(err)
+		msglog.Println(err)
 
 	}
 
@@ -35,9 +35,9 @@ func ToUTF8(data []byte) string {
 
 	if err != nil {
 
-		log.Println("errors while converting to UTF-8.")
+		err = errors.Join(errors.New("errors while converting to UTF-8."), err)
 
-		log.Println(err)
+		msglog.Println(err)
 
 		return ""
 

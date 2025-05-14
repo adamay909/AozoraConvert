@@ -1,7 +1,6 @@
 package aozoraconvert
 
 import (
-	"log"
 	"strings"
 )
 
@@ -204,7 +203,7 @@ func azrTxtFormatterOpen(n *Node, w *strings.Builder) {
 		noteStringOpenTxt(n, w)
 
 	default:
-		log.Println("Renderer: unknown node type: " + n.String())
+		msglog.Println("Renderer: unknown node type: " + n.String())
 
 		if oJis0208 {
 			addToStringsBuilder(w, noteStartStr, n.rawString(), noteEndStr)
@@ -315,10 +314,20 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 
 	case "centering":
 		return
+
 	case "bibliographical info":
 		return
 
+	case "gaiji char":
+		return
+
+	case "kunoji":
+		return
+
 	case "gaiji note":
+		return
+
+	case "warichu line break":
 		return
 
 	case "metadata":
@@ -333,7 +342,16 @@ func azrTxtFormatterClose(n *Node, w *strings.Builder) {
 	case "meta contributor":
 		w.WriteString("\n")
 
+	case "special char":
+		return
+
+	case "main text":
+		return
+
 	case "document":
+		return
+
+	case "unknown":
 		return
 
 	case "unknown block type":
@@ -402,6 +420,15 @@ func indentationOpenTxt(n *Node, w *strings.Builder) {
 
 			return
 		}
+	}
+
+	if n.isJisage() && n.firstChild.Attr["type"] == "section title" && n.firstChild.next == nil {
+
+		addToStringsBuilder(w, noteStartStr, strings.TrimPrefix(n.rawString(), blockStartStr), noteEndStr)
+
+		n.SetAttr("single line jisage", "true")
+
+		return
 	}
 
 	noteStringOpenTxt(n, w)

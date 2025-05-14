@@ -3,7 +3,6 @@ package aozoraconvert
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -227,7 +226,22 @@ func (n *Node) setIndentationAttr(e *token) {
 
 	n.SetAttr("top margin", strconv.Itoa(e.getTopMargin()))
 
-	n.SetAttr("indent", "-"+strconv.Itoa(e.getIndentation()))
+	ind := e.getIndentation()
+
+	switch {
+
+	case ind < 0:
+
+		n.SetAttr("indent", strconv.Itoa(ind))
+
+	case ind > 0:
+
+		n.SetAttr("indent", strconv.Itoa(ind))
+
+	default:
+
+		n.SetAttr("indent", "0")
+	}
 }
 
 func (n *Node) setNarrowParagraphAttr(e *token) {
@@ -342,7 +356,7 @@ func (n *Node) setImageSizeFromFile() {
 
 	n.SetAttr("height", "Height")
 
-	log.Println("setting image from file not implemented")
+	msglog.Println("setting image from file not implemented")
 
 	return
 

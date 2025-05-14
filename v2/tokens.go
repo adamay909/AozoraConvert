@@ -2,7 +2,6 @@ package aozoraconvert
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -560,7 +559,7 @@ func (t *token) getRefStrings() []string {
 
 				ostr = newstr
 
-				log.Println("line ", t.lineNumber(), t.String(), "前方参照文字列の指定にはルビ不要")
+				clog.Println("line ", t.lineNumber(), t.String(), "前方参照文字列の指定のルビを削除")
 			}
 		}
 
@@ -722,7 +721,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 			panic("Can't find place to insert implied opener note. " + t.info())
 		}
 
-		log.Println("Can't find place to insert implied opener note. Defaulting to start of line. " + t.info())
+		clog.Println(t.lineNumberStr() + "行：前方参照の文字列が見つからず。行頭まで参照とみなす。")
 		e.insertTokenRight(nt)
 		return
 

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"io"
-	"log"
 	"mime"
 	"path/filepath"
 	"strings"
@@ -44,7 +43,7 @@ func NewEbookFromZip(dz []byte) (bk *Book) {
 
 	arch, err := zip.NewReader(bytes.NewReader(dz), int64(len(dz)))
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 		return
 	}
 
@@ -61,7 +60,7 @@ func NewEbookFromZip(dz []byte) (bk *Book) {
 			bk.Body, err = AST(readStringFromFile(r))
 
 			if err != nil {
-				log.Println(err)
+				msglog.Println(err)
 				return
 			}
 
@@ -80,14 +79,14 @@ func NewEbookFromZip(dz []byte) (bk *Book) {
 
 		defer r.Close()
 		if err != nil {
-			log.Println(err)
+			msglog.Println(err)
 			return
 		}
 
 		fi.Data, err = io.ReadAll(r)
 
 		if err != nil {
-			log.Println(err)
+			msglog.Println(err)
 			return
 		}
 
@@ -122,7 +121,7 @@ func readStringFromFile(f io.Reader) string {
 	d, err := io.ReadAll(f)
 
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 		return ""
 	}
 

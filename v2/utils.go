@@ -5,18 +5,6 @@ import (
 	"strings"
 )
 
-/*
-func newRubyBaseMarker() *azAtom {
-
-	return &azAtom{
-		aType: rubyBaseStartTag,
-		aData: rubyBaseStartStr,
-		aNext: nil,
-		aPrev: nil,
-	}
-
-}
-*/
 func (tok *token) noteText() (r string) {
 
 	if tok.tokType != gaijiToken {

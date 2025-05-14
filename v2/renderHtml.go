@@ -38,7 +38,7 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 	switch n.Attr["type"] {
 
 	case "text":
-		w.WriteString(n.Attr["raw"])
+		w.WriteString(n.rawString())
 
 	case "paragraph":
 		w.WriteString("<p>")
@@ -62,12 +62,6 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 
 	case "section":
 		w.WriteString("<section>\n")
-
-	case "gaiji char":
-		gaijiCharOpenHTML(n, w)
-
-	case "kunoji":
-		kunojiOpenHTML(n, w)
 
 	case "indentation":
 		indentationOpenHTML(n, w)
@@ -127,11 +121,16 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 	case "pagination":
 		return
 
+	case "accent start":
+		return
+
+	case "accent end":
+		return
+
 	case "kunten":
 		kuntenHTML(n, w)
 
 	case "okurigana":
-
 		okuriganaHTML(n, w)
 
 	case "centering":
@@ -140,17 +139,20 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 	case "bibliographical info":
 		bibInfoOpenHTML(n, w)
 
+	case "kunoji":
+		kunojiOpenHTML(n, w)
+
 	case "gaiji note":
 		gaijiNoteOpenHTML(n, w)
 
 	case "warichu line break":
 		w.WriteString("\n")
 
+	case "gaiji char":
+		gaijiCharOpenHTML(n, w)
+
 	case "special char":
 		specialCharOpenHTML(n, w)
-
-	case "accent string":
-		accentOpenHTML(n, w)
 
 	case "metadata":
 		metadataOpenHTML(n, w)
@@ -173,8 +175,11 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 	case "unknown":
 		unknownOpenHTML(n, w)
 
+	case "unknown block type":
+		unknownBlockOpenHTML(n, w)
+
 	default:
-		log.Println("Renderer: unknown node type: " + n.String())
+		msglog.Println("Renderer: unknown node type: " + n.String())
 		unknownOpenHTML(n, w)
 	}
 
@@ -270,6 +275,12 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 	case "pagination":
 		return
 
+	case "accent start":
+		return
+
+	case "accent end":
+		return
+
 	case "kunten":
 		return
 
@@ -281,6 +292,21 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 
 	case "bibliographical info":
 		bibInfoCloseHTML(n, w)
+
+	case "gaiji char":
+		return
+
+	case "kunoji":
+		return
+
+	case "gaiji note":
+		return
+
+	case "warichu line break":
+		return
+
+	case "special char":
+		return
 
 	case "metadata":
 		metadataCloseHTML(n, w)
@@ -294,32 +320,19 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 	case "meta contributor":
 		metaContributorCloseHTML(n, w)
 
-	case "special char":
-		return
-
-	case "gaiji char":
-		return
-
-	case "accent string":
-		return
-
-	case "gaiji note":
-		return
-
 	case "main text":
-		return
-
-	case "kunoji":
-		return
-
-	case "unknown":
 		return
 
 	case "document":
 		return
 
+	case "unknown":
+		return
+
+	case "unknown block type":
+		return
+
 	default:
-		log.Println("unknown node type", n.tok.info())
 		return
 	}
 
@@ -1253,6 +1266,30 @@ func unknownOpenHTML(n *Node, w *strings.Builder) {
 	h1.addClass("annotation")
 
 	addToStringsBuilder(w, h1.String(), noteStartStr, n.Attr["raw"], noteEndStr, newCloseHtag("span").String())
+
+}
+
+func unknownBlockOpenHTML(n *Node, w *strings.Builder) {
+
+	h1 := newHtag("div")
+
+	h1.addClass("unknown")
+
+	h1.setAfter("\n")
+
+	addToStringsBuilder(w, h1.String(), noteStartStr, n.Attr["raw"], noteEndStr, "\n")
+
+}
+
+func unknownBlockCloseHTML(n *Node, w *strings.Builder) {
+
+	h1 := newCloseHtag("div")
+
+	h1.setAfter("\n")
+
+	h1.setBefore("\n")
+
+	addToStringsBuilder(w, noteStartStr, n.Attr["raw closer"], noteEndStr, h1.String())
 
 }
 

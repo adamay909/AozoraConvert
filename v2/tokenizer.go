@@ -3,7 +3,6 @@ package aozoraconvert
 import (
 	"errors"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -22,10 +21,6 @@ type tokenizer struct {
 
 var tokenizerOption opt
 
-var tokenizerLog *log.Logger
-
-var dummyLog *strings.Builder
-
 func init() {
 
 	oFull = true
@@ -41,8 +36,6 @@ func init() {
 	oTolerant = true
 
 	oParsable = false
-
-	tokenizerLog = log.New(os.Stdout, "", 0)
 
 	log.SetFlags(0)
 
@@ -253,6 +246,7 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		end = len(noteEndStr)
 
 	}
+
 	e.content = tknz.readNext(end)
 
 	if e.tokType == noteToken {
@@ -267,7 +261,11 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		tknz.lineCounter = tknz.lineCounter + len(strings.Split(e.content, "\n")) - 1
 
 		//we discard explanation of aozorabunko-style markup!!
-		e.tokType = emptyLineToken
+		if strings.HasPrefix(tknz.data[tknz.position:], "\n\n") {
+			e.tokType = emptyToken
+		} else {
+			e.tokType = emptyLineToken
+		}
 
 	}
 
@@ -331,7 +329,7 @@ func typeOf(s *tokenizer) tokenType {
 		if !oTolerant {
 			panic(msg)
 		}
-		log.Println(msg)
+		clog.Println(msg)
 		return specialCharToken
 
 	case strings.HasPrefix(s.data[s.position:], noteEndStr):
@@ -339,7 +337,7 @@ func typeOf(s *tokenizer) tokenType {
 		if !oTolerant {
 			panic(msg)
 		}
-		log.Println(msg)
+		clog.Println(msg)
 		return specialCharToken
 
 	case len(s.data[s.position:]) == 0:

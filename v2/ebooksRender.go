@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
-	"log"
 	"math/rand"
 	"mime"
 	"path/filepath"
@@ -57,7 +56,7 @@ func (b *Book) RenderEpub() []byte {
 	fh.CRC32 = crc32.ChecksumIEEE(mt)
 	iw, err := w.CreateRaw(fh)
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 	iw.Write(mt)
 
@@ -65,49 +64,49 @@ func (b *Book) RenderEpub() []byte {
 	f, err := w.Create("META-INF/container.xml")
 	_, err = f.Write(metainfxml)
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 	//write title page
 
 	f, err = w.Create("OEBPF/title.html")
 	_, err = f.Write(oebtitle(b))
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 
 	//write main file
 	f, err = w.Create("OEBPF/1.html")
 	_, err = f.Write(oebmain(b))
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 
 	//write opf
 	f, err = w.Create("OEBPF/content.opf")
 	_, err = f.Write(contentopf(b))
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 
 	//write Epub3 toc
 	f, err = w.Create("OEBPF/toc.html")
 	_, err = f.Write(tocep3(b))
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 
 	//write support files
 	for _, file := range b.Files {
 		f, err = w.Create("OEBPF/" + file.Name)
 		if err != nil {
-			log.Println(err)
+			msglog.Println(err)
 		}
 		_, err = f.Write(file.Data)
 	}
 
 	err = w.Close()
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 	return buf.Bytes()
 }
@@ -208,7 +207,7 @@ func (b *Book) RenderAZW3() []byte {
 	buf := new(bytes.Buffer)
 	err := mb.Realize().Write(buf)
 	if err != nil {
-		log.Println(err)
+		msglog.Println(err)
 	}
 	return buf.Bytes()
 
@@ -441,13 +440,13 @@ func (b *Book) addFilesFromZip(arch *zip.Reader) {
 		r, err := f.Open()
 		defer r.Close()
 		if err != nil {
-			log.Println(err)
+			msglog.Println(err)
 			return
 		}
 
 		fi.Data, err = io.ReadAll(r)
 		if err != nil {
-			log.Println(err)
+			msglog.Println(err)
 			return
 		}
 

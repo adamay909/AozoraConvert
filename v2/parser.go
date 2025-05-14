@@ -3,7 +3,6 @@ package aozoraconvert
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -500,7 +499,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 			n.setType("unknown")
 
-			log.Println("Parser: unknown annotation type: " + e.info())
+			msglog.Println("Parser: unknown annotation type: " + e.info())
 
 			if e.next != nil && e.next.tokType == endOfLineToken {
 				n.SetAttr("force linebreak", "true")
@@ -647,12 +646,12 @@ func getAST(t *token) (nd *Node, err error) {
 		for _, e := range linearizeNode(document) {
 
 			if !e.closed {
-				log.Print("unclosed node: ")
-				log.Print(e.Attr["type"])
+				msglog.Print("unclosed node: ")
+				msglog.Print(e.Attr["type"])
 				if e.tok != nil {
-					log.Print(e.tok.info())
+					msglog.Print(e.tok.info())
 				}
-				log.Print("\n")
+				msglog.Print("\n")
 
 			}
 		}
@@ -663,16 +662,9 @@ func getAST(t *token) (nd *Node, err error) {
 }
 
 func getMetadata(t *token) (metadataNode *Node) {
-	/*
-		defer func() {
-			oParsable = oParsable
-		}()
 
-		oParsable = true
-	*/
 	text := ""
 
-	//for e := t.firstToken(); e.tokType != emptyLineToken && !e.isBlockStartNote(); e = e.next {
 	for e := t.firstToken(); e.tokType != emptyLineToken; e = e.next {
 
 		switch e.tokType {
@@ -702,7 +694,7 @@ func getMetadata(t *token) (metadataNode *Node) {
 
 	if err != nil {
 
-		log.Fatal(err)
+		msglog.Fatal(err)
 
 		panic(err.Error())
 
@@ -735,7 +727,7 @@ func getMetadata(t *token) (metadataNode *Node) {
 
 		if err != nil {
 
-			log.Fatal(err)
+			msglog.Fatal(err)
 			panic(err.Error())
 
 		}
@@ -826,7 +818,7 @@ func (n *Node) fixKanbun() {
 		}
 	}
 
-	log.Println("WARNING: line ", strconv.Itoa(n.tok.lineNumber()), " kanbun detected.")
+	msglog.Println("WARNING: line ", strconv.Itoa(n.tok.lineNumber()), " kanbun detected.")
 
 	n.SetAttr("type", "kanbun")
 }
