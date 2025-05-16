@@ -1063,21 +1063,38 @@ func (t *token) fixCentering() {
 
 func (t *token) fixSectionTitles() {
 
+	seccount := 0
+
 	for e := t.firstToken(); e != nil; e = e.next {
 
 		if e.isSectionTitleStart() {
 
-			e.fixSectionFormatting()
+			seccount++
+
+			e.fixSectionFormatting(seccount)
 
 		}
 	}
 }
 
-func (t *token) fixSectionFormatting() {
+func (t *token) fixSectionFormatting(seccount int) {
 
 	pos := t
 
-	e1 := sectionTitleFormattingStart(pos)
+	e1 := new(token)
+
+	if seccount == 1 {
+
+		for e1 = pos; e1 != nil && e1.tokType != mainTextStartToken; e1 = e1.prev {
+		}
+
+		if e1 == nil {
+			e1 = t.firstToken()
+		}
+	} else {
+
+		e1 = sectionTitleFormattingStart(pos)
+	}
 
 	switch strings.TrimPrefix(pos.innerString(), blockStartStr) {
 	case "大見出し":
