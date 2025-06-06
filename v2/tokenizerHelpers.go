@@ -1,5 +1,9 @@
 package aozoraconvert
 
+import (
+	"strings"
+)
+
 func (t *token) cleanup() {
 
 	var stopProcessing bool
@@ -34,6 +38,7 @@ func (t *token) cleanup() {
 		if e.tokType == accentEndToken {
 
 			if accentStart == nil {
+				clog.Println(e.lineNumberStr() + "行：〕 => 外字注記")
 				e.tokType = specialCharToken
 				continue
 			}
@@ -48,7 +53,7 @@ func (t *token) cleanup() {
 			continue
 		}
 
-		if withinAccent && t.tokType == textToken {
+		if withinAccent && e.tokType == textToken {
 			e.convertAccentToken()
 			if e.content != e.unicodeContent {
 				converted = true
@@ -96,6 +101,14 @@ func (t *token) gatherNotes() {
 
 	for e := t.firstToken(); e != nil; e = e.next {
 
+		if e.tokType == noteEndToken {
+			if !oTolerant {
+				panic("終わり角括弧は外字注記にしてください")
+			}
+			e.tokType = specialCharToken
+			clog.Println(e.lineNumberStr() + "行：終わり角括弧 => 外字注記")
+		}
+
 		if e.tokType != noteStartToken {
 			continue
 		}
@@ -109,6 +122,8 @@ func (t *token) gatherNotes() {
 		note := getnote(e, f)
 
 		replaceTokens(e, f, note)
+
+		note.inserted = false
 
 		e = note
 
@@ -162,6 +177,12 @@ func (t *token) cleanupTokenString() {
 
 		case e.tokType == rubyParentStartToken:
 			if e.prev == nil || e.prev.tokType != rubyGroupStartToken {
+				if !oTolerant {
+					panic(e.lineNumberStr() + "行：ルビではないルビ親開始記号")
+				}
+
+				clog.Println(e.lineNumberStr() + "行：｜ => 外字注記")
+
 				e.tokType = specialCharToken
 			}
 
@@ -183,4 +204,52 @@ func replaceTokens(start, end, replacement *token) {
 		end.next.prev = replacement
 	}
 
+}
+
+func (t *token) isAbbreviatedBlockFormat() bool {
+
+	if !t.isFirstTokenInLine() {
+		return false
+	}
+
+	if t.tokType != noteToken {
+		return false
+	}
+
+	if strings.HasPrefix(t.innerString(), blockStartStr) {
+		return false
+	}
+
+	for _, e := range impliedCloserMarker {
+
+		if strings.HasSuffix(t.innerString(), e) {
+
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t *token) isImpliedOpener() (bool, string) {
+
+	if t.tokType != noteToken {
+		return false, ""
+	}
+
+	if strings.HasPrefix(t.innerString(), blockStartStr) {
+		return false, ""
+	}
+
+	for _, e := range impliedOpenerMarker {
+
+		if strings.HasSuffix(t.innerString(), e) {
+
+			return true, e
+
+		}
+
+	}
+
+	return false, ""
 }

@@ -1453,7 +1453,9 @@ func rubyGroupOpenLaTeX(n *Node, w *strings.Builder) {
 
 	if !monolithicParent {
 
-		n.splitRuby()
+		const oLatex = true
+
+		n.splitRuby(oLatex)
 
 		rps = strings.Split(n.Attr["ruby base"], "\t")
 

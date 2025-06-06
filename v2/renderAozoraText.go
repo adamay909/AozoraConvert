@@ -607,7 +607,9 @@ func bibInfoOpenTxt(n *Node, w *strings.Builder) {
 
 func rubyGroupOpenTxt(n *Node, w *strings.Builder) {
 
-	n.splitRuby()
+	const noLatex = false
+
+	n.splitRuby(noLatex)
 
 	w.WriteString(rubyParentStartStr)
 

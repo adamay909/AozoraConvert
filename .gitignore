@@ -9,3 +9,5 @@ testing/
 *.txt
 *.dvi
 v2/cmd/checkFiles/
+v2/cmd/collect/
+v2/cmd/correct/

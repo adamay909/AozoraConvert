@@ -1,7 +1,7 @@
 package aozoraconvert
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -24,7 +24,7 @@ func (t *token) fixLines() {
 
 	for e := t.firstToken(); e != nil; e = e.next {
 
-		//fmt.Print(e)
+		//		fmt.Print(e)
 
 		e.fixAbbreviatedBlockFormat()
 		e.fixInlineAlignBottom()
@@ -37,15 +37,7 @@ func (t *token) fixLines() {
 
 func (t *token) fixAbbreviatedBlockFormat() {
 
-	if !t.isFirstTokenInLine() {
-		return
-	}
-
-	if t.tokType != noteToken {
-		return
-	}
-
-	if strings.HasPrefix(t.innerString(), blockStartStr) {
+	if !t.isAbbreviatedBlockFormat() {
 		return
 	}
 
@@ -60,11 +52,6 @@ func (t *token) fixAbbreviatedBlockFormat() {
 			break
 		}
 	}
-
-	if m == emptyStr {
-		return
-	}
-
 	//now we know we are dealing with a relevant token
 
 	//first fix t itself.
@@ -186,10 +173,10 @@ func (t *token) fixruby() {
 			if e == t.next {
 
 				if !oTolerant {
-					panic(strconv.Itoa(t.lineNumber()) + "行：ルビの文字列が指定されていません")
+					panic(t.lineNumberStr() + "行：ルビの文字列が指定されていません")
 				}
 
-				clog.Println(strconv.Itoa(t.lineNumber()), "行：空のルビを削除")
+				clog.Println(t.lineNumberStr() + "行：空のルビを削除")
 
 				t.tokType = emptyToken
 
@@ -244,6 +231,8 @@ func (t *token) fixruby() {
 
 		replaceTokens(noteStart, e2, note)
 
+		note.inserted = false
+
 		if note.isImage() {
 
 			msg := t.lineNumberStr() + "行：" + " 画像を文字として使用？"
@@ -252,20 +241,8 @@ func (t *token) fixruby() {
 
 			msglog.Println("警告: " + msg)
 
-		} else {
-
-			msg := t.lineNumberStr() + "行：ルビと注記の順番が違います:" + printContext(t, 3)
-
-			if !oTolerant {
-				panic("ERROR: " + msg)
-			}
-
-			clog.Println("警告: ルビと注記の順番を入れ替え")
-
-			note.remove()
-
-			e.next.insertTokenRight(note)
 		}
+
 	}
 
 	t.insertTokenLeft(newTokenOfType(rubyParentEndToken))
@@ -329,18 +306,6 @@ func (t *token) rubyParentExplicit() bool {
 			continue
 		}
 
-		if e.isKunten() {
-			continue
-		}
-
-		if e.isOkurigana() {
-			continue
-		}
-
-		if e.isImage() {
-			continue
-		}
-
 		if e.tokType == emptyToken {
 			continue
 		}
@@ -361,7 +326,7 @@ func (t *token) insertRubyParentStart() {
 
 	e = t.prev
 
-	if e.prev.isImage() {
+	if e.prev.tokType == gaijiImgToken {
 
 		e.prev.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
@@ -371,7 +336,7 @@ func (t *token) insertRubyParentStart() {
 
 	}
 
-	var ref CharTypeID
+	var refType CharTypeID
 
 	var r []rune
 
@@ -389,14 +354,34 @@ func (t *token) insertRubyParentStart() {
 
 	r = []rune(e.unicodeString())
 
-	ref = CharType(r[len(r)-1])
+	refType = CharType(r[len(r)-1])
 
 	k := 0
 
-	for e = t.prev; e != nil; e = e.prev {
+	for e = t.prev.prev; e != nil; e = e.prev {
 
-		if e.tokType == rubyParentEndToken {
-			continue
+		if e.tokType == noteEndToken {
+
+			noteStart := e.matchingNoteStart()
+
+			if noteStart == nil {
+
+				if !oTolerant {
+					panic(e.lineNumberStr() + "行：角括弧は外字注記に！")
+				}
+
+				clog.Println(e.lineNumberStr() + "行：角括弧 => 外字注記")
+
+				continue
+
+			}
+
+			note := getnote(noteStart, e)
+
+			replaceTokens(noteStart, e, note)
+
+			e = note
+
 		}
 
 		if e.tokType == rubyGroupEndToken {
@@ -415,16 +400,28 @@ func (t *token) insertRubyParentStart() {
 			break
 		}
 
-		if e.tokType == noteEndToken {
-			break
-		}
-
 		if e.tokType == specialCharToken {
 			break
 		}
 
-		if e.tokType == noteToken {
+		if e.isPairClose() {
 			break
+		}
+
+		if e.isPairOpen() {
+			break
+		}
+
+		if e.isBlock() {
+			break
+		}
+
+		if e.isBlockEnd() {
+			break
+		}
+
+		if e.tokType == noteToken {
+			continue
 		}
 
 		if e.tokType != textToken && e.tokType != gaijiCharToken {
@@ -433,23 +430,19 @@ func (t *token) insertRubyParentStart() {
 
 		r = []rune(e.unicodeString())
 
-		if ref == Roman {
+		if refType == Roman {
 
-			for k = len(r) - 1; ; k-- {
+			for k = len(r) - 1; CharType(r[k]) != Whitespace; k-- {
 
 				if k == 0 {
 
-					break
-				}
-
-				if CharType(r[k]) == Whitespace {
 					break
 				}
 			}
 
 		} else {
 
-			for k = len(r) - 1; ref == CharType(r[k]); k-- {
+			for k = len(r) - 1; refType == CharType(r[k]); k-- {
 
 				if k == 0 {
 
@@ -458,7 +451,51 @@ func (t *token) insertRubyParentStart() {
 			}
 		}
 
-		if CharType(r[k]) != ref {
+		if (k == len(r)-1 && k > 0) || (len(r) == 1 && CharType(r[k]) != refType) {
+
+			for e = e.next; ; e = e.next {
+
+				if e.tokType != noteToken {
+					break
+				}
+
+				if e.isAbbreviatedBlockFormat() {
+					continue
+				}
+
+				if ok, _ := e.isImpliedOpener(); ok {
+					continue
+				}
+
+				if e.isBlock() {
+					continue
+				}
+
+				if e.isBlockEnd() {
+					continue
+				}
+
+				if !e.isPairOpen() {
+					continue
+				}
+
+				if e.isFormatOfType(bottomalignMarker) {
+					continue
+				}
+
+				break
+
+			}
+
+			e.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+
+			return
+
+		}
+
+		if CharType(r[k]) != refType {
 
 			t2 := newTokenOfType(textToken)
 
@@ -480,20 +517,56 @@ func (t *token) insertRubyParentStart() {
 
 		}
 
-		if e.prev == nil {
+	}
 
-			e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
+	if e == nil {
 
-			e.prev.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
-
-			return
-		}
+		e = t.firstToken()
 
 	}
 
-	e.insertTokenRight(newTokenOfType(rubyParentStartToken))
+	if e.tokType == endOfLineToken || e.tokType == emptyLineToken || e.tokType == rubyGroupEndToken {
 
-	e.insertTokenRight(newTokenOfType(rubyGroupStartToken))
+		e = e.next
+	}
+
+	for ; ; e = e.next {
+
+		if e.tokType != noteToken {
+			break
+		}
+
+		if e.isAbbreviatedBlockFormat() {
+			continue
+		}
+
+		if e.isBlock() {
+			continue
+		}
+
+		if e.isBlockEnd() {
+			continue
+		}
+
+		if ok, _ := e.isImpliedOpener(); ok {
+			continue
+		}
+
+		if !e.isPairOpen() {
+			continue
+		}
+
+		if e.isFormatOfType(bottomalignMarker) {
+			continue
+		}
+
+		break
+
+	}
+
+	e.insertTokenLeft(newTokenOfType(rubyGroupStartToken))
+
+	e.insertTokenLeft(newTokenOfType(rubyParentStartToken))
 
 	return
 }
@@ -614,56 +687,12 @@ func (t *token) replaceGaiji() {
 // to ease parsing of notes. The returned token is new opener.
 func (t *token) fixImpliedOpener() {
 
-	if t.tokType != noteToken {
+	ok, m := t.isImpliedOpener()
+
+	if !ok {
 		return
 	}
 
-	if strings.HasPrefix(t.innerString(), blockStartStr) {
-		return
-	}
-
-	m := ""
-
-	for _, e := range impliedOpenerMarker {
-
-		if strings.HasSuffix(t.innerString(), e) {
-
-			m = e
-
-			break
-
-		}
-
-	}
-
-	if m == "" {
-		return
-	}
-	/*
-		if t.next.tokType == rubyStartToken {
-
-			msg := "line " + strconv.Itoa(t.lineNumber()) + " wrong order of ruby and annotation:" + t.prev.String() + t.String() + t.next.String() + t.next.next.String()
-
-			if !oTolerant {
-				panic(msg)
-			}
-
-			log.Println("WARNING: " + msg + " fixed")
-
-			e := new(token)
-
-			for e := t.next; e.tokType != rubyEndToken; e = e.next {
-			}
-
-			n2 := copyOf(t)
-
-			e.insertTokenRight(n2)
-
-			t.tokType = emptyToken
-
-			return
-		}
-	*/
 	switch m {
 
 	case "ルビ":
@@ -962,6 +991,9 @@ func fixParagraph(start, end *token) {
 		c := new(token)
 
 		for c = end.prev; !c.isSectionTitleEnd(); c = c.prev {
+			if c.prev == nil {
+				break
+			}
 		}
 
 		c.insertTokenRight(newTokenOfType(paragraphToken))
@@ -1653,7 +1685,7 @@ func (t *token) fixnote() {
 	}
 
 	if newstr != "" {
-		clog.Println(t.lineNumberStr()+"行：", t.String(), "=>", newstr)
+		clog.Println(t.lineNumberStr()+"行：", t.String(), "=>", noteStartStr+newstr+noteEndStr)
 
 		t.setInnerString(newstr)
 	}
@@ -1662,18 +1694,19 @@ func (t *token) fixnote() {
 
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			clog.Println(t.lineNumber(), "行: ", "ブロック開始注記の前に改行")
+			clog.Println(t.lineNumberStr()+"行: ", "ブロック開始注記の前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
-		}
+		} else {
 
-		if t.next != nil && !t.next.isLineBreak() {
+			if t.next != nil && !t.next.isLineBreak() {
 
-			clog.Println(t.lineNumber(), "行: ", "ブロック開始注記の後に改行")
+				clog.Println(t.lineNumberStr()+"行: ", "ブロック開始注記の後に改行")
 
-			t.insertTokenRight(newTokenOfType(endOfLineToken))
+				t.insertTokenRight(newTokenOfType(endOfLineToken))
 
+			}
 		}
 	}
 
@@ -1681,18 +1714,19 @@ func (t *token) fixnote() {
 
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			clog.Println(t.lineNumber(), "行: ", "ブロック終了注記の前に改行")
+			clog.Println(t.lineNumberStr()+"行: ", "ブロック終了注記の前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
-		}
+		} else {
 
-		if t.next != nil && !t.next.isLineBreak() {
+			if t.next != nil && !t.next.isLineBreak() {
 
-			clog.Println(t.lineNumber(), "行: ", "ブロック終了注記の後に改行")
+				clog.Println(t.lineNumberStr()+"行: ", "ブロック終了注記の後に改行")
 
-			t.insertTokenRight(newTokenOfType(endOfLineToken))
+				t.insertTokenRight(newTokenOfType(endOfLineToken))
 
+			}
 		}
 	}
 
@@ -1701,7 +1735,7 @@ func (t *token) fixnote() {
 		//if t.prev != nil && t.prev.tokType != endOfLineToken {
 		if t.prev != nil && !t.prev.isLineBreak() {
 
-			log.Println(t.lineNumber(), "行：", "字下げ前に改行")
+			clog.Println(t.lineNumberStr()+"行：", "字下げ前に改行")
 
 			t.insertTokenLeft(newTokenOfType(endOfLineToken))
 
@@ -1715,20 +1749,6 @@ func (t *token) fixIndentationRound2() {
 	c := 0
 
 	for e := t.firstToken(); e != nil; e = e.next {
-
-		if strings.HasPrefix(e.innerString(), blockStartStr) && strings.Contains(e.innerString(), "字下げ") {
-
-			idx := strings.LastIndex(e.innerString(), "字下げ")
-
-			nstr := e.innerString()[:idx+len("字下げ")]
-
-			if nstr != e.innerString() {
-				clog.Println("警告：", strconv.Itoa(e.lineNumber()), "行", e.String(), "=>", nstr)
-				e.originalContent = e.innerString()
-				e.setInnerString(nstr)
-				e.modified = true
-			}
-		}
 
 		if e.isIndentationStart() {
 			c++
@@ -1745,9 +1765,9 @@ func (t *token) fixIndentationRound2() {
 			continue
 		}
 
-		log.Println(e.lineNumberStr(), "行のあたり：字下げが入れ子になっているか？修復を試みる")
-
 		c2 := 0
+
+		nested := new(token)
 
 		for f := e.prev; f != nil; f = f.prev {
 
@@ -1757,43 +1777,59 @@ func (t *token) fixIndentationRound2() {
 
 			c2++
 
-			if c2 == 2 {
-
-				for i := e.prev; i != nil; i = i.prev {
-
-					if i.tokType != endOfLineToken && !i.isIndentationEnd() {
-					}
-
-					if i.isIndentationEnd() {
-
-						for j := i.prev; j != nil; j = j.prev {
-
-							if j.isIndentationStart() {
-
-								j.setInnerString(blockStartStr + fwnum(f.getTopMargin()+j.getTopMargin()) + "字下げ")
-
-								break
-							}
-						}
-
-						i.insertTokenRight(newTokenOfType(endOfLineToken))
-
-						i.next.insertTokenRight(copyOf(f))
-						i.next.next.insertTokenRight(newTokenOfType(endOfLineToken))
-
-						break
-					}
-				}
+			if c2 > 2 {
+				fmt.Println("check1")
 				break
 			}
+
+			if c2 < 2 {
+
+				nested = f
+				/*
+					if f.prev == nil {
+						fmt.Println("check2")
+						break
+					}
+
+					if !f.prev.isLineBreak() {
+						fmt.Println("check3")
+						break
+					}
+
+					if f.prev.prev == nil {
+						fmt.Println("check4")
+						break
+					}
+
+					if !f.prev.prev.isIndentationEnd() {
+						fmt.Println("check5")
+						break
+					}
+				*/
+				continue
+			}
+
+			for i := nested.next; i != nil; i = i.next {
+				if i.isIndentationEnd() {
+
+					nested.setInnerString(blockStartStr + fwnum(f.getTopMargin()+nested.getTopMargin()) + "字下げ")
+
+					i.insertTokenRight(newTokenOfType(endOfLineToken))
+					i.next.insertTokenRight(copyOf(f))
+					i.next.next.insertTokenRight(newTokenOfType(endOfLineToken))
+					c++
+					break
+				}
+			}
+			break
 		}
 
 		if c2 != 2 {
-
-			panic(e.lineNumberStr() + "行：修復不能")
-
+			panic(e.lineNumberStr() + "行のあたり：余分な字下げ終了注記")
 		}
-		c++
+
+		clog.Println(e.lineNumberStr() + "行のあたり：字下げが入れ子になっている模様。修復を試みる")
+
 	}
 
 }

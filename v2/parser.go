@@ -60,7 +60,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 	for e := t.mainTextStart(); e != nil; e = e.next {
 
-		//fmt.Print(e)
+		//	fmt.Print(e)
 
 		n = newNode("")
 

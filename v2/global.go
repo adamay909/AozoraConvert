@@ -151,11 +151,6 @@ var inlineNoteMarker = []string{
 	"割り注",
 }
 
-var rubylikeNoteSimpleMarker = []string{
-	"ルビ",
-	"注記",
-}
-
 var rubylikeNoteMarker = []string{
 	"ルビ付き",
 	"注記付き",
@@ -241,7 +236,6 @@ func init() {
 		lineDecoMarker,
 		decoMarker,
 		inlineNoteMarker,
-		rubylikeNoteSimpleMarker,
 		rubylikeNoteMarker,
 		fontShapeMarker,
 		fontsizeMarker,

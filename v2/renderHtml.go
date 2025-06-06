@@ -1309,7 +1309,9 @@ func rubyGroupOpenHTML(n *Node, w *strings.Builder) {
 		}
 	}()
 
-	n.splitRuby()
+	const noLatex = false
+
+	n.splitRuby(noLatex)
 
 	rps := strings.Split(n.Attr["ruby base"], "\t")
 

@@ -118,6 +118,8 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 
 		tokenString.fixDocument()
 
+		//return
+
 		if oTolerant {
 			tokenString.fixIndentationRound2()
 		}
@@ -178,13 +180,13 @@ func (tknz *tokenizer) nextToken() (e *token) {
 	if e.tokType == eofToken {
 		return nil
 	}
-
-	if tknz.simpleProcessing {
-		if e.tokType != endOfLineToken && e.tokType != emptyLineToken {
-			e.tokType = textToken
+	/*
+		if tknz.simpleProcessing {
+			if e.tokType != endOfLineToken && e.tokType != emptyLineToken {
+				e.tokType = textToken
+			}
 		}
-	}
-
+	*/
 	switch e.tokType {
 
 	case textToken:
@@ -257,12 +259,41 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 	}
 
+	if e.tokType == specialCharToken {
+
+		if !oTolerant {
+
+			if len(e.content) > len(noteEndStr) {
+
+				panic(e.content + "は外字中期に置き換えてください")
+
+			}
+		}
+	}
+
 	//fmt.Print(e)
 
 	return e
 }
 
 func typeOf(s *tokenizer) tokenType {
+
+	if s.simpleProcessing {
+
+		switch {
+		case strings.HasPrefix(s.data[s.position:], lineBreakStr):
+			if s.position == 0 || s.data[s.position-1] == '\n' {
+				return emptyLineToken
+			}
+			return endOfLineToken
+
+		case len(s.data[s.position:]) == 0:
+			return eofToken
+
+		default:
+			return textToken
+		}
+	}
 
 	switch {
 
@@ -317,15 +348,23 @@ func typeOf(s *tokenizer) tokenType {
 		if !oTolerant {
 			panic(msg)
 		}
-		clog.Println(s.lineCounter, "行：", msg)
+		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
 		return specialCharToken
 
-	case strings.HasPrefix(s.data[s.position:], noteEndStr):
-		msg := ("終わり角括弧 => 外字注記")
+	case strings.HasPrefix(s.data[s.position:], referenceMarkStr):
+		msg := "※ => 外字注記"
 		if !oTolerant {
 			panic(msg)
 		}
-		clog.Println(s.lineCounter, "行：", msg)
+		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
+		return specialCharToken
+
+	case strings.HasPrefix(s.data[s.position:], "＃"):
+		msg := "＃ => 外字注記"
+		if !oTolerant {
+			panic(msg)
+		}
+		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
 		return specialCharToken
 
 	case len(s.data[s.position:]) == 0:
@@ -374,6 +413,18 @@ func findContiguousText(s *tokenizer) (i int) {
 		case strings.HasPrefix(s.data[s.position+i:], squareBracketOpenStr):
 			if !oTolerant {
 				panic("始め角括弧は外字注記か違う字に置き換えてください")
+			}
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], referenceMarkStr):
+			if !oTolerant {
+				panic(referenceMarkStr + "は外字注記か違う字に置き換えてください")
+			}
+			return i
+
+		case strings.HasPrefix(s.data[s.position+i:], "＃"):
+			if !oTolerant {
+				panic("＃は外字注記か違う字に置き換えてください")
 			}
 			return i
 

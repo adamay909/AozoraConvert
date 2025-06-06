@@ -1,6 +1,7 @@
 package aozoraconvert
 
 //go:generate stringer -type=tokenType
+
 import (
 	"fmt"
 	"strconv"
@@ -74,136 +75,6 @@ const (
 )
 
 type tokenSubType int
-
-/*
-func (t tokenType) String() string {
-
-		switch t {
-
-		case emptyToken:
-			return "emptyToken"
-
-		case textToken:
-			return "textToken"
-
-		case gaijiToken:
-			return "gaijiToken"
-
-		case rubyGroupStartToken:
-			return "rubyGroupStartToken"
-
-		case rubyGroupEndToken:
-			return "rubyGroupEndToken"
-
-		case rubyParentStartToken:
-			return "rubyParentStartToken"
-
-		case rubyParentEndToken:
-			return "rubyParentEndToken"
-
-		case rubyStartToken:
-			return "rubyStartToken"
-
-		case rubyEndToken:
-			return "rubyEndToken"
-
-		case noteToken:
-			return "noteToken"
-
-		case bibInfoToken:
-			return "bibInfoToken"
-
-		case bibInfoEndToken:
-			return "bibInfoEndToken"
-
-		case emptyLineToken:
-			return "emptyLineToken"
-
-		case endOfLineToken:
-			return "endOfLineToken"
-
-		case paragraphEndToken:
-			return "paragraphEndToken"
-
-		case paragraphToken:
-			return "paragraphToken"
-
-		case sectionTitleStartToken:
-			return "sectionTitleStartToken"
-
-		case sectionTitleEndToken:
-			return "sectionTitleEndToken"
-
-		case sectionToken:
-			return "sectionToken"
-
-		case subsectionToken:
-			return "subsectionToken"
-
-		case subsubsectionToken:
-			return "subsubsectionToken"
-
-		case sectionEndToken:
-			return "sectionEndToken"
-
-		case subsectionEndToken:
-			return "subsectionEndToken"
-
-		case subsubsectionEndToken:
-			return "subsubsectionEndToken"
-
-		case figureStartToken:
-			return "figureStartToken"
-
-		case figureEndToken:
-			return "figureEndToken"
-
-		case gaijiNoteToken:
-			return "gaijiNoteToken"
-
-		case specialCharToken:
-			return "specialCharToken"
-
-		case accentStartToken:
-			return "accentStartToken"
-
-		case accentEndToken:
-			return "accentEndToken"
-
-		case gaijiCharToken:
-			return "gaijiCharToken"
-
-		case kunojiToken:
-			return "kunojiToken"
-
-		case alignBottomCloserToken:
-			return "alignBottomCloserToken"
-
-		case centeringEndToken:
-			return "centeringEndToken"
-
-		case markupNoteToken:
-			return "markupNoteToken"
-
-		case mainTextStartToken:
-			return "mainTextStartToken"
-
-		case mainTextEndToken:
-			return "mainTextEndToken"
-
-		case eofToken:
-			return "eofToken"
-
-		case gaijiImgToken:
-			return "gaijiImageToken"
-
-		default:
-
-			return strconv.Itoa(int(t))
-
-		}
-	}
-*/
 
 func newToken() *token {
 
@@ -459,6 +330,8 @@ func (t *token) setString(str string) {
 
 	t.content = str
 
+	t.unicodeContent = t.content
+
 	return
 
 }
@@ -475,6 +348,9 @@ func (t *token) setInnerString(str string) {
 
 		t.content = b.String()
 
+		t.unicodeContent = t.content
+
+		t.jis0213Content = t.content
 	default:
 
 		t.content = str
@@ -638,13 +514,20 @@ func (t *token) info() string {
 
 	if t.modified {
 		addToStringsBuilder(output, "(modified)")
+	}
+
+	switch t.tokType {
+
+	case emptyToken, endOfLineToken, emptyLineToken, paragraphToken, paragraphEndToken, rubyParentStartToken, rubyParentEndToken, rubyGroupStartToken, rubyGroupEndToken:
+
+	default:
 		if t.originalContent != "" {
 			addToStringsBuilder(output, " original string: ", t.originalContent)
 		}
-	}
 
-	if t.unicodeContent != "" {
-		addToStringsBuilder(output, "unicode: ", t.unicodeContent)
+		if t.unicodeContent != "" {
+			addToStringsBuilder(output, "unicode: ", t.unicodeContent)
+		}
 	}
 
 	return strings.ReplaceAll(output.String(), "\n", "\\n")
@@ -665,6 +548,20 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	for e = t.prev; e != nil; e = e.prev {
 
+		if e.tokType == rubyEndToken {
+			ignore = true
+			continue
+		}
+
+		if e.tokType == rubyStartToken {
+			ignore = false
+			continue
+		}
+
+		if ignore {
+			continue
+		}
+
 		if e.tokType == endOfLineToken {
 			break
 		}
@@ -679,20 +576,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 		if e.isPairOpen() {
 			nesting--
-		}
-
-		if e.tokType == rubyEndToken {
-			ignore = true
-			continue
-		}
-
-		if e.tokType == rubyStartToken {
-			ignore = false
-			continue
-		}
-
-		if ignore {
-			continue
 		}
 
 		if !e.isText() {
@@ -713,7 +596,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	if e == nil {
 
-		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + e.info())
+		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + t.info())
 
 		return
 
@@ -757,8 +640,6 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	k := len(txt) - cr
 
 	t2 := newTokenOfType(textToken)
-
-	//	s1 := e.content[:len(e.content)-k]
 
 	t2.setString(e.content[:len(e.content)-k])
 
@@ -900,6 +781,8 @@ func (t *token) lastTokenInLine() *token {
 
 	e := new(token)
 
+	last := new(token)
+
 	for e = t; e != nil; e = e.next {
 
 		if e.tokType == endOfLineToken {
@@ -909,9 +792,10 @@ func (t *token) lastTokenInLine() *token {
 		if e.tokType == paragraphEndToken {
 			return e
 		}
+		last = e
 	}
 
-	return e
+	return last
 }
 
 func (t *token) nextTokenOfType(c tokenType) *token {
@@ -1657,14 +1541,6 @@ func (t *token) isText() bool {
 		return true
 	}
 
-	if t.tokType == accentStartToken {
-		return true
-	}
-
-	if t.tokType == accentEndToken {
-		return true
-	}
-
 	if t.tokType == gaijiCharToken {
 		return true
 	}
@@ -1701,6 +1577,10 @@ func (t *token) isLineBreak() bool {
 	}
 
 	if t.tokType == emptyLineToken {
+		return true
+	}
+
+	if t.tokType == paragraphEndToken {
 		return true
 	}
 

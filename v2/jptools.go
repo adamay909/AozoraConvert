@@ -1,5 +1,7 @@
 package aozoraconvert
 
+//go:generate stringer -type=CharTypeID
+
 import (
 	"errors"
 	"strconv"
@@ -172,26 +174,6 @@ func fwnum(n int) string {
 	return fstr
 }
 
-// String returns the character type of c
-// as a string. E.g. "Katakana" if c
-// is katakana.
-func (c CharTypeID) String() string {
-	switch c {
-	case Symbol:
-		return "Symbol"
-	case Kanji:
-		return "Kanji"
-	case Hiragana:
-		return "Hiragana"
-	case Katakana:
-		return "Katakana"
-	case Whitespace:
-		return "Whitespace"
-	default:
-		return "other"
-	}
-}
-
 // isKatakana checkes if r is katakana.
 func isKatakana(r rune) bool {
 
@@ -257,6 +239,19 @@ func isFWnumeral(r rune) bool {
 
 	return true
 
+}
+
+func isFWNumeralString(s string) bool {
+
+	for _, r := range s {
+
+		if !isFWnumeral(r) {
+			return false
+		}
+	}
+
+	//if s is empty, response is trivially true
+	return true
 }
 
 /*

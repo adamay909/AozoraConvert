@@ -262,7 +262,7 @@ func (n *Node) withinScopeOfType(s string) (bool, *Node) {
 	return false, nil
 }
 
-func (n *Node) splitRuby() {
+func (n *Node) splitRuby(oLatex bool) {
 
 	var rp []rune
 
@@ -287,16 +287,18 @@ func (n *Node) splitRuby() {
 			wr := []rune(wt.String())
 			for i := 0; i < len(wr); i++ {
 
-				if wr[i] == '〳' {
-					rt = append(rt, "{"+string(wr[i:i+2])+"}")
-					i++
-					continue
-				}
+				if oLatex {
+					if wr[i] == '〳' {
+						rt = append(rt, "{"+string(wr[i:i+2])+"}")
+						i++
+						continue
+					}
 
-				if wr[i] == '〴' {
-					rt = append(rt, "{"+string(wr[i:i+2])+"}")
-					i++
-					continue
+					if wr[i] == '〴' {
+						rt = append(rt, "{"+string(wr[i:i+2])+"}")
+						i++
+						continue
+					}
 				}
 
 				rt = append(rt, string(wr[i:i+1]))
