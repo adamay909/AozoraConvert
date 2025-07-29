@@ -1,1 +1,0 @@
-各フォルダはaozora.orihasam.comで作成したLaTeXパッケージを解凍したもの。それぞれのフォルダ内に内部のLaTeXファイルをlualatexで組版したものがあります。
