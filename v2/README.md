@@ -369,11 +369,11 @@ aozoraConvert -strict -o 出力ファイル.txt 入力ファイル
 
 ## aozora.orihasam.comについて
 
-[aozora.orihasam.com](https://aozora.orihasam.com)は青空文庫のテキストの検索や変換が手軽にできるように、上で紹介したaozoraConvertの下敷きとなっているGoライブラリを利用したウェブアプリです。
+[aozora.orihasam.com](https://aozora.orihasam.com)は青空文庫のテキストの検索や変換が手軽にできるように、上で紹介したaozoraConvertの下敷きとなっているGoライブラリを利用したウェブアプリです。アプリのソースコードは[https://github.com/adamay909/AozoraBookcase](https://github.com/adamay909/AozoraBookcase)で公開しています。
 
 各本のページにいくつかのダウンロードオプションが示されますが、それらについて説明します。各ページの右上にあるメニューで外字の置き換えをJIS0213範囲内に留めるよう設定できます。ダウンローダされるファイルの名前は青空文庫提供のtxtファイルの名前に由来します。
 
-利点としてタイトルなどを青空文庫のデータベースを利用して自動的に修正するので、自分で確認、修正することがない点があります。
+利点としてタイトルなどを青空文庫のデータベースを利用して自動的に修正するので、自分で確認、修正する必要がない点があります。
 
 - Epub。ダウンロードされるのは
 ```
