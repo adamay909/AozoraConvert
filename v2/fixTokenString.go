@@ -1,7 +1,6 @@
 package aozoraconvert
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -1778,7 +1777,6 @@ func (t *token) fixIndentationRound2() {
 			c2++
 
 			if c2 > 2 {
-				fmt.Println("check1")
 				break
 			}
 

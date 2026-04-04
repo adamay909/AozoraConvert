@@ -2,7 +2,6 @@ package aozoraconvert
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -646,9 +645,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 	if prevNode.Parent() == nil || prevNode.Parent().Attr["type"] != "document" {
 
-		fmt.Println("last node is ", prevNode.Attr["type"])
 		if prevNode.Parent() != nil {
-			fmt.Println("Parent is ", prevNode.Parent().Attr["type"])
 		}
 
 		for _, e := range linearizeNode(document) {

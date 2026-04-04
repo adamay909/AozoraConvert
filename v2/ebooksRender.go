@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	_ "embed" //embed
-	"fmt"
 	"hash/crc32"
 	"io"
 	"math/rand"
@@ -327,7 +326,6 @@ func oebmain(b *Book) []byte {
 			err := RenderHTML(e, w)
 
 			if err != nil {
-				fmt.Println(err)
 				return []byte{}
 			}
 		}

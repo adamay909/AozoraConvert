@@ -3,7 +3,6 @@ package aozoraconvert
 //go:generate stringer -type=tokenType
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -660,7 +659,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 // t.String() is surrounded by "***".
 func printContext(t *token, n int) string {
 
-	fmt.Println(t)
+	println(t.String())
 
 	t1 := new(token)
 
