@@ -617,13 +617,25 @@ func sectionTitleEndHTML(n *Node, w *strings.Builder) {
 
 func imageHTML(n *Node, w *strings.Builder) {
 
+	h := genImageTag(n)
+
+	h.AddStringTo(w)
+
+}
+
+func genImageTag(n *Node) *htmlTagSpec {
+
 	h := newHtag("img")
 
 	h.addClass("illustration")
 
-	h.addExtraKeyVal("width", n.Attr["width"])
+	h.addExtraKeyVal("max-width", n.Attr["width"])
 
-	h.addExtraKeyVal("height", n.Attr["height"])
+	h.addExtraKeyVal("max-height", n.Attr["height"])
+
+	h.addExtraKeyVal("height", "100%")
+
+	h.addExtraKeyVal("aspect-ratio", n.Attr["width"]+"/"+n.Attr["height"])
 
 	h.addExtraKeyVal("src", n.Attr["file"])
 
@@ -631,7 +643,7 @@ func imageHTML(n *Node, w *strings.Builder) {
 
 	h.setAfter("\n")
 
-	h.AddStringTo(w)
+	return h
 
 }
 

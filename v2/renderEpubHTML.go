@@ -55,21 +55,9 @@ func htmlEpubFormatterClose(n *Node, w *strings.Builder) {
 
 func imageXHTML(n *Node, w *strings.Builder) {
 
-	h := newHtag("img")
-
-	h.addClass("illustration")
-
-	h.addExtraKeyVal("width", n.Attr["width"])
-
-	h.addExtraKeyVal("height", n.Attr["height"])
-
-	h.addExtraKeyVal("src", n.Attr["file"])
-
-	h.addExtraKeyVal("alt", n.Attr["alt text"])
+	h := genImageTag(n)
 
 	h.setSelfClose()
-
-	h.setAfter("\n")
 
 	h.AddStringTo(w)
 
