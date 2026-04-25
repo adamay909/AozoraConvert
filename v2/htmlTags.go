@@ -219,3 +219,9 @@ func (h *htmlTagSpec) addExtraKeyVal(k string, v string) {
 	h.extraKeyVal[k] = append(h.extraKeyVal[k], v)
 
 }
+
+func (h *htmlTagSpec) deleteKey(k string) {
+
+	delete(h.extraKeyVal, k)
+
+}

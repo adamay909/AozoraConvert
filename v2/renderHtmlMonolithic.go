@@ -40,21 +40,13 @@ func htmlMonoFormatterClose(n *Node, w *strings.Builder) {
 
 func embedImage(n *Node, w *strings.Builder) {
 
-	h := newHtag("img")
+	h := genImageTag(n)
 
-	h.addClass("illustration")
-
-	h.addExtraKeyVal("width", n.Attr["width"])
-
-	h.addExtraKeyVal("height", n.Attr["height"])
+	h.deleteKey("src")
 
 	h.addExtraKeyVal("src", n.Attr["data"])
 
-	h.addExtraKeyVal("alt", n.Attr["alt text"])
-
 	h.setSelfClose()
-
-	h.setAfter("\n")
 
 	h.AddStringTo(w)
 
