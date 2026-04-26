@@ -209,9 +209,10 @@ func (n *Node) setFontSizeAttr(e *token) {
 func (n *Node) setIndentationAttr(e *token) {
 
 	defer func() {
+
 		if r := recover(); r != nil {
 			msg := `can't parse info from ` + e.info()
-			panic(msg)
+			panic(errors.New(msg))
 		}
 	}()
 

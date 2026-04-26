@@ -113,7 +113,7 @@ func AST(data string) (n *Node, err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -131,7 +131,7 @@ func RenderAozoraText(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 
 			return
 
@@ -150,7 +150,7 @@ func RenderHTML(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -174,7 +174,7 @@ func RenderHTMLFull(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 
 			return
 
@@ -209,7 +209,7 @@ func RenderNavHTML(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -227,7 +227,7 @@ func RenderJSON(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -245,7 +245,7 @@ func RenderLaTeX(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -264,7 +264,7 @@ func RenderLaTeXFull(ast *Node, w *strings.Builder) (err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 
 			return
 

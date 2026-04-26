@@ -11,7 +11,6 @@ func parse(text string) (*Node, error) {
 	tok, err := tokenizeAndFix(text)
 
 	if err != nil {
-
 		return new(Node), err
 
 	}
@@ -838,6 +837,25 @@ func (n *Node) ClearMetadata() {
 
 		e.ClearChildren()
 
+		return
+	}
+}
+
+// SetDodID sets an id for document.
+// n must have a child node with Attr["type"]=="metadata"
+func (n *Node) SetDocID(id string) {
+
+	if n.Attr["type"] != "document" {
+		return
+	}
+
+	for _, e := range n.Children() {
+
+		if e.Attr["type"] != "metadata" {
+			continue
+		}
+
+		e.SetAttr("data-docid", id)
 		return
 	}
 }

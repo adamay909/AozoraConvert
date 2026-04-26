@@ -3,6 +3,7 @@ package aozoraconvert
 //go:generate stringer -type=tokenType
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -595,7 +596,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 
 	if e == nil {
 
-		panic("Can't find place to insert implied opener note. Defaulting to start of line. " + t.info())
+		panic(errors.New("Can't find place to insert implied opener note. Defaulting to start of line. " + t.info()))
 
 		return
 
@@ -604,7 +605,7 @@ func (t *token) addTokenBefore(txt string, nt *token) {
 	if e.tokType == endOfLineToken || e.tokType == emptyLineToken {
 
 		if !oTolerant {
-			panic("Can't find place to insert implied opener note. " + t.info())
+			panic(errors.New("Can't find place to insert implied opener note. " + t.info()))
 		}
 
 		clog.Println(t.lineNumberStr() + "行：前方参照の文字列が見つからず。行頭まで参照とみなす。")
@@ -1173,7 +1174,7 @@ func (t *token) matchingIndentationCloser() *token {
 
 	}
 
-	panic(t.info() + " No matching closer.")
+	panic(errors.New(t.info() + " No matching closer."))
 
 	return pos
 }
@@ -1298,7 +1299,7 @@ func (t *token) matchingCloserToken() *token {
 func matchingCloserToken(t *token) *token {
 
 	if t.next == nil {
-		panic(t.info() + " missing matching closer")
+		panic(errors.New(t.info() + " missing matching closer"))
 	}
 
 	pos := new(token)
@@ -1330,7 +1331,7 @@ func matchingCloserToken(t *token) *token {
 		}
 
 		if pos.next == nil {
-			panic(t.info() + " missing matching closer")
+			panic(errors.New(t.info() + " missing matching closer"))
 		}
 	}
 

@@ -388,7 +388,7 @@ func parseAndRenderOnly(inputFile string) []byte {
 
 		log.Println(err)
 
-		log.Println("\nExiting.")
+		log.Println("\nErrors while parsing. Exiting.")
 
 		return []byte{}
 
@@ -402,7 +402,7 @@ func parseAndRenderOnly(inputFile string) []byte {
 
 		log.Println(err)
 
-		log.Println("\nExiting.")
+		log.Println("\nErrors while rendering. Exiting.")
 
 		return []byte{}
 

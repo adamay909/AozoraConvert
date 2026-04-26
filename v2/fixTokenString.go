@@ -1,6 +1,7 @@
 package aozoraconvert
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -172,7 +173,7 @@ func (t *token) fixruby() {
 			if e == t.next {
 
 				if !oTolerant {
-					panic(t.lineNumberStr() + "行：ルビの文字列が指定されていません")
+					panic(errors.New(t.lineNumberStr() + "行：ルビの文字列が指定されていません"))
 				}
 
 				clog.Println(t.lineNumberStr() + "行：空のルビを削除")
@@ -211,7 +212,7 @@ func (t *token) fixruby() {
 	if !found {
 
 		if !oTolerant {
-			panic(t.lineNumberStr() + "行：ルビ文字列の終了位置が指定されていません。" + t.info() + "\n surrounding text: " + t.textContext())
+			panic(errors.New(t.lineNumberStr() + "行：ルビ文字列の終了位置が指定されていません。" + t.info() + "\n surrounding text: " + t.textContext()))
 		}
 
 		clog.Println(t.lineNumberStr() + "行：《　=> 外字注記")
@@ -366,7 +367,7 @@ func (t *token) insertRubyParentStart() {
 			if noteStart == nil {
 
 				if !oTolerant {
-					panic(e.lineNumberStr() + "行：角括弧は外字注記に！")
+					panic(errors.New(e.lineNumberStr() + "行：角括弧は外字注記に！"))
 				}
 
 				clog.Println(e.lineNumberStr() + "行：角括弧 => 外字注記")
@@ -1161,7 +1162,7 @@ func (t *token) insertSectionEnds() {
 		if pos.isBlockClosingNote() {
 			open--
 			if open < 0 {
-				panic(pos.info() + " closing tag without matching opener! ")
+				panic(errors.New(pos.info() + " closing tag without matching opener! "))
 			}
 
 			openers = openers[:len(openers)-1]
@@ -1823,7 +1824,7 @@ func (t *token) fixIndentationRound2() {
 		}
 
 		if c2 != 2 {
-			panic(e.lineNumberStr() + "行のあたり：余分な字下げ終了注記")
+			panic(errors.New(e.lineNumberStr() + "行のあたり：余分な字下げ終了注記"))
 		}
 
 		clog.Println(e.lineNumberStr() + "行のあたり：字下げが入れ子になっている模様。修復を試みる")

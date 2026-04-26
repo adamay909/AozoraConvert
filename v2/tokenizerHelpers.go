@@ -1,6 +1,7 @@
 package aozoraconvert
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ func (t *token) cleanup() {
 		if e.tokType == accentStartToken {
 			if withinAccent {
 				if !oTolerant {
-					panic(e.lineNumberStr() + "行：アクセント注記が入れ子")
+					panic(errors.New(e.lineNumberStr() + "行：アクセント注記が入れ子"))
 				} else {
 					clog.Println(e.lineNumberStr() + "行：〔 => 外字注記")
 					accentStart.tokType = specialCharToken
@@ -103,7 +104,7 @@ func (t *token) gatherNotes() {
 
 		if e.tokType == noteEndToken {
 			if !oTolerant {
-				panic("終わり角括弧は外字注記にしてください")
+				panic(errors.New("終わり角括弧は外字注記にしてください"))
 			}
 			e.tokType = specialCharToken
 			clog.Println(e.lineNumberStr() + "行：終わり角括弧 => 外字注記")
@@ -116,7 +117,7 @@ func (t *token) gatherNotes() {
 		f := e.matchingNoteEnd()
 
 		if f == nil {
-			panic("note is not closed" + t.info())
+			panic(errors.New("note is not closed" + t.info()))
 		}
 
 		note := getnote(e, f)
@@ -178,7 +179,7 @@ func (t *token) cleanupTokenString() {
 		case e.tokType == rubyParentStartToken:
 			if e.prev == nil || e.prev.tokType != rubyGroupStartToken {
 				if !oTolerant {
-					panic(e.lineNumberStr() + "行：ルビではないルビ親開始記号")
+					panic(errors.New(e.lineNumberStr() + "行：ルビではないルビ親開始記号"))
 				}
 
 				clog.Println(e.lineNumberStr() + "行：｜ => 外字注記")

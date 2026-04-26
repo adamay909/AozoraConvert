@@ -89,7 +89,7 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 	defer func() {
 
 		if r := recover(); r != nil {
-			err = errors.New(r.(string))
+			err = errors.New(r.(error).Error())
 			return
 
 		}
@@ -162,7 +162,7 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 		if r := recover(); r != nil {
 
-			panic("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string))
+			panic(errors.New("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string)))
 			return
 
 		}
@@ -265,7 +265,7 @@ func (tknz *tokenizer) nextToken() (e *token) {
 
 			if len(e.content) > len(noteEndStr) {
 
-				panic(e.content + "は外字中期に置き換えてください")
+				panic(errors.New(e.content + "は外字中期に置き換えてください"))
 
 			}
 		}
@@ -349,7 +349,7 @@ func typeOf(s *tokenizer) tokenType {
 	case strings.HasPrefix(s.data[s.position:], squareBracketOpenStr):
 		msg := "始め角括弧 => 外字注記"
 		if !oTolerant {
-			panic(msg)
+			panic(errors.New(msg))
 		}
 		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
 		return specialCharToken
@@ -357,7 +357,7 @@ func typeOf(s *tokenizer) tokenType {
 	case strings.HasPrefix(s.data[s.position:], referenceMarkStr):
 		msg := "※ => 外字注記"
 		if !oTolerant {
-			panic(msg)
+			panic(errors.New(msg))
 		}
 		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
 		return specialCharToken
@@ -365,7 +365,7 @@ func typeOf(s *tokenizer) tokenType {
 	case strings.HasPrefix(s.data[s.position:], "＃"):
 		msg := "＃ => 外字注記"
 		if !oTolerant {
-			panic(msg)
+			panic(errors.New(msg))
 		}
 		clog.Println(strconv.Itoa(s.lineCounter)+"行：", msg)
 		return specialCharToken
@@ -415,19 +415,19 @@ func findContiguousText(s *tokenizer) (i int) {
 
 		case strings.HasPrefix(s.data[s.position+i:], squareBracketOpenStr):
 			if !oTolerant {
-				panic("始め角括弧は外字注記か違う字に置き換えてください")
+				panic(errors.New("始め角括弧は外字注記か違う字に置き換えてください"))
 			}
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], referenceMarkStr):
 			if !oTolerant {
-				panic(referenceMarkStr + "は外字注記か違う字に置き換えてください")
+				panic(errors.New(referenceMarkStr + "は外字注記か違う字に置き換えてください"))
 			}
 			return i
 
 		case strings.HasPrefix(s.data[s.position+i:], "＃"):
 			if !oTolerant {
-				panic("＃は外字注記か違う字に置き換えてください")
+				panic(errors.New("＃は外字注記か違う字に置き換えてください"))
 			}
 			return i
 
@@ -464,7 +464,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if len(lines) < 3 {
 
-			panic("Tokenizer: arkup has no end")
+			panic(errors.New("Tokenizer: arkup has no end"))
 
 		}
 
@@ -480,14 +480,14 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 		}
 
 		if !found {
-			panic("Tokenizer: markup has no end")
+			panic(errors.New("Tokenizer: markup has no end"))
 		}
 
 		j := strings.Index(s.data[s.position+len(lines[0])+len(lines[1])+2:], lines[i])
 
 		if j == -1 {
 
-			panic("Tokenizer: markup has no end")
+			panic(errors.New("Tokenizer: markup has no end"))
 
 		}
 
@@ -503,12 +503,12 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 		if i == -1 {
 
-			panic("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext())
+			panic(errors.New("Tokenizer: unmatched opening tag: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext()))
 
 		}
 		/*
 			if i > end {
-				panic("Tokenizer: matching tag too far away: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext() + strconv.Itoa(end))
+				panic(errors.New("Tokenizer: matching tag too far away: " + strconv.Itoa(s.lineCounter) + " " + o.String() + "\n surrounding text: " + s.textContext() + strconv.Itoa(end)))
 
 			}
 		*/
@@ -546,7 +546,7 @@ func findMatchingCloser(o tokenType, s *tokenizer) int {
 
 	}
 
-	panic("Tokenizer: note not terminated. " + "\n surrounding text: " + s.textContext())
+	panic(errors.New("Tokenizer: note not terminated. " + "\n surrounding text: " + s.textContext()))
 
 	return -1
 
