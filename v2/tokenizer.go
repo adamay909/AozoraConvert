@@ -79,9 +79,7 @@ func tokenize(s string) *token {
 	for t1 := t0; t1 != nil; t1 = t1.next {
 
 		t1.addTokenRight(tknz.nextToken())
-
 	}
-
 	return t0
 
 }
@@ -91,7 +89,6 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 	defer func() {
 
 		if r := recover(); r != nil {
-
 			err = errors.New(r.(string))
 			return
 
@@ -99,7 +96,6 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 	}()
 
 	tokenString = tokenize(text)
-
 	if tokenString.lastToken().tokType != endOfLineToken {
 		tokenString.lastToken().addTokenRight(newTokenOfType(endOfLineToken))
 	}
@@ -107,6 +103,8 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
 	if !oRaw {
+
+		tokenString.fixTextEndNote()
 
 		tokenString.fixLines()
 
@@ -165,7 +163,6 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		if r := recover(); r != nil {
 
 			panic("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string))
-
 			return
 
 		}
@@ -225,6 +222,9 @@ func (tknz *tokenizer) nextToken() (e *token) {
 		e.lineNo = tknz.lineCounter
 		tknz.simpleProcessing = true
 		end = len(bibInfoStartStr)
+		if strings.HasPrefix(tknz.data[tknz.position:], mainTextEndStr) {
+			end = len(mainTextEndStr)
+		}
 
 	case accentStartToken:
 		end = len(accentStartStr)
@@ -305,6 +305,9 @@ func typeOf(s *tokenizer) tokenType {
 			return bibInfoToken
 		}
 		return textToken
+
+	case strings.HasPrefix(s.data[s.position:], mainTextEndStr):
+		return bibInfoToken
 
 	case strings.HasPrefix(s.data[s.position:], rubyStartStr):
 		return rubyStartToken

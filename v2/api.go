@@ -113,7 +113,7 @@ func AST(data string) (n *Node, err error) {
 
 		if r := recover(); r != nil {
 
-			err = errors.New(r.(error).Error())
+			err = errors.New(r.(string))
 			return
 
 		}
@@ -130,8 +130,6 @@ func RenderAozoraText(ast *Node, w *strings.Builder) (err error) {
 	defer func() {
 
 		if r := recover(); r != nil {
-
-			//			log.Println(r)
 
 			err = errors.New(r.(string))
 
@@ -151,8 +149,6 @@ func RenderHTML(ast *Node, w *strings.Builder) (err error) {
 	defer func() {
 
 		if r := recover(); r != nil {
-
-			//			log.Println(r)
 
 			err = errors.New(r.(string))
 			return

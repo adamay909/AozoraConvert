@@ -1923,3 +1923,19 @@ func (t *token) cleanUpIndentation() {
 		e = f
 	}
 }
+
+func (t *token) fixTextEndNote() {
+
+	for e := t.lastToken(); e != nil; e = e.prev {
+		if e.tokType != bibInfoToken {
+			continue
+		}
+		if e.prev != nil && e.next != nil {
+			if e.prev.tokType == noteStartToken && e.next.tokType == textToken && e.next.content == noteEndStr {
+				e.prev.tokType = emptyToken
+				e.next.tokType = emptyToken
+				return
+			}
+		}
+	}
+}

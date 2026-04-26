@@ -507,7 +507,6 @@ func getAST(t *token) (nd *Node, err error) {
 			n.setType("unknown")
 
 			msglog.Println("Parser: unknown annotation type: " + e.info())
-
 			if e.next != nil && e.next.tokType == endOfLineToken {
 				n.SetAttr("force linebreak", "true")
 			}

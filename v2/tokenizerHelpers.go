@@ -16,7 +16,7 @@ func (t *token) cleanup() {
 
 	for e := t.firstToken(); e != nil; e = e.next {
 
-		//	fmt.Print(e)
+		//		fmt.Print(e)
 
 		e.fixkunoji()
 
