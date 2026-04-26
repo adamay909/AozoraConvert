@@ -1141,6 +1141,10 @@ func metadataOpenHTML(n *Node, w *strings.Builder) {
 
 	h.addClass("metadata")
 
+	if id, ok := n.Attr["data-docid"]; ok {
+		h.addExtraKeyVal("data-docid", id)
+	}
+
 	h.AddStringTo(w)
 
 	//centeringOpenHTML(n, w)
