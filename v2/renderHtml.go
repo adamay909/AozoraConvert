@@ -628,15 +628,15 @@ func genImageTag(n *Node) *htmlTagSpec {
 	h := newHtag("img")
 
 	h.addClass("illustration")
+	/*
+		h.addExtraKeyVal("max-width", n.Attr["width"]+"px")
 
-	h.addExtraKeyVal("max-width", n.Attr["width"]+"px")
+		h.addExtraKeyVal("max-height", n.Attr["height"]+"px")
 
-	h.addExtraKeyVal("max-height", n.Attr["height"]+"px")
+		h.addExtraKeyVal("height", "100%")
 
-	h.addExtraKeyVal("height", "100%")
-
-	h.addExtraKeyVal("aspect-ratio", n.Attr["width"]+"/"+n.Attr["height"])
-
+		h.addExtraKeyVal("aspect-ratio", n.Attr["width"]+"/"+n.Attr["height"])
+	*/
 	h.addExtraKeyVal("src", n.Attr["file"])
 
 	h.addExtraKeyVal("alt", n.Attr["alt text"])
