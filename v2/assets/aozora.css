@@ -253,11 +253,6 @@ figure {
  font-style: italic;
 }
 
-.illustration {
-}
-
-
-
 .italic {
  font-style: italic;
 }
@@ -265,6 +260,11 @@ figure {
 .illustration {
  height: 100%;
  width: 100%;
+ object-fit: scale-down;
+}
+
+.inlineImage {
+ width: 1.5em;
  object-fit: scale-down;
 }
 

@@ -627,7 +627,13 @@ func genImageTag(n *Node) *htmlTagSpec {
 
 	h := newHtag("img")
 
-	h.addClass("illustration")
+	if val, ok := n.Attr["style"]; ok {
+		if val == "inline" {
+			h.addClass("inlineImage")
+		}
+	} else {
+		h.addClass("illustration")
+	}
 	/*
 		h.addExtraKeyVal("max-width", n.Attr["width"]+"px")
 
