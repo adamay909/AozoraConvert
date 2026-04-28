@@ -285,7 +285,9 @@ figure {
 }
 
 .horizontal {
+ writing-mode: horizontal-tb;
  text-orientation: upright;
+ line-height: 1.2em;
 }
 
 .sideways {
