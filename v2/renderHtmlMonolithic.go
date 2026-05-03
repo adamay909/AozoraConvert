@@ -1,8 +1,18 @@
 package aozoraconvert
 
-import "strings"
+import (
+	"log"
+	"strings"
+)
 
 func renderHTMLMonolithic(n *Node, w *strings.Builder) {
+
+	defer func() {
+		r := recover()
+		if r != nil {
+			log.Println("RENDERING FAILED")
+		}
+	}()
 
 	Serialize(n, w, htmlMonoFormatterOpen, htmlMonoFormatterClose)
 

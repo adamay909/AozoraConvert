@@ -935,7 +935,8 @@ func fixParagraph(start, end *token) {
 
 	oldstart := start
 
-	for start.isEmptyText() || start.tokType == emptyToken {
+	//	for start.isEmptyText() || start.tokType == emptyToken {
+	for start.tokType == emptyToken { //start of line can be white space
 		start = start.next
 	}
 
@@ -1935,6 +1936,7 @@ func (t *token) fixTextEndNote() {
 			if e.prev.tokType == noteStartToken && e.next.tokType == textToken && e.next.content == noteEndStr {
 				e.prev.tokType = emptyToken
 				e.next.tokType = emptyToken
+				e.content = "この本について"
 				return
 			}
 		}

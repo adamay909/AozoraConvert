@@ -987,6 +987,8 @@ func figureCloseHTML(n *Node, w *strings.Builder) {
 
 func bibInfoOpenHTML(n *Node, w *strings.Builder) {
 
+	paginationHTML(n, w)
+
 	h2 := newHtag("footer")
 	h2.setAfter("\n")
 
@@ -1143,6 +1145,8 @@ func kunojiOpenHTML(n *Node, w *strings.Builder) {
 
 func metadataOpenHTML(n *Node, w *strings.Builder) {
 
+	centeringOpenHTML(n, w)
+
 	h := newHtag("div")
 
 	h.addClass("metadata")
@@ -1153,13 +1157,13 @@ func metadataOpenHTML(n *Node, w *strings.Builder) {
 
 	h.AddStringTo(w)
 
-	//centeringOpenHTML(n, w)
-
 }
 
 func metadataCloseHTML(n *Node, w *strings.Builder) {
 
 	standardCloserHTML(n, w)
+	standardCloserHTML(n, w) //do twice to account for centering close
+	paginationHTML(n, w)     //add page break after title+author(s)
 
 }
 

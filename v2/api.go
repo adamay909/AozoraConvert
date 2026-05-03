@@ -114,6 +114,7 @@ func AST(data string) (n *Node, err error) {
 		if r := recover(); r != nil {
 
 			err = errors.New(r.(error).Error())
+			//err = errors.New(r.(string))
 			return
 
 		}
