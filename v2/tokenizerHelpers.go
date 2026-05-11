@@ -74,25 +74,20 @@ func (t *token) cleanup() {
 	}
 }
 
+// fix ruby notes so that all ruby parent start/end, ruby text
+// start end are explicit
 func (t *token) fixRuby() {
 
 	for e := t.firstToken(); e != nil; e = e.next {
-
-		//		fmt.Print(e)
-
+		//we ignore notes
 		if e.tokType == noteStartToken {
-
 			e = e.matchingNoteEnd()
-
 			continue
-
 		}
-		//		fmt.Print(e)
-
+		//bibliographical info at end has no rubys
 		if e.tokType == bibInfoToken {
 			break
 		}
-
 		e.fixruby()
 
 	}
@@ -243,14 +238,16 @@ func (t *token) isImpliedOpener() (bool, string) {
 	}
 
 	for _, e := range impliedOpenerMarker {
-
 		if strings.HasSuffix(t.innerString(), e) {
-
 			return true, e
-
 		}
-
 	}
 
 	return false, ""
+}
+
+// just get the boolean
+func (t *token) isImpliedOpenerTF() bool {
+	ok, _ := t.isImpliedOpener()
+	return ok
 }

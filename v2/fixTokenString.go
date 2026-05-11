@@ -532,6 +532,9 @@ func (t *token) insertRubyParentStart() {
 
 	for ; ; e = e.next {
 
+		if e.tokType == kunojiToken {
+			continue
+		}
 		if e.tokType != noteToken {
 			break
 		}
