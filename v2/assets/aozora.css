@@ -270,10 +270,11 @@ figure {
 
 .warichu {
  display: inline-block;
+ text-align: start;
  vertical-align: text-bottom; 
  line-height: 1.2;
  font-size: small;
- width: 2em;
+ width: auto;
 }
 
 /*For Mozilla's Gecko engine.

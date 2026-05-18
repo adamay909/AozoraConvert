@@ -146,7 +146,8 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		gaijiNoteOpenHTML(n, w)
 
 	case "warichu line break":
-		w.WriteString("\n")
+		h := newHtag("br")
+		h.AddStringTo(w)
 
 	case "gaiji char":
 		gaijiCharOpenHTML(n, w)
@@ -677,6 +678,8 @@ func bottomAlignOpenHTML(n *Node, w *strings.Builder) {
 		h.setAfter("\n")
 
 	} else {
+		h1 := newHtag("br")
+		h1.AddStringTo(w)
 
 		h.addClass("flushBottom")
 
@@ -700,32 +703,24 @@ func inlineNoteOpenHTML(n *Node, w *strings.Builder) {
 
 	s := strings.Split(wt.String(), "［＃改行］")
 
-	l := 0
+	longest := 0
 
 	if len(s) > 1 {
 
-		if len([]rune(s[0])) > len([]rune(s[1])) {
-
-			l = len([]rune(s[0]))
-
-		} else {
-
-			l = len([]rune(s[1]))
-
+		for j := range s {
+			if len([]rune(s[j])) > len([]rune(s[longest])) {
+				longest = j
+			}
 		}
+		h.addExtraKeyVal("style", "height: "+strconv.Itoa(len([]rune(s[longest])))+".5em;")
+
 	} else {
-
-		l = len([]rune(s[0]))
-
-		if l%2 == 1 {
-			l++
+		length := len([]rune(s[0])) / 2
+		if len([]rune(s[0]))%2 == 1 {
+			length = length + 1
 		}
-
-		l = l / 2
-
+		h.addExtraKeyVal("style", "height: "+strconv.Itoa(length)+".5em;")
 	}
-
-	h.addExtraKeyVal("style", "height: "+strconv.Itoa(l)+".5em;")
 
 	h.AddStringTo(w)
 
