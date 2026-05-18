@@ -704,6 +704,7 @@ func inlineNoteOpenHTML(n *Node, w *strings.Builder) {
 	s := strings.Split(wt.String(), "［＃改行］")
 
 	longest := 0
+	length := 0
 
 	if len(s) > 1 {
 
@@ -712,10 +713,10 @@ func inlineNoteOpenHTML(n *Node, w *strings.Builder) {
 				longest = j
 			}
 		}
-		h.addExtraKeyVal("style", "height: "+strconv.Itoa(len([]rune(s[longest])))+".5em;")
+		length = len([]rune(s[longest]))
 
 	} else {
-		length := len([]rune(s[0])) / 2
+		length = len([]rune(s[0])) / 2
 		if len([]rune(s[0]))%2 == 1 {
 			length = length + 1
 		}

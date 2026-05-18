@@ -222,11 +222,7 @@ func (n *Node) setIndentationAttr(e *token) {
 
 	switch {
 
-	case ind < 0:
-
-		n.SetAttr("indent", strconv.Itoa(ind))
-
-	case ind > 0:
+	case ind != 0:
 
 		n.SetAttr("indent", strconv.Itoa(ind))
 

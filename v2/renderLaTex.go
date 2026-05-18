@@ -129,7 +129,8 @@ func azrLaTeXFormatterOpen(n *Node, w *strings.Builder) {
 		gaijiNoteOpenLaTeX(n, w)
 
 	case "warichu line break":
-		w.WriteString(`\\`)
+
+		w.WriteString("\n\n")
 
 	case "gaiji char":
 		gaijiCharOpenLaTeX(n, w)
@@ -519,27 +520,27 @@ func fontSizeOpenLaTeX(n *Node, w *strings.Builder) {
 	case "大きな文字":
 		switch n.Attr["step"] {
 		case "1":
-			w.WriteString(latexCmd("large"))
+			w.WriteString(latexCmd("relsize{1}"))
 		case "2":
-			w.WriteString(latexCmd("Large"))
+			w.WriteString(latexCmd("relsize{2}"))
 		case "3":
-			w.WriteString(latexCmd("LARGE"))
+			w.WriteString(latexCmd("relsize{3}"))
 		case "4":
-			w.WriteString(latexCmd("huge"))
+			w.WriteString(latexCmd("relsize{4}"))
 		default:
-			w.WriteString(latexCmd("Huge"))
+			w.WriteString(latexCmd("relsize{5}"))
 		}
 
 	case "小さな文字":
 		switch n.Attr["step"] {
 		case "1":
-			w.WriteString(latexCmd("small"))
+			w.WriteString(latexCmd("relsize{-2}"))
 		case "2":
-			w.WriteString(latexCmd("footnotesize"))
+			w.WriteString(latexCmd("relsize{-3}"))
 		case "3":
-			w.WriteString(latexCmd("scriptsize"))
+			w.WriteString(latexCmd("relsize{-4}"))
 		default:
-			w.WriteString(latexCmd("tiny"))
+			w.WriteString(latexCmd("relsize{-2}"))
 		}
 	}
 
@@ -735,43 +736,25 @@ func inlineNoteOpenLaTeX(n *Node, w *strings.Builder) {
 	renderInnerAozoraText(n, wt)
 
 	s := strings.Split(wt.String(), "［＃改行］")
-
-	l := 0
+	longest := 0
+	length := 0
 
 	if len(s) > 1 {
-
-		if len([]rune(s[0])) > len([]rune(s[1])) {
-
-			l = len([]rune(s[0]))
-
-		} else {
-
-			l = len([]rune(s[1]))
-
+		for j := range s {
+			if len([]rune(s[j])) > len([]rune(s[longest])) {
+				longest = j
+			}
 		}
+		length = len([]rune(s[longest]))
 	} else {
-
-		l = len([]rune(s[0]))
-
-		if l%2 == 1 {
-			l++
+		length = len([]rune(s[0])) / 2
+		if len([]rune(s[0]))%2 == 1 {
+			length = length + 1
 		}
-
-		l = l / 2
-
 	}
 
-	if len(s) == 2 {
-
-		w.WriteString(latexCmd("azconvWarichuM"))
-
-	} else {
-
-		w.WriteString(latexCmd("azconvWarichu"))
-
-	}
-
-	w.WriteString(latexArg(strconv.Itoa(l) + `.5\zw`))
+	w.WriteString(latexCmd("azconvWarichuM"))
+	w.WriteString(latexArg(strconv.Itoa(length) + `.05\zw`))
 
 	w.WriteString(`{`)
 

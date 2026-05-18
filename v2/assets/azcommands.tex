@@ -22,6 +22,8 @@
 
 \usepackage[kumi=aki, tateaki=1]{kanbun}
 
+\usepackage{relsize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % environments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,7 +192,7 @@
 }
 
 \newcommand{\azconvKunten}[1]{%
-\raisebox{-0.4\zw}{\scriptsize #1}\normalsize}
+\raisebox{-0.4\zw}{\relsize{-3} #1}}
 
 %　#1は改ページ、改丁など注記で指示されているもの。デフォルトでは無視する。
 \newcommand{\azconvNewpage}[1]{%
@@ -198,7 +200,7 @@
 }
 
 \newcommand{\azconvOkurigana}[1]{%
-\raisebox{0.6\zw}{\scriptsize #1}\normalsize}
+\raisebox{0.6\zw}{\relsize{-3} #1}}
 
 \newcommand{\azconvSection}[1]{%
  \section{#1}
@@ -214,10 +216,12 @@
 
 
 \newcommand{\azconvSup}[1]{%
-\textsuperscript{#1}}
+\raisebox{0.6\zw}{\relsize{-3} #1}}
+%\textsuperscript{#1}}
 
 \newcommand{\azconvSub}[1]{%
-\textsubscript{#1}}
+\raisebox{-0.6\zw}{\relsize{-3} #1}}
+%\textsubscript{#1}}
 
 \newcommand{\azconvSubtitle}[1]{
 	{\large
@@ -290,7 +294,7 @@
 
 % 割中の中で改行が指定されている場合に使う。#1はboxのサイズ、#2が文字列。
 \newcommand{\azconvWarichuM}[2]{\linespread{0.5}
-{\scriptsize\parbox{#1}{#2}}}
+{\textscale{0.5}{\parbox{#1}{#2}}}}
 
 \newcommand{\azconvYokogumi}[1]{%
 \raisebox{-.35\zw}{\hbox{\utod #1}}}

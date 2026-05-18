@@ -239,6 +239,12 @@ func (n *Node) insideSingleLineCommand() bool {
 		case "narrow paragraph":
 			return false
 
+		case "font size":
+			return false
+
+		case "font shape":
+			return false
+
 		case "bibliographical info":
 			return false
 
