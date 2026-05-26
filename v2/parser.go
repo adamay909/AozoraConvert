@@ -2,7 +2,6 @@ package aozoraconvert
 
 import (
 	"errors"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -531,7 +530,7 @@ func getAST(t *token) (nd *Node, err error) {
 				if !oTolerant {
 					panic(err)
 				}
-				log.Println(err)
+				//				log.Println(err)
 			}
 
 			if prevNode.Attr["raw closer"] == "" {

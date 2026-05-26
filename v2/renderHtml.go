@@ -56,6 +56,9 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		rubyOpenHTML(n, w)
 
 	case "empty line":
+		if n.Parent() != nil && n.Parent().Attr["type"] == "centering" {
+			return
+		}
 		h := newHtag("br")
 		h.AddStringTo(w)
 		w.WriteString("\n")
@@ -277,6 +280,7 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "pagination":
+		paginationHTML(n, w)
 		return
 
 	case "accent start":
