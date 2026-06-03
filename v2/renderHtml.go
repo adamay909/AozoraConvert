@@ -8,6 +8,8 @@ import (
 
 var oCompatible bool
 
+var oXHTML bool //control if output is XHTML
+
 var output *strings.Builder
 
 func init() {
@@ -25,6 +27,7 @@ func unsetCompatible() {
 
 func renderHTML(n *Node, w *strings.Builder) {
 
+	oXHTML = false
 	Serialize(n, w, azrHTMLFormatterOpen, azrHTMLFormatterClose)
 
 }
@@ -59,9 +62,7 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		if n.Parent() != nil && n.Parent().Attr["type"] == "centering" {
 			return
 		}
-		h := newHtag("br")
-		h.AddStringTo(w)
-		w.WriteString("\n")
+		insertLineBreak(w)
 
 	case "section":
 		w.WriteString("<section>\n")
@@ -149,8 +150,7 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		gaijiNoteOpenHTML(n, w)
 
 	case "warichu line break":
-		h := newHtag("br")
-		h.AddStringTo(w)
+		insertLineBreak(w)
 
 	case "gaiji char":
 		gaijiCharOpenHTML(n, w)
@@ -623,9 +623,10 @@ func sectionTitleEndHTML(n *Node, w *strings.Builder) {
 func imageHTML(n *Node, w *strings.Builder) {
 
 	h := genImageTag(n)
-
+	if oXHTML {
+		h.setSelfClose()
+	}
 	h.AddStringTo(w)
-
 }
 
 func genImageTag(n *Node) *htmlTagSpec {
@@ -640,13 +641,14 @@ func genImageTag(n *Node) *htmlTagSpec {
 		h.addClass("illustration")
 	}
 
-	h.addExtraKeyVal("max-width", n.Attr["width"]+"px")
-
-	h.addExtraKeyVal("max-height", n.Attr["height"]+"px")
-
-	//h.addExtraKeyVal("height", "100%")
-
-	h.addExtraKeyVal("aspect-ratio", n.Attr["width"]+"/"+n.Attr["height"])
+	if oXHTML {
+		h.addExtraKeyVal("width", n.Attr["width"])
+		h.addExtraKeyVal("height", n.Attr["height"])
+	} else {
+		h.addExtraKeyVal("max-width", n.Attr["width"]+"px")
+		h.addExtraKeyVal("max-height", n.Attr["height"]+"px")
+		h.addExtraKeyVal("aspect-ratio", n.Attr["width"]+"/"+n.Attr["height"])
+	}
 
 	h.addExtraKeyVal("src", n.Attr["file"])
 
@@ -682,11 +684,8 @@ func bottomAlignOpenHTML(n *Node, w *strings.Builder) {
 		h.setAfter("\n")
 
 	} else {
-		h1 := newHtag("br")
-		h1.AddStringTo(w)
-
+		insertLineBreak(w)
 		h.addClass("flushBottom")
-
 	}
 
 	h.addClass("bottomMargin" + n.Attr["bottom margin"])
@@ -1383,4 +1382,13 @@ func rubyGroupCloseHTML(n *Node, w *strings.Builder) {
 		}
 	}
 
+}
+
+func insertLineBreak(w *strings.Builder) {
+	h := newHtag(`br`)
+	if oXHTML {
+		h.setSelfClose()
+	}
+	h.AddStringTo(w)
+	w.WriteString("\n")
 }

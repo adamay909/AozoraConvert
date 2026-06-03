@@ -545,7 +545,7 @@ func (n *Node) getSectionTitle() string {
 
 			w := new(strings.Builder)
 
-			renderInnerTextOnly(e, w)
+			renderInnerTextOnlyNoRuby(e, w)
 
 			return w.String()
 

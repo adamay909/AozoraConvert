@@ -1,3 +1,4 @@
+.gitignore
 TODO
 *.log
 *_test.*
@@ -11,3 +12,5 @@ testing/
 v2/cmd/checkFiles/
 v2/cmd/collect/
 v2/cmd/correct/
+*.diff
+

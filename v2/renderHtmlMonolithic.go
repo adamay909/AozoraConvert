@@ -13,7 +13,7 @@ func renderHTMLMonolithic(n *Node, w *strings.Builder) {
 			log.Println("RENDERING FAILED")
 		}
 	}()
-
+	oXHTML = false
 	Serialize(n, w, htmlMonoFormatterOpen, htmlMonoFormatterClose)
 
 }

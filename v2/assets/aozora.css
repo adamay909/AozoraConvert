@@ -210,11 +210,11 @@ figure {
 }
 
 .kunten {
- font-size: x-small;
+ font-size: 0.64em;
 }
 
 .okurigana {
- font-size: x-small;
+ font-size: 0.64em;
 }
 
 .underline {
@@ -258,8 +258,8 @@ figure {
 }
 
 .illustration {
- height: 100%;
- width: 100%;
+ height: 80%;
+ width: 80%;
  object-fit: scale-down;
 }
 
@@ -273,7 +273,7 @@ figure {
  text-align: start;
  vertical-align: text-bottom; 
  line-height: 1.2;
- font-size: small;
+ font-size: 0.5em;
  width: auto;
 }
 
@@ -308,9 +308,11 @@ text-orientation: sideways;
 }
 
 .superscript {
+ font-size: 0.64em;
 }
 
 .subscript {
+ font-size: 0.64em;
 }
 
 .centering {
@@ -377,43 +379,95 @@ text-orientation: sideways;
 }
 
 .section {
- font-size: x-large;
+ font-size: 1.5em;
  font-weight: bold;
  list-style-type: none;
 }
 
 .subsection {
- font-size: large;
+ font-size: 1.2em;
  font-weight: bold;
  list-style-type: none;
 }
 
 .subsubsection {
- font-size: medium;
+ font-size: 1em;
  font-weight: bold;
  list-style-type: none;
 }
 
 .annotation {
- font-size: small;
+ font-size: 0.8em;
 }
 
 h1.title {
- font-size: xx-large;
+ font-size: 2em;
  margin-top: 1em;
 }
 
 h2.subtitle {
- font-size: x-large;
+ font-size: 1.5em;
  margin-top: 2em;
 }
 
 h2.contributor {
- font-size: x-large;
+ font-size: 1.5em;
  text-align:  end;
 }
 
 footer {
  page-break-before: always;
 }
+
+figure {
+ writing-mode: horizontal-tb;
+ display: flex;
+ flex-direction: column;
+ place-items: center;
+ width: 100%;
+ height: 100%; 
+}
+
+
+figcaption {
+ font-size: 0.8em;
+}
+
+
+h1.title + h2.contributor {
+ margin-right: 2em;
+}
+
+h2.subtitle + h2.contributor {
+ margin-right: 2em;
+}
+
+.small {
+ font-size: 0.8em; 
+}
+
+.x-small {
+ font-size: 0.64em;
+}
+
+.xx-small {
+ font-size: 0.5em;
+}
+
+.large {
+ font-size: 1.2em;
+}
+
+.x-large {
+ font-size: 1.45em;
+}
+
+.xx-large {
+ font-size: 1.75em;
+}
+
+.xxx-large {
+ font-size: 2.1em;
+}
+
 

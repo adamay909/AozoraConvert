@@ -22,6 +22,11 @@ func renderInnerTextOnly(n *Node, w *strings.Builder) {
 
 }
 
+func renderInnerTextOnlyNoRuby(n *Node, w *strings.Builder) {
+
+	SerializeDescendants(n, w, plaintextWriterNoRubyOpen, plaintextWriterClose)
+
+}
 func plaintextWriterOpen(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
@@ -34,6 +39,21 @@ func plaintextWriterOpen(n *Node, w *strings.Builder) {
 	}
 }
 
+func plaintextWriterNoRubyOpen(n *Node, w *strings.Builder) {
+
+	if n.Parent().Attr["type"] == "ruby" {
+		return
+	}
+
+	switch n.Attr["type"] {
+
+	case "text", "special char", "kunoji", "gaiji char":
+		azrTxtFormatterOpen(n, w)
+
+	default:
+		return
+	}
+}
 func plaintextWriterClose(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {

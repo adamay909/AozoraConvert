@@ -354,3 +354,20 @@ func (n *Node) hasChildOfType(t string) bool {
 	}
 	return false
 }
+
+// deep clone n: tree rooted at n is cloned. Attr is copied but the rest is not.
+func (n *Node) clone() *Node {
+	c := new(Node)
+	for k, v := range n.Attr {
+		c.Attr[k] = v
+	}
+	if n.firstChild != nil {
+		c.firstChild = n.firstChild.clone()
+	}
+	if c.Parent() != nil {
+		if n.next != nil {
+			c.next = n.next.clone()
+		}
+	}
+	return c
+}

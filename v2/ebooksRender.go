@@ -297,6 +297,24 @@ func (b *Book) RenderMonolithicHTML() []byte {
 
 	renderHTMLMonolithic(b.Body, w)
 
+	w.WriteString(`<div class="pageBreak"></div>` + "\n")
+
+	return []byte(w.String())
+
+}
+
+// RenderNavHTML returns the toc of the book formatted
+// appropriately for <nav> element
+func (b *Book) RenderNavHTML() []byte {
+
+	w := new(strings.Builder)
+
+	w.WriteString(`<nav class="toc">` + "\n")
+
+	renderNavHTML(b.Body, w)
+
+	w.WriteString(`</nav>` + "\n")
+
 	return []byte(w.String())
 
 }

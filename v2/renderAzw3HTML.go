@@ -7,8 +7,9 @@ import (
 )
 
 func renderHTMLForAzw3(n *Node, w *strings.Builder) {
-
+	oXHTML = true
 	Serialize(n, w, htmlAzw3FormatterOpen, htmlAzw3FormatterClose)
+	oXHTML = false
 
 }
 
@@ -22,9 +23,6 @@ func htmlAzw3FormatterOpen(n *Node, w *strings.Builder) {
 
 	case "pagination":
 		paginationHTML(n, w)
-
-	case "metadata":
-		centeringOpenHTML(n, w)
 
 	default:
 		azrHTMLFormatterOpen(n, w)
@@ -42,7 +40,7 @@ func htmlAzw3FormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "metadata":
-		w.WriteString(newCloseHtag(`div`).String())
+		metadataCloseHTML(n, w)
 
 	default:
 		azrHTMLFormatterClose(n, w)
