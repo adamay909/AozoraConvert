@@ -123,7 +123,7 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		imageHTML(n, w)
 
 	case "pagination":
-		return
+		paginationHTML(n, w)
 
 	case "accent start":
 		return
