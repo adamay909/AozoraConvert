@@ -36,43 +36,25 @@ const (
 
 // String returns the attributes of n.
 func (n *Node) String() string {
-
 	output.Reset()
-
 	addToStringsBuilder(output, `"type": `, `"`, n.Attr["type"], `"`, ",\n")
-
 	if n.Attr["raw"] != "" {
-
 		addToStringsBuilder(output, `"raw": `, `"`, n.Attr["raw"], `"`, ",\n")
-
 	}
-
 	if n.Attr["raw closer"] != "" {
-
 		addToStringsBuilder(output, `"raw closer": `, `"`, n.Attr["raw closer"], `"`, ",\n")
-
 	}
-
 	var keys []string
-
 	for k := range n.Attr {
-
 		keys = append(keys, k)
-
 	}
-
 	sort.Strings(keys)
-
 	for _, k := range keys {
-
 		switch k {
-
 		case "type", "raw", "raw closer":
 			continue
-
 		default:
 			addToStringsBuilder(output, `"`, k, `": `, `"`, n.Attr[k], `"`, ",\n")
-
 		}
 	}
 	return strings.TrimSuffix(output.String(), ",\n")
