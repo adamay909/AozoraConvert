@@ -383,7 +383,7 @@ func emphOpenLaTeX(n *Node, w *strings.Builder) {
 		w.WriteString(latexArg("fisheye"))
 
 	case "ばつ傍点":
-		w.WriteString(latexArg("Ｘ"))
+		w.WriteString(latexArg(`$\times$`))
 
 	}
 
