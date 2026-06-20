@@ -17,6 +17,9 @@ var LaTeXdefinitions string
 //go:embed assets/aozora.css
 var AozoraCSS string
 
+// set this to false to prevent recovering from any panic
+var oRECOVER = false
+
 var tmpBuilder *strings.Builder
 
 func init() {
@@ -108,18 +111,18 @@ func SetStrict(v bool) {
 // data should be a properly formatted Aozorabunko text.
 // If not, it will probably panic.
 func AST(data string) (n *Node, err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				//err = errors.New(r.(string))
+				return
 
-			err = errors.New(r.(error).Error())
-			//err = errors.New(r.(string))
-			return
-
-		}
-	}()
-
+			}
+		}()
+	}
 	return parse(data)
 
 }
@@ -127,18 +130,18 @@ func AST(data string) (n *Node, err error) {
 // RenderAozoraText renders ast as a string formatted
 // in the style of Aozorabunko.
 func RenderAozoraText(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
 
-			err = errors.New(r.(error).Error())
+				return
 
-			return
-
-		}
-	}()
-
+			}
+		}()
+	}
 	renderAozoraText(ast, w)
 
 	return
@@ -146,16 +149,18 @@ func RenderAozoraText(ast *Node, w *strings.Builder) (err error) {
 
 // RenderHTML renders ast as an html fragment.
 func RenderHTML(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				return
 
-			err = errors.New(r.(error).Error())
-			return
+			}
+		}()
+	}
 
-		}
-	}()
 	if ast == nil {
 		return
 	}
@@ -170,18 +175,18 @@ var htmltemplate string
 
 // RenderHTMLFull renders ast as a full HTML file including doctype declararation and head element.
 func RenderHTMLFull(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
 
-			err = errors.New(r.(error).Error())
+				return
 
-			return
-
-		}
-	}()
-
+			}
+		}()
+	}
 	title := ast.getTitle()
 
 	if title == "" {
@@ -205,16 +210,17 @@ func RenderHTMLFull(ast *Node, w *strings.Builder) (err error) {
 // the text given by ast. TOC is formatted as
 // an html ordered list.
 func RenderNavHTML(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				return
 
-			err = errors.New(r.(error).Error())
-			return
-
-		}
-	}()
+			}
+		}()
+	}
 
 	renderNavHTML(ast, w)
 
@@ -223,16 +229,17 @@ func RenderNavHTML(ast *Node, w *strings.Builder) (err error) {
 
 // RenderJSON renders ast in JSON format.
 func RenderJSON(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				return
 
-			err = errors.New(r.(error).Error())
-			return
-
-		}
-	}()
+			}
+		}()
+	}
 
 	renderJSON(ast, w)
 
@@ -241,17 +248,17 @@ func RenderJSON(ast *Node, w *strings.Builder) (err error) {
 
 // RenderLaTeX renders ast as a LaTeX fragment.
 func RenderLaTeX(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				return
 
-			err = errors.New(r.(error).Error())
-			return
-
-		}
-	}()
-
+			}
+		}()
+	}
 	renderLaTeX(ast, w)
 
 	return
@@ -260,17 +267,18 @@ func RenderLaTeX(ast *Node, w *strings.Builder) (err error) {
 // RenderLaTeXFull renders ast as a whole compileable
 // LaTeX document. You will need to use the uplatex engine.
 func RenderLaTeXFull(ast *Node, w *strings.Builder) (err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
 
-			err = errors.New(r.(error).Error())
+				return
 
-			return
-
-		}
-	}()
+			}
+		}()
+	}
 
 	w.WriteString(`\documentclass[tate,paper=b6j,jafontsize=9pt]{jlreq}` + "\n\n")
 

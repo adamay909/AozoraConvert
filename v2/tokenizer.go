@@ -68,7 +68,6 @@ func setOutputOption(o string) {
 	return
 }
 
-// offset is setting line number in case s isn't the whole document being processed.
 func tokenize(s string) *token {
 
 	tknz := newTokenizer(s)
@@ -85,16 +84,18 @@ func tokenize(s string) *token {
 }
 
 func tokenizeAndFix(text string) (tokenString *token, err error) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
+				err = errors.New(r.(error).Error())
+				return
 
-		if r := recover(); r != nil {
-			err = errors.New(r.(error).Error())
-			return
+			}
+		}()
+	}
 
-		}
-	}()
-
+	text = prep(text)
 	tokenString = tokenize(text)
 	if tokenString.lastToken().tokType != endOfLineToken {
 		tokenString.lastToken().addTokenRight(newTokenOfType(endOfLineToken))
@@ -157,16 +158,17 @@ func (tknz *tokenizer) readNext(i int) string {
 }
 
 func (tknz *tokenizer) nextToken() (e *token) {
+	if oRECOVER {
+		defer func() {
 
-	defer func() {
+			if r := recover(); r != nil {
 
-		if r := recover(); r != nil {
+				panic(errors.New("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string)))
+				return
 
-			panic(errors.New("line " + strconv.Itoa(tknz.lineCounter) + ":" + r.(string)))
-			return
-
-		}
-	}()
+			}
+		}()
+	}
 
 	e = newToken()
 
@@ -718,4 +720,18 @@ func hasOnly(s string, c rune) bool {
 	}
 
 	return true
+}
+
+func prep(in string) string {
+	var newLines []string
+	lines := strings.Split(in, "\n")
+	for _, line := range lines {
+		tline := strings.Trim(line, "\u0020\u3000")
+		if len(tline) == 0 {
+			newLines = append(newLines, tline)
+		} else {
+			newLines = append(newLines, line)
+		}
+	}
+	return strings.Join(newLines, "\n")
 }

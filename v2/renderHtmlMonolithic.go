@@ -6,13 +6,15 @@ import (
 )
 
 func renderHTMLMonolithic(n *Node, w *strings.Builder) {
+	if oRECOVER {
+		defer func() {
+			r := recover()
+			if r != nil {
+				log.Println("RENDERING FAILED")
+			}
+		}()
+	}
 
-	defer func() {
-		r := recover()
-		if r != nil {
-			log.Println("RENDERING FAILED")
-		}
-	}()
 	oXHTML = false
 	Serialize(n, w, htmlMonoFormatterOpen, htmlMonoFormatterClose)
 

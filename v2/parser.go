@@ -2,6 +2,7 @@ package aozoraconvert
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -11,6 +12,7 @@ func parse(text string) (*Node, error) {
 	tok, err := tokenizeAndFix(text)
 
 	if err != nil {
+		log.Println("couldn't tokenize")
 		return new(Node), err
 
 	}
@@ -58,7 +60,7 @@ func getAST(t *token) (nd *Node, err error) {
 
 	for e := t.mainTextStart(); e != nil; e = e.next {
 
-		//	fmt.Print(e)
+		//		fmt.Print(e)
 
 		n = newNode("")
 
