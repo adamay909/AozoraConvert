@@ -20,6 +20,7 @@ type Book struct {
 	Files                     []fileData
 	UUID                      string
 	Body                      *Node
+	TOC                       *Node
 	URI                       string
 	Images                    []records.ImageRecord
 	CSS                       string

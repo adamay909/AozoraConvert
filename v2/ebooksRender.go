@@ -43,6 +43,9 @@ func (b *Book) RenderEpub() []byte {
 	//set mod time
 	b.DateMod = time.Now().Format(time.DateOnly) + "T00:00:00Z"
 
+	//get Toc of book
+	b.TOC = b.Body.sectionStructure()
+
 	//write mimetype file
 	fh := new(zip.FileHeader)
 	fh.Name = "mimetype"
@@ -411,7 +414,7 @@ func tocep3(b *Book) []byte {
 
 	w := new(strings.Builder)
 
-	renderNavHTML(b.Body, w)
+	renderNavHTML(b.TOC, w)
 
 	resp := strings.ReplaceAll(epubtoc, `{{.RenderEP3TOC}}`, w.String())
 

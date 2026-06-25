@@ -1,6 +1,7 @@
 package aozoraconvert
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -485,6 +486,8 @@ func (n *Node) sectionStructure() *Node {
 
 	top.SetAttr("id", "main")
 
+	top.SetAttr("depth", "1")
+
 	prevNode := top
 
 	for _, e := range linearizeDescendants(n) {
@@ -510,6 +513,8 @@ func (n *Node) sectionStructure() *Node {
 		}
 
 		if e.sectionLevel() > prevNode.sectionLevel() {
+
+			top.SetAttr("depth", strconv.Itoa(e.sectionLevel()))
 
 			prevNode.addChild(sec)
 
