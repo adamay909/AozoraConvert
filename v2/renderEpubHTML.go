@@ -6,10 +6,11 @@ import (
 
 func renderEpubHTML(n *Node, w *strings.Builder) {
 	oXHTML = true
-	Serialize(n, w, htmlEpubFormatterOpen, htmlEpubFormatterClose)
+	Serialize(n, w, azrHTMLFormatterOpen, azrHTMLFormatterClose)
 	oXHTML = false
 }
 
+/*
 func htmlEpubFormatterOpen(n *Node, w *strings.Builder) {
 
 	switch n.Attr["type"] {
@@ -23,11 +24,11 @@ func htmlEpubFormatterOpen(n *Node, w *strings.Builder) {
 	case "metadata":
 
 		centeringOpenHTML(n, w)
-		/*
+
 			case "image":
 
 				imageXHTML(n, w)
-		*/
+
 	case "pagination":
 		paginationHTML(n, w)
 
@@ -52,7 +53,7 @@ func htmlEpubFormatterClose(n *Node, w *strings.Builder) {
 	}
 
 }
-
+*/
 /*
 func imageXHTML(n *Node, w *strings.Builder) {
 

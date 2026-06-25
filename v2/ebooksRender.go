@@ -33,9 +33,7 @@ func (b *Book) RenderEpub() []byte {
 	oCompatible = true
 
 	defer func() {
-
 		oCompatible = false
-
 	}()
 
 	buf := new(bytes.Buffer)
@@ -325,32 +323,19 @@ var oebhtmltemplate string
 func oebmain(b *Book) []byte {
 
 	resp := strings.ReplaceAll(oebhtmltemplate, `{{.Title}}`, b.Title)
-
 	resp = strings.ReplaceAll(resp, `{{.Creator}}`, b.Creator)
-
 	resp = strings.ReplaceAll(resp, `{{.Publisher}}`, b.Publisher)
-
 	w := new(strings.Builder)
-
 	for _, e := range b.Body.Children() {
-
 		if e.Attr["type"] == "main text" {
-
 			renderEpubHTML(e, w)
-
 		}
 		if e.Attr["type"] == "bibliographical info" {
-
-			err := RenderHTML(e, w)
-
-			if err != nil {
-				return []byte{}
-			}
+			renderEpubHTML(e, w)
 		}
 	}
 
 	resp = strings.ReplaceAll(resp, `{{.RenderBody}}`, w.String())
-
 	return []byte(resp)
 
 }
