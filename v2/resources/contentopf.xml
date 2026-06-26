@@ -27,12 +27,13 @@
 	
 	<item id="title" href="title.html" media-type="application/xhtml+xml" />
 	
+	<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
 
 	{{.FileList}}
 
   </manifest>
   
-  <spine page-progression-direction="rtl">
+  <spine page-progression-direction="rtl" toc="ncx">
 
    <itemref idref="title"/>
  

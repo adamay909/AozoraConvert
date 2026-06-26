@@ -43,7 +43,7 @@ func (b *Book) RenderEpub() []byte {
 	//set mod time
 	b.DateMod = time.Now().Format(time.DateOnly) + "T00:00:00Z"
 
-	//get Toc of book
+	//get TOC
 	b.TOC = b.Body.sectionStructure()
 
 	//write mimetype file
@@ -90,7 +90,14 @@ func (b *Book) RenderEpub() []byte {
 
 	//write Epub3 toc
 	f, err = w.Create("OEBPF/toc.html")
-	_, err = f.Write(tocep3(b))
+	_, err = f.Write(tocEpub3(b))
+	if err != nil {
+		msglog.Println(err)
+	}
+
+	//write Epub3 toc.ncx for Kindle compatibility
+	f, err = w.Create("OEBPF/toc.ncx")
+	_, err = f.Write(tocncx(b))
 	if err != nil {
 		msglog.Println(err)
 	}
@@ -410,7 +417,7 @@ func contentopf(b *Book) []byte {
 //go:embed resources/toc.html
 var epubtoc string
 
-func tocep3(b *Book) []byte {
+func tocEpub3(b *Book) []byte {
 
 	w := new(strings.Builder)
 
@@ -428,6 +435,28 @@ func tocep3(b *Book) []byte {
 
 }
 
+//go:embed resources/toc.ncx
+var epubncx string
+
+func tocncx(b *Book) []byte {
+
+	w := new(strings.Builder)
+
+	renderTocNcx(b.TOC, w)
+
+	resp := strings.ReplaceAll(epubncx, `{{.TOC}}`, w.String())
+
+	//	resp = strings.ReplaceAll(resp, "#", "1.html#")
+
+	resp = strings.ReplaceAll(resp, "{{.Title}}", b.Title)
+
+	resp = strings.ReplaceAll(resp, "{{.Depth}}", b.TOC.Attr["depth"])
+
+	resp = strings.ReplaceAll(resp, "{{.UUID}}", b.UUID)
+
+	return []byte(resp)
+
+}
 func (b *Book) addFilesFromZip(arch *zip.Reader) {
 
 	for _, f := range arch.File {

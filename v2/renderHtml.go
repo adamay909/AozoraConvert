@@ -1007,9 +1007,10 @@ func bibInfoCloseHTML(n *Node, w *strings.Builder) {
 
 }
 
+// n must be the output of node.sectionStructure()
 func renderNavHTML(n *Node, w *strings.Builder) {
 
-	Serialize(n.sectionStructure(), w, navOpenHTML, navCloseHTML)
+	Serialize(n, w, navOpenHTML, navCloseHTML)
 
 }
 
