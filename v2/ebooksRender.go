@@ -40,81 +40,40 @@ func (b *Book) RenderEpub() []byte {
 
 	w := zip.NewWriter(buf)
 
+	//write mimetype file
+	mt := []byte("application/epub+zip")
+	writeToEpub(w, "mimetype", mt)
+
 	//set mod time
 	b.DateMod = time.Now().Format(time.DateOnly) + "T00:00:00Z"
 
 	//get TOC
 	b.TOC = b.Body.sectionStructure()
 
-	//write mimetype file
-	fh := new(zip.FileHeader)
-	fh.Name = "mimetype"
-	fh.Method = 0
-	mt := []byte("application/epub+zip")
-	fh.UncompressedSize64 = uint64(len(mt))
-	fh.CompressedSize64 = uint64(len(mt))
-	fh.CRC32 = crc32.ChecksumIEEE(mt)
-	iw, err := w.CreateRaw(fh)
-	if err != nil {
-		msglog.Println(err)
-	}
-	iw.Write(mt)
-
 	//write META-INF
-	f, err := w.Create("META-INF/container.xml")
-	_, err = f.Write(metainfxml)
-	if err != nil {
-		msglog.Println(err)
-	}
-	//write title page
+	writeToEpub(w, "META-INF/container.xml", metainfxml)
 
-	f, err = w.Create("OEBPF/title.html")
-	_, err = f.Write(oebtitle(b))
-	if err != nil {
-		msglog.Println(err)
-	}
+	//write title page
+	writeToEpub(w, "OEBPF/title.html", oebtitle(b))
 
 	//write main file
-	f, err = w.Create("OEBPF/1.html")
-	_, err = f.Write(oebmain(b))
-	if err != nil {
-		msglog.Println(err)
-	}
+	writeToEpub(w, "OEBPF/1.html", oebmain(b))
 
 	//write opf
-	f, err = w.Create("OEBPF/content.opf")
-	_, err = f.Write(contentopf(b))
-	if err != nil {
-		msglog.Println(err)
-	}
+	writeToEpub(w, "OEBPF/content.opf", contentopf(b))
 
 	//write Epub3 toc
-	f, err = w.Create("OEBPF/toc.html")
-	_, err = f.Write(tocEpub3(b))
-	if err != nil {
-		msglog.Println(err)
-	}
+	writeToEpub(w, "OEBPF/toc.html", tocEpub3(b))
 
 	//write Epub3 toc.ncx for Kindle compatibility
-	f, err = w.Create("OEBPF/toc.ncx")
-	_, err = f.Write(tocncx(b))
-	if err != nil {
-		msglog.Println(err)
-	}
+	writeToEpub(w, "OEBPF/toc.ncx", tocncx(b))
 
 	//write support files
 	for _, file := range b.Files {
-		f, err = w.Create("OEBPF/" + file.Name)
-		if err != nil {
-			msglog.Println(err)
-		}
-		_, err = f.Write(file.Data)
+		writeToEpub(w, "OEBPF/"+file.Name, file.Data)
 	}
 
-	err = w.Close()
-	if err != nil {
-		msglog.Println(err)
-	}
+	w.Close()
 	return buf.Bytes()
 }
 
@@ -489,4 +448,19 @@ func (b *Book) addFilesFromZip(arch *zip.Reader) {
 			b.Images = append(b.Images, records.ImageRecord{Data: fi.Data, Ext: filepath.Ext(fi.Name)})
 		}
 	}
+}
+
+func writeToEpub(w *zip.Writer, fname string, data []byte) {
+	fh := new(zip.FileHeader)
+	fh.Name = fname
+	fh.Method = zip.Store
+	fh.UncompressedSize64 = uint64(len(data))
+	fh.CompressedSize64 = uint64(len(data))
+	fh.CRC32 = crc32.ChecksumIEEE(data)
+	//fh.Modified = time.Unix(0, 0)
+	iw, err := w.CreateHeader(fh)
+	if err != nil {
+		msglog.Println(err)
+	}
+	iw.Write(data)
 }

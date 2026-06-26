@@ -9,7 +9,7 @@
 
    <dc:publisher>{{.Publisher}}</dc:publisher>
  
-   <dc:language>jpn</dc:language>
+   <dc:language>ja</dc:language>
 
    <dc:identifier id="uuid_id">{{.UUID}}</dc:identifier>
 
