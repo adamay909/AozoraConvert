@@ -3,7 +3,7 @@
 
   <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
 
-   <dc:title>{{.Title}}</dc:title>
+   <dc:title id="main-title">{{.Title}}</dc:title>
 
    <dc:creator>{{.Creator}}</dc:creator>
 
@@ -12,8 +12,6 @@
    <dc:language>ja</dc:language>
 
    <dc:identifier id="uuid_id">{{.UUID}}</dc:identifier>
-
-   <dc:identifier>{{.UUID}}</dc:identifier>
 
    <meta property="dcterms:modified">{{.DateMod}}</meta>
    
