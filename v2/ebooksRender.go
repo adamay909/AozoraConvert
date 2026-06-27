@@ -278,7 +278,9 @@ func (b *Book) RenderNavHTML() []byte {
 
 	w.WriteString(`<nav class="toc">` + "\n")
 
-	renderNavHTML(b.Body, w)
+	b.TOC = b.Body.sectionStructure()
+
+	renderNavHTML(b.TOC, w)
 
 	w.WriteString(`</nav>` + "\n")
 

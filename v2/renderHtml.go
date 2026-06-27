@@ -702,8 +702,8 @@ func inlineNoteOpenHTML(n *Node, w *strings.Builder) {
 
 	wt := new(strings.Builder)
 
-	renderInnerAozoraText(n, wt)
-
+	// renderInnerAozoraText(n, wt)
+	renderInnerTextOnlyNoRuby(n, wt)
 	s := strings.Split(wt.String(), "［＃改行］")
 
 	longest := 0
