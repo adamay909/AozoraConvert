@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/google/uuid v1.6.0
-	golang.org/x/image v0.38.0
+	golang.org/x/image v0.41.0
 	golang.org/x/net v0.55.0
 	golang.org/x/text v0.35.0
 )
