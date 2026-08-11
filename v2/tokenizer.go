@@ -104,7 +104,6 @@ func tokenizeAndFix(text string) (tokenString *token, err error) {
 	tokenString.lastToken().insertTokenRight(newTokenOfType(endOfLineToken))
 
 	if !oRaw {
-
 		tokenString.fixTextEndNote()
 
 		tokenString.fixLines()

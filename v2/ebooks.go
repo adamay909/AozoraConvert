@@ -11,7 +11,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/adamay909/AozoraConvert/v2/mobi/records"
-	"github.com/google/uuid"
 )
 
 // Book represents a book from Aozora Bunko
@@ -32,7 +31,8 @@ type Book struct {
 // NewBook returns a new Book.
 func NewBook() *Book {
 	b := new(Book)
-	b.UUID = uuid.NewString()
+	//b.UUID = uuid.NewString()
+	b.UUID = "2bc8df04-20ec-4fb6-a4c8-356942b083b4"
 	return b
 }
 
@@ -110,7 +110,8 @@ func NewEbookFromZip(dz []byte) (bk *Book) {
 
 	bk.Files = append(bk.Files, fi)
 
-	bk.UUID = uuid.NewString()
+	bk.UUID = "2bc8df04-20ec-4fb6-a4c8-356942b083b4"
+	//	bk.UUID = uuid.NewString()
 
 	bk.SetMetadataFromText()
 

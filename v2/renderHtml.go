@@ -65,7 +65,9 @@ func azrHTMLFormatterOpen(n *Node, w *strings.Builder) {
 		insertLineBreak(w)
 
 	case "section":
-		w.WriteString("<section>\n")
+		sectionOpenHTML(n, w)
+
+		//		w.WriteString("<section>\n")
 
 	case "indentation":
 		indentationOpenHTML(n, w)
@@ -222,7 +224,8 @@ func azrHTMLFormatterClose(n *Node, w *strings.Builder) {
 		return
 
 	case "section":
-		w.WriteString("</section>\n")
+		sectionCloseHTML(n, w)
+		//		w.WriteString("</section>\n")
 
 	case "indentation":
 		standardCloserHTML(n, w)
@@ -1251,6 +1254,21 @@ func captionCloseHTML(n *Node, w *strings.Builder) {
 
 	h.AddStringTo(w)
 
+}
+
+func sectionOpenHTML(n *Node, w *strings.Builder) {
+
+	h := newHtag("section")
+	h.addClass("level" + strconv.Itoa(n.sectionLevel()))
+	h.setAfter("\n")
+	h.AddStringTo(w)
+}
+
+func sectionCloseHTML(n *Node, w *strings.Builder) {
+
+	h := newCloseHtag("section")
+	h.setAfter("\n")
+	h.AddStringTo(w)
 }
 
 func rubyOpenHTML(n *Node, w *strings.Builder) {

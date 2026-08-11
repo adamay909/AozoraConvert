@@ -4,6 +4,7 @@ package aozoraconvert
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
@@ -99,7 +100,7 @@ var (
 var initialized = false
 
 func init() {
-
+	initialized = false
 	initMap()
 
 }
@@ -349,12 +350,14 @@ func convert(mkt string) (s string, err error) {
 
 	jiscode, err := mktToJis(mkt)
 	if err != nil {
+		fmt.Println("fail", err)
 		return
 	}
 
 	s, ok := utf8of[jiscode]
 	if !ok {
 		err = errors.New("Unicode undefined for " + mkt)
+		fmt.Println(err)
 		return
 	}
 	return

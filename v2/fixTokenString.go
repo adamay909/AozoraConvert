@@ -623,7 +623,6 @@ func (t *token) replaceGaiji() {
 
 	if j != "" {
 		uni, _ = convert(j)
-
 		t.jis0213Content = uni
 
 		t.unicodeContent = uni
